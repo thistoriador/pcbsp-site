@@ -1,13 +1,254 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>PCB São Paulo</title>
+
+  <meta
+    name="description"
+    content="PCB São Paulo"
+  >
+
+  <meta
+    name="theme-color"
+    content="#b5121b"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(
+          145deg,
+          #8d0d14 0%,
+          #b5121b 55%,
+          #760a10 100%
+        );
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 24px;
+    }
+
+    .pagina {
+      width: 100%;
+      max-width: 700px;
+      text-align: center;
+    }
+
+    .topo {
+      margin-bottom: 34px;
+    }
+
+    .pcb {
+      color: #ffd400;
+      font-size: 38px;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .sp {
+      color: #ffffff;
+    }
+
+    .subtitulo {
+      color: #ffffff;
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .apps-titulo {
+      color: #ffd400;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+    }
+
+    .app-card {
+      display: block;
+      width: 100%;
+      max-width: 420px;
+
+      margin: 0 auto;
+
+      background: #ffffff;
+
+      border-radius: 24px;
+
+      padding: 26px 22px;
+
+      text-decoration: none;
+
+      box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.35);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+
+      box-shadow:
+        0 20px 45px
+        rgba(0, 0, 0, 0.42);
+    }
+
+    .icone {
+      width: 190px;
+      max-width: 65%;
+      height: auto;
+
+      border-radius: 22px;
+
+      margin-bottom: 18px;
+    }
+
+    .app-nome {
+      color: #111111;
+      font-size: 25px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .app-descricao {
+      color: #555555;
+      font-size: 15px;
+      line-height: 1.5;
+
+      margin-top: 10px;
+    }
+
+    .botao {
+      display: block;
+
+      margin-top: 22px;
+
+      background: #b5121b;
+      color: #ffffff;
+
+      border-radius: 12px;
+
+      padding: 15px;
+
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .rodape {
+      margin-top: 35px;
+
+      color: rgba(255, 255, 255, 0.75);
+
+      font-size: 12px;
+    }
+
+    @media (max-width: 500px) {
+
+      .pcb {
+        font-size: 32px;
+      }
+
+      .app-card {
+        padding: 22px 18px;
+      }
+
+      .icone {
+        width: 170px;
+      }
+
+      .app-nome {
+        font-size: 22px;
+      }
+
+    }
+
+  </style>
 </head>
 
+
 <body>
-  <h1>PCB São Paulo</h1>
-  <p>Site em construção.</p>
+
+  <main class="pagina">
+
+    <header class="topo">
+
+      <h1 class="pcb">
+        PCB <span class="sp">SÃO PAULO</span>
+      </h1>
+
+      <div class="subtitulo">
+        Aplicativos e ferramentas
+      </div>
+
+    </header>
+
+
+    <div class="apps-titulo">
+      ACESSE NOSSOS APLICATIVOS
+    </div>
+
+
+    <a
+      class="app-card"
+      href="https://pcbsp.com.br/recrutamento/"
+    >
+
+      <img
+        class="icone"
+        src="https://pcbsp.com.br/recrutamento/icone-recrutamento.png"
+        alt="Recrutamento e Circulismo"
+      >
+
+      <div class="app-nome">
+        Recrutamento e Circulismo
+      </div>
+
+      <div class="app-descricao">
+        Acesse o aplicativo de Recrutamento e Circulismo do PCB São Paulo.
+      </div>
+
+      <span class="botao">
+        ACESSAR APLICATIVO
+      </span>
+
+    </a>
+
+
+    <footer class="rodape">
+      PCB São Paulo
+    </footer>
+
+  </main>
+
 </body>
+
 </html>
