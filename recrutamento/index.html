@@ -11,15 +11,67 @@
   <meta name="theme-color" content="#b5121b">
 
   <meta name="description"
-        content="Aplicativo PCB SP | Recrutamento e Circulismo">
+        content="PCB SP | Recrutamento e Circulismo">
 
-  <link rel="manifest" href="./manifest.json">
+  <!-- ==========================================
+       PRÉVIA WHATSAPP / FACEBOOK / REDES SOCIAIS
+       ========================================== -->
+
+  <meta property="og:type" content="website">
+
+  <meta property="og:title"
+        content="PCB SP | Recrutamento e Circulismo">
+
+  <meta property="og:description"
+        content="ORGANIZAR • MOBILIZAR • MULTIPLICAR">
+
+  <meta property="og:url"
+        content="https://pcbsp.com.br/recrutamento/">
+
+  <meta property="og:site_name"
+        content="PCB São Paulo">
+
+  <meta property="og:image"
+        content="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+
+  <meta property="og:image:type"
+        content="image/png">
+
+  <meta property="og:image:alt"
+        content="PCB SP | Recrutamento e Circulismo">
+
+
+  <!-- ==========================================
+       COMPATIBILIDADE COM OUTRAS PLATAFORMAS
+       ========================================== -->
+
+  <meta name="twitter:card"
+        content="summary_large_image">
+
+  <meta name="twitter:title"
+        content="PCB SP | Recrutamento e Circulismo">
+
+  <meta name="twitter:description"
+        content="ORGANIZAR • MOBILIZAR • MULTIPLICAR">
+
+  <meta name="twitter:image"
+        content="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+
+
+  <!-- ==========================================
+       PWA
+       ========================================== -->
+
+  <link rel="manifest"
+        href="./manifest.json">
 
   <link rel="icon"
+        type="image/png"
         href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
 
   <link rel="apple-touch-icon"
         href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+
 
   <style>
     * {
@@ -120,7 +172,7 @@
     <img
       class="logo"
       src="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png"
-      alt="PCB SP">
+      alt="PCB SP | Recrutamento e Circulismo">
 
     <h1>PCB SÃO PAULO</h1>
 
@@ -152,73 +204,64 @@
     const installButton =
       document.getElementById('installButton');
 
-    window.addEventListener(
-      'beforeinstallprompt',
-      (event) => {
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
 
-        event.preventDefault();
+      deferredPrompt = event;
 
-        deferredPrompt = event;
+      installButton.style.display = 'block';
+    });
 
-        installButton.style.display = 'block';
+    installButton.addEventListener('click', async () => {
+
+      if (!deferredPrompt) {
+        return;
       }
-    );
 
-    installButton.addEventListener(
-      'click',
-      async () => {
+      deferredPrompt.prompt();
 
-        if (!deferredPrompt) {
-          return;
-        }
+      await deferredPrompt.userChoice;
 
-        deferredPrompt.prompt();
+      deferredPrompt = null;
 
-        await deferredPrompt.userChoice;
+      installButton.style.display = 'none';
+    });
 
-        deferredPrompt = null;
+    window.addEventListener('appinstalled', () => {
 
-        installButton.style.display = 'none';
-      }
-    );
+      deferredPrompt = null;
 
-    window.addEventListener(
-      'appinstalled',
-      () => {
-
-        deferredPrompt = null;
-
-        installButton.style.display = 'none';
-      }
-    );
+      installButton.style.display = 'none';
+    });
 
 
-    /* ================================
+    /* ==========================================
        SERVICE WORKER
-       ================================ */
+       ========================================== */
 
     if ('serviceWorker' in navigator) {
 
-      window.addEventListener(
-        'load',
-        () => {
+      window.addEventListener('load', () => {
 
-          navigator.serviceWorker
-            .register('./sw.js')
-            .then(() => {
-              console.log(
-                'Service Worker registrado com sucesso'
-              );
-            })
-            .catch((error) => {
-              console.error(
-                'Erro ao registrar Service Worker:',
-                error
-              );
-            });
+        navigator.serviceWorker
+          .register('./sw.js')
+          .then(() => {
 
-        }
-      );
+            console.log(
+              'Service Worker registrado com sucesso'
+            );
+
+          })
+          .catch((error) => {
+
+            console.error(
+              'Erro ao registrar Service Worker:',
+              error
+            );
+
+          });
+
+      });
 
     }
   </script>
