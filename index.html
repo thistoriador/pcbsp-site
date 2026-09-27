@@ -27,33 +27,56 @@
   >
 
   <!-- WHATSAPP / FACEBOOK / OPEN GRAPH -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="PCB São Paulo">
-<meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PCB São Paulo">
+  <meta property="og:locale" content="pt_BR">
 
-<meta property="og:url" content="https://pcbsp.com.br/">
+  <meta property="og:url" content="https://pcbsp.com.br/">
 
-<meta property="og:title" content="PCB São Paulo">
-<meta property="og:description" content="Aplicativos e ferramentas do PCB São Paulo">
+  <meta property="og:title" content="PCB São Paulo">
 
-<meta property="og:image" content="https://pcbsp.com.br/preview.png">
-<meta property="og:image:secure_url" content="https://pcbsp.com.br/preview.png">
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="PCB São Paulo — Aplicativos e ferramentas">
+  <meta
+    property="og:description"
+    content="Aplicativos e ferramentas do PCB São Paulo"
+  >
+
+  <meta
+    property="og:image"
+    content="https://pcbsp.com.br/preview.png"
+  >
+
+  <meta
+    property="og:image:secure_url"
+    content="https://pcbsp.com.br/preview.png"
+  >
+
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta
+    property="og:image:alt"
+    content="PCB São Paulo — Aplicativos e ferramentas"
+  >
 
   <!-- X / TWITTER -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PCB São Paulo">
+
+  <meta
+    name="twitter:title"
+    content="PCB São Paulo"
+  >
+
   <meta
     name="twitter:description"
     content="Aplicativos e ferramentas do PCB São Paulo"
   >
+
   <meta
     name="twitter:image"
-    content="https://pcbsp.com.br/preview.png?v=1"
+    content="https://pcbsp.com.br/preview.png"
   >
+
 
   <style>
 
@@ -88,11 +111,14 @@
 
     .pagina {
       width: 100%;
-      max-width: 900px;
+      max-width: 1000px;
       text-align: center;
     }
 
-    /* BANNER */
+
+    /* =========================
+       BANNER PRINCIPAL
+       ========================= */
 
     .banner {
       width: 100%;
@@ -107,27 +133,51 @@
         rgba(0, 0, 0, 0.35);
     }
 
-    /* TÍTULO DOS APPS */
+
+    /* =========================
+       TÍTULO
+       ========================= */
 
     .apps-titulo {
       color: #ffd400;
 
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       letter-spacing: 2px;
 
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
 
-    /* CARD */
+
+    /* =========================
+       GRADE DE APLICATIVOS
+       ========================= */
+
+    .apps-grid {
+      width: 100%;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 24px;
+
+      align-items: stretch;
+    }
+
+
+    /* =========================
+       CARD
+       ========================= */
 
     .app-card {
-      display: block;
+      display: flex;
+
+      flex-direction: column;
+      align-items: center;
 
       width: 100%;
-      max-width: 420px;
-
-      margin: 0 auto;
 
       background: #ffffff;
 
@@ -147,22 +197,47 @@
     }
 
     .app-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
 
       box-shadow:
         0 20px 45px
-        rgba(0, 0, 0, 0.42);
+        rgba(0, 0, 0, 0.45);
     }
 
-    .icone {
-      width: 190px;
-      max-width: 65%;
-      height: auto;
 
-      border-radius: 22px;
+    /* =========================
+       ÍCONES
+       ========================= */
+
+    .icone-container {
+      width: 100%;
+      height: 220px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       margin-bottom: 18px;
     }
+
+    .icone {
+      max-width: 210px;
+      max-height: 210px;
+
+      width: auto;
+      height: auto;
+
+      object-fit: contain;
+    }
+
+    .icone-recrutamento {
+      border-radius: 22px;
+    }
+
+
+    /* =========================
+       TEXTOS
+       ========================= */
 
     .app-nome {
       color: #111111;
@@ -171,6 +246,12 @@
       font-weight: 900;
 
       line-height: 1.15;
+
+      min-height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .app-descricao {
@@ -180,10 +261,19 @@
       line-height: 1.5;
 
       margin-top: 10px;
+
+      flex-grow: 1;
     }
+
+
+    /* =========================
+       BOTÃO
+       ========================= */
 
     .botao {
       display: block;
+
+      width: 100%;
 
       margin-top: 22px;
 
@@ -198,17 +288,26 @@
       font-weight: 900;
     }
 
+
+    /* =========================
+       RODAPÉ
+       ========================= */
+
     .rodape {
-      margin-top: 35px;
+      margin-top: 38px;
+      margin-bottom: 10px;
 
       color: rgba(255, 255, 255, 0.75);
 
       font-size: 12px;
     }
 
-    /* CELULAR */
 
-    @media (max-width: 600px) {
+    /* =========================
+       CELULAR
+       ========================= */
+
+    @media (max-width: 700px) {
 
       body {
         padding: 14px;
@@ -223,16 +322,37 @@
         margin-bottom: 26px;
       }
 
+      .apps-titulo {
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+
+      .apps-grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+      }
+
       .app-card {
         padding: 22px 18px;
       }
 
+      .icone-container {
+        height: 190px;
+      }
+
       .icone {
-        width: 170px;
+        max-width: 180px;
+        max-height: 180px;
       }
 
       .app-nome {
         font-size: 22px;
+        min-height: auto;
+      }
+
+      .app-descricao {
+        font-size: 15px;
       }
 
     }
@@ -245,7 +365,10 @@
 
   <main class="pagina">
 
-    <!-- BANNER PRINCIPAL -->
+
+    <!-- =========================
+         BANNER PCB SÃO PAULO
+         ========================= -->
 
     <img
       class="banner"
@@ -254,42 +377,99 @@
     >
 
 
-    <!-- APLICATIVOS -->
+    <!-- =========================
+         APLICATIVOS
+         ========================= -->
 
     <div class="apps-titulo">
       ACESSE NOSSOS APLICATIVOS
     </div>
 
 
-    <a
-      class="app-card"
-      href="https://pcbsp.com.br/recrutamento/"
-    >
+    <section class="apps-grid">
 
-      <img
-        class="icone"
-        src="https://pcbsp.com.br/recrutamento/icone-recrutamento.png"
-        alt="Recrutamento e Circulismo"
+
+      <!-- =========================
+           RECRUTAMENTO E CIRCULISMO
+           ========================= -->
+
+      <a
+        class="app-card"
+        href="/recrutamento/"
       >
 
-      <div class="app-nome">
-        Recrutamento e Circulismo
-      </div>
+        <div class="icone-container">
 
-      <div class="app-descricao">
-        Acesse o aplicativo de Recrutamento e Circulismo do PCB São Paulo.
-      </div>
+          <img
+            class="icone icone-recrutamento"
+            src="/recrutamento/icone-recrutamento.png"
+            alt="Recrutamento e Circulismo"
+          >
 
-      <span class="botao">
-        ACESSAR APLICATIVO
-      </span>
+        </div>
 
-    </a>
+        <div class="app-nome">
+          Recrutamento e Circulismo
+        </div>
 
+        <div class="app-descricao">
+          Acesse o aplicativo de Recrutamento e Circulismo
+          do PCB São Paulo.
+        </div>
+
+        <span class="botao">
+          ACESSAR APLICATIVO
+        </span>
+
+      </a>
+
+
+      <!-- =========================
+           MAPA DOS VOTOS PCB-SP
+           ========================= -->
+
+      <a
+        class="app-card"
+        href="/mapa/"
+      >
+
+        <div class="icone-container">
+
+          <img
+            class="icone"
+            src="/mapa/icone-mapa.png"
+            alt="Mapa dos Votos PCB-SP"
+          >
+
+        </div>
+
+        <div class="app-nome">
+          Mapa dos Votos PCB-SP
+        </div>
+
+        <div class="app-descricao">
+          Consulte e analise dados eleitorais e a distribuição
+          territorial dos votos do PCB em São Paulo.
+        </div>
+
+        <span class="botao">
+          ACESSAR MAPA
+        </span>
+
+      </a>
+
+
+    </section>
+
+
+    <!-- =========================
+         RODAPÉ
+         ========================= -->
 
     <footer class="rodape">
       PCB São Paulo
     </footer>
+
 
   </main>
 
