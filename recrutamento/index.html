@@ -17,7 +17,8 @@
        PRÉVIA WHATSAPP / FACEBOOK
        ========================================== -->
 
-  <meta property="og:type" content="website">
+  <meta property="og:type"
+        content="website">
 
   <meta property="og:site_name"
         content="PCB São Paulo">
@@ -26,25 +27,26 @@
         content="PCB SP | Recrutamento e Circulismo">
 
   <meta property="og:description"
-        content="ORGANIZAR • MOBILIZAR • MULTIPLICAR">
+        content="ORGANIZAR • FORMAR • MULTIPLICAR">
 
   <meta property="og:url"
         content="https://pcbsp.com.br/recrutamento/">
 
+  <!-- IMAGEM HORIZONTAL DA PRÉVIA -->
   <meta property="og:image"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
 
   <meta property="og:image:secure_url"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
 
   <meta property="og:image:type"
         content="image/png">
 
   <meta property="og:image:width"
-        content="512">
+        content="1200">
 
   <meta property="og:image:height"
-        content="512">
+        content="630">
 
   <meta property="og:image:alt"
         content="PCB SP - Recrutamento e Circulismo">
@@ -60,17 +62,19 @@
         content="PCB SP | Recrutamento e Circulismo">
 
   <meta name="twitter:description"
-        content="ORGANIZAR • MOBILIZAR • MULTIPLICAR">
+        content="ORGANIZAR • FORMAR • MULTIPLICAR">
 
   <meta name="twitter:image"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
 
   <!-- ==========================================
        PWA
        ========================================== -->
 
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest"
+        href="./manifest.json">
 
+  <!-- ÍCONE ORIGINAL DO APLICATIVO -->
   <link rel="icon"
         type="image/png"
         href="./icone-recrutamento.png">
@@ -174,6 +178,7 @@
 
   <main class="app">
 
+    <!-- ÍCONE ORIGINAL DO APP -->
     <img
       class="logo"
       src="./icone-recrutamento.png"
@@ -184,7 +189,7 @@
     <h2>Recrutamento e Circulismo</h2>
 
     <div class="lema">
-      ORGANIZAR • MOBILIZAR • MULTIPLICAR
+      ORGANIZAR • FORMAR • MULTIPLICAR
     </div>
 
     <a
@@ -210,11 +215,13 @@
       document.getElementById('installButton');
 
     window.addEventListener('beforeinstallprompt', (event) => {
+
       event.preventDefault();
 
       deferredPrompt = event;
 
       installButton.style.display = 'block';
+
     });
 
     installButton.addEventListener('click', async () => {
@@ -230,6 +237,7 @@
       deferredPrompt = null;
 
       installButton.style.display = 'none';
+
     });
 
     window.addEventListener('appinstalled', () => {
@@ -237,6 +245,7 @@
       deferredPrompt = null;
 
       installButton.style.display = 'none';
+
     });
 
     if ('serviceWorker' in navigator) {
