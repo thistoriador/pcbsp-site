@@ -1,88 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
   <meta charset="UTF-8">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
   <title>PCB SP | Recrutamento e Circulismo</title>
 
   <meta name="theme-color" content="#b5121b">
 
-  <meta name="description"
-        content="PCB SP | Recrutamento e Circulismo">
+  <meta
+    name="description"
+    content="PCB SP | Recrutamento e Circulismo"
+  >
 
-  <!-- ==========================================
-       PRÉVIA WHATSAPP / FACEBOOK
-       ========================================== -->
 
-  <meta property="og:type"
-        content="website">
+  <!-- =========================
+       PRÉVIA DE COMPARTILHAMENTO
+       ========================= -->
 
-  <meta property="og:site_name"
-        content="PCB São Paulo">
+  <meta property="og:type" content="website">
 
-  <meta property="og:title"
-        content="PCB SP | Recrutamento e Circulismo">
+  <meta
+    property="og:site_name"
+    content="PCB São Paulo"
+  >
 
-  <meta property="og:description"
-        content="ORGANIZAR • FORMAR • MULTIPLICAR">
+  <meta
+    property="og:title"
+    content="PCB SP | Recrutamento e Circulismo"
+  >
 
-  <meta property="og:url"
-        content="https://pcbsp.com.br/recrutamento/">
+  <meta
+    property="og:description"
+    content="ORGANIZAR • FORMAR • MULTIPLICAR"
+  >
 
-  <!-- IMAGEM HORIZONTAL DA PRÉVIA -->
-  <meta property="og:image"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
+  <meta
+    property="og:url"
+    content="https://pcbsp.com.br/recrutamento/"
+  >
 
-  <meta property="og:image:secure_url"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
+  <meta
+    property="og:image"
+    content="https://pcbsp.com.br/recrutamento/previa-recrutamento.jpg"
+  >
 
-  <meta property="og:image:type"
-        content="image/png">
+  <meta
+    property="og:image:secure_url"
+    content="https://pcbsp.com.br/recrutamento/previa-recrutamento.jpg"
+  >
 
-  <meta property="og:image:width"
-        content="1200">
+  <meta
+    property="og:image:type"
+    content="image/jpeg"
+  >
 
-  <meta property="og:image:height"
-        content="630">
+  <meta
+    property="og:image:width"
+    content="1200"
+  >
 
-  <meta property="og:image:alt"
-        content="PCB SP - Recrutamento e Circulismo">
+  <meta
+    property="og:image:height"
+    content="630"
+  >
 
-  <!-- ==========================================
-       OUTRAS PLATAFORMAS
-       ========================================== -->
+  <meta
+    property="og:image:alt"
+    content="PCB SP - Recrutamento e Circulismo"
+  >
 
-  <meta name="twitter:card"
-        content="summary_large_image">
 
-  <meta name="twitter:title"
-        content="PCB SP | Recrutamento e Circulismo">
+  <!-- Twitter / outros serviços -->
 
-  <meta name="twitter:description"
-        content="ORGANIZAR • FORMAR • MULTIPLICAR">
+  <meta
+    name="twitter:card"
+    content="summary_large_image"
+  >
 
-  <meta name="twitter:image"
-        content="https://pcbsp.com.br/recrutamento/icone-recrutamento2.png">
+  <meta
+    name="twitter:title"
+    content="PCB SP | Recrutamento e Circulismo"
+  >
 
-  <!-- ==========================================
+  <meta
+    name="twitter:description"
+    content="ORGANIZAR • FORMAR • MULTIPLICAR"
+  >
+
+  <meta
+    name="twitter:image"
+    content="https://pcbsp.com.br/recrutamento/previa-recrutamento.jpg"
+  >
+
+
+  <!-- =========================
        PWA
-       ========================================== -->
+       ========================= -->
 
-  <link rel="manifest"
-        href="./manifest.json">
+  <link
+    rel="manifest"
+    href="./manifest.json"
+  >
 
-  <!-- ÍCONE ORIGINAL DO APLICATIVO -->
-  <link rel="icon"
-        type="image/png"
-        href="./icone-recrutamento.png">
+  <link
+    rel="icon"
+    type="image/png"
+    href="./icone-recrutamento.png"
+  >
 
-  <link rel="apple-touch-icon"
-        href="./icone-recrutamento.png">
+  <link
+    rel="apple-touch-icon"
+    href="./icone-recrutamento.png"
+  >
+
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -91,10 +131,9 @@
     body {
       margin: 0;
       padding: 0;
-      width: 100%;
       min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
-      background: #8f0f17;
+      background: #111;
     }
 
     body {
@@ -102,87 +141,98 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 20px;
     }
 
-    .app {
+    .card {
       width: 100%;
       max-width: 520px;
       background: #b5121b;
-      color: #ffffff;
+      border-radius: 22px;
+      padding: 30px 22px;
       text-align: center;
-      padding: 36px 24px;
-      border-radius: 18px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
     }
 
     .logo {
-      width: 112px;
-      height: 112px;
-      object-fit: cover;
-      border-radius: 24px;
-      margin-bottom: 20px;
+      width: 170px;
+      max-width: 55%;
+      height: auto;
+      margin-bottom: 18px;
+      border-radius: 20px;
     }
 
     h1 {
-      margin: 0 0 8px;
+      margin: 0;
+      color: #ffd400;
       font-size: 30px;
-      line-height: 1.1;
+      font-weight: 900;
+      line-height: 1.05;
     }
 
     h2 {
-      margin: 0 0 28px;
-      color: #ffd21f;
-      font-size: 23px;
+      margin: 10px 0 0;
+      color: #fff;
+      font-size: 25px;
+      font-weight: 800;
+      line-height: 1.15;
     }
 
     .lema {
-      font-weight: 700;
+      margin: 18px 0 26px;
+      color: #ffd400;
+      font-size: 15px;
+      font-weight: 900;
       letter-spacing: 1px;
-      margin-bottom: 32px;
+      line-height: 1.5;
     }
 
-    button,
-    .abrir {
-      width: 100%;
+    .btn {
       display: block;
+      width: 100%;
       border: 0;
-      border-radius: 12px;
-      padding: 17px 18px;
+      border-radius: 14px;
+      padding: 17px 15px;
       margin-top: 12px;
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 900;
       cursor: pointer;
       text-decoration: none;
     }
 
-    .abrir {
-      background: #ffd21f;
-      color: #111111;
+    .entrar {
+      background: #ffd400;
+      color: #111;
     }
 
-    #installButton {
+    .instalar {
       display: none;
-      background: #111111;
-      color: #ffffff;
+      background: #111;
+      color: #fff;
+      border: 2px solid #ffd400;
     }
 
     .rodape {
-      margin-top: 28px;
-      font-size: 13px;
-      opacity: 0.8;
+      margin-top: 22px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      line-height: 1.4;
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <main class="app">
+  <main class="card">
 
-    <!-- ÍCONE ORIGINAL DO APP -->
     <img
       class="logo"
       src="./icone-recrutamento.png"
-      alt="PCB SP | Recrutamento e Circulismo">
+      alt="PCB SP"
+    >
 
     <h1>PCB SÃO PAULO</h1>
 
@@ -192,88 +242,109 @@
       ORGANIZAR • FORMAR • MULTIPLICAR
     </div>
 
+
     <a
-      class="abrir"
-      href="https://script.google.com/macros/s/AKfycbxX32EywSxmIoUIHgIEF0Xsv9Ed9TZhHhKE2ObPolExAnrxKrHwXkim9ufx5eVET4em/exec">
+      class="btn entrar"
+      href="https://script.google.com/macros/s/AKfycbxX32EywSxmIoUIHgIEF0Xsv9Ed9TZhHhKE2ObPolExAnrxKrHwXkim9ufx5eVET4em/exec"
+    >
       ENTRAR NO APLICATIVO
     </a>
 
-    <button id="installButton">
+
+    <button
+      id="installButton"
+      class="btn instalar"
+      type="button"
+    >
       INSTALAR APLICATIVO
     </button>
 
+
     <div class="rodape">
-      PCB • SÃO PAULO
+      PCB São Paulo
     </div>
 
   </main>
 
+
   <script>
+
     let deferredPrompt = null;
 
     const installButton =
       document.getElementById('installButton');
 
-    window.addEventListener('beforeinstallprompt', (event) => {
 
-      event.preventDefault();
+    window.addEventListener(
+      'beforeinstallprompt',
+      function (event) {
 
-      deferredPrompt = event;
+        event.preventDefault();
 
-      installButton.style.display = 'block';
+        deferredPrompt = event;
 
-    });
+        installButton.style.display = 'block';
 
-    installButton.addEventListener('click', async () => {
-
-      if (!deferredPrompt) {
-        return;
       }
+    );
 
-      deferredPrompt.prompt();
 
-      await deferredPrompt.userChoice;
+    installButton.addEventListener(
+      'click',
+      async function () {
 
-      deferredPrompt = null;
+        if (!deferredPrompt) {
+          return;
+        }
 
-      installButton.style.display = 'none';
+        deferredPrompt.prompt();
 
-    });
+        await deferredPrompt.userChoice;
 
-    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
 
-      deferredPrompt = null;
+        installButton.style.display = 'none';
 
-      installButton.style.display = 'none';
+      }
+    );
 
-    });
+
+    window.addEventListener(
+      'appinstalled',
+      function () {
+
+        deferredPrompt = null;
+
+        installButton.style.display = 'none';
+
+      }
+    );
+
 
     if ('serviceWorker' in navigator) {
 
-      window.addEventListener('load', () => {
+      window.addEventListener(
+        'load',
+        function () {
 
-        navigator.serviceWorker
-          .register('./sw.js')
-          .then(() => {
+          navigator.serviceWorker
+            .register('./sw.js')
+            .catch(function (error) {
 
-            console.log(
-              'Service Worker registrado com sucesso'
-            );
+              console.log(
+                'Erro ao registrar Service Worker:',
+                error
+              );
 
-          })
-          .catch((error) => {
+            });
 
-            console.error(
-              'Erro ao registrar Service Worker:',
-              error
-            );
-
-          });
-
-      });
+        }
+      );
 
     }
+
   </script>
 
 </body>
+
 </html>
