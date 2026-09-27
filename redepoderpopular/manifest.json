@@ -1,6 +1,6 @@
 {
   "name": "PCB SP | Rede do Poder Popular",
-  "short_name": "Rede do Poder Popular",
+  "short_name": "Rede Poder Popular",
   "description": "Aplicativo PCB SP | Rede do Poder Popular",
   "start_url": "./",
   "scope": "./",
@@ -9,10 +9,10 @@
   "theme_color": "#b5121b",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-rede.png",
+      "src": "https://raw.githubusercontent.com/thistoriador/icones-apps/main/iconerededopoderpopular.jpeg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/jpeg",
+      "purpose": "any"
     }
   ]
 }
