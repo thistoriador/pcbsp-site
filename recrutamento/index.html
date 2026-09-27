@@ -14,10 +14,13 @@
         content="PCB SP | Recrutamento e Circulismo">
 
   <!-- ==========================================
-       PRÉVIA WHATSAPP / FACEBOOK / REDES SOCIAIS
+       PRÉVIA WHATSAPP / FACEBOOK
        ========================================== -->
 
   <meta property="og:type" content="website">
+
+  <meta property="og:site_name"
+        content="PCB São Paulo">
 
   <meta property="og:title"
         content="PCB SP | Recrutamento e Circulismo">
@@ -28,21 +31,26 @@
   <meta property="og:url"
         content="https://pcbsp.com.br/recrutamento/">
 
-  <meta property="og:site_name"
-        content="PCB São Paulo">
-
   <meta property="og:image"
-        content="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
+
+  <meta property="og:image:secure_url"
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
 
   <meta property="og:image:type"
         content="image/png">
 
-  <meta property="og:image:alt"
-        content="PCB SP | Recrutamento e Circulismo">
+  <meta property="og:image:width"
+        content="512">
 
+  <meta property="og:image:height"
+        content="512">
+
+  <meta property="og:image:alt"
+        content="PCB SP - Recrutamento e Circulismo">
 
   <!-- ==========================================
-       COMPATIBILIDADE COM OUTRAS PLATAFORMAS
+       OUTRAS PLATAFORMAS
        ========================================== -->
 
   <meta name="twitter:card"
@@ -55,23 +63,20 @@
         content="ORGANIZAR • MOBILIZAR • MULTIPLICAR">
 
   <meta name="twitter:image"
-        content="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
-
+        content="https://pcbsp.com.br/recrutamento/icone-recrutamento.png">
 
   <!-- ==========================================
        PWA
        ========================================== -->
 
-  <link rel="manifest"
-        href="./manifest.json">
+  <link rel="manifest" href="./manifest.json">
 
   <link rel="icon"
         type="image/png"
-        href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+        href="./icone-recrutamento.png">
 
   <link rel="apple-touch-icon"
-        href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
-
+        href="./icone-recrutamento.png">
 
   <style>
     * {
@@ -171,7 +176,7 @@
 
     <img
       class="logo"
-      src="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png"
+      src="./icone-recrutamento.png"
       alt="PCB SP | Recrutamento e Circulismo">
 
     <h1>PCB SÃO PAULO</h1>
@@ -224,7 +229,7 @@
 
       deferredPrompt = null;
 
-      installButton.style.display = 'none';
+      installButton.style.display = 'none');
     });
 
     window.addEventListener('appinstalled', () => {
@@ -234,11 +239,6 @@
       installButton.style.display = 'none';
     });
 
-
-    /* ==========================================
-       SERVICE WORKER
-       ========================================== */
-
     if ('serviceWorker' in navigator) {
 
       window.addEventListener('load', () => {
@@ -246,19 +246,13 @@
         navigator.serviceWorker
           .register('./sw.js')
           .then(() => {
-
-            console.log(
-              'Service Worker registrado com sucesso'
-            );
-
+            console.log('Service Worker registrado com sucesso');
           })
           .catch((error) => {
-
             console.error(
               'Erro ao registrar Service Worker:',
               error
             );
-
           });
 
       });
