@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
 
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>PCB SP | Recrutamento e Circulismo</title>
+
+  <meta name="theme-color" content="#b5121b">
+  <meta name="description"
+        content="Aplicativo PCB SP | Recrutamento e Circulismo">
+
+  <link rel="manifest" href="./manifest.json">
+
+  <link rel="icon"
+        href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+
+  <link rel="apple-touch-icon"
+        href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #8f0f17;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: #b5121b;
+      color: #fff;
+      text-align: center;
+      padding: 36px 24px;
+      border-radius: 18px;
+    }
+
+    .logo {
+      width: 112px;
+      height: 112px;
+      border-radius: 24px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    h2 {
+      margin: 0 0 28px;
+      color: #ffd21f;
+      font-size: 23px;
+    }
+
+    .lema {
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+
+    button,
+    .abrir {
+      width: 100%;
+      display: block;
+      border: 0;
+      border-radius: 12px;
+      padding: 17px 18px;
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .abrir {
+      background: #ffd21f;
+      color: #111;
+    }
+
+    #installButton {
+      display: none;
+      background: #111;
+      color: #fff;
+    }
+
+    .rodape {
+      margin-top: 28px;
+      font-size: 13px;
+      opacity: .8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <img
+      class="logo"
+      src="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png"
+      alt="PCB SP">
+
+    <h1>PCB SÃO PAULO</h1>
+    <h2>Recrutamento e Circulismo</h2>
+
+    <div class="lema">
+      ORGANIZAR • MOBILIZAR • MULTIPLICAR
+    </div>
+
+    <a
+      class="abrir"
+      href="https://script.google.com/macros/s/AKfycbxX32EywSxmIoUIHgIEF0Xsv9Ed9TZhHhKE2ObPolExAnrxKrHwXkim9ufx5eVET4em/exec">
+      ENTRAR NO APLICATIVO
+    </a>
+
+    <button id="installButton">
+      INSTALAR APLICATIVO
+    </button>
+
+    <div class="rodape">
+      PCB • SÃO PAULO
+    </div>
+
+  </main>
+
+  <script>
+    let deferredPrompt = null;
+    const installButton = document.getElementById('installButton');
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installButton.style.display = 'block';
+    });
+
+    installButton.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+
+      deferredPrompt = null;
+      installButton.style.display = 'none';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      installButton.style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
