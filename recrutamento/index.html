@@ -9,6 +9,7 @@
   <title>PCB SP | Recrutamento e Circulismo</title>
 
   <meta name="theme-color" content="#b5121b">
+
   <meta name="description"
         content="Aplicativo PCB SP | Recrutamento e Circulismo">
 
@@ -25,7 +26,8 @@
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       width: 100%;
@@ -46,7 +48,7 @@
       width: 100%;
       max-width: 520px;
       background: #b5121b;
-      color: #fff;
+      color: #ffffff;
       text-align: center;
       padding: 36px 24px;
       border-radius: 18px;
@@ -55,6 +57,7 @@
     .logo {
       width: 112px;
       height: 112px;
+      object-fit: cover;
       border-radius: 24px;
       margin-bottom: 20px;
     }
@@ -93,19 +96,19 @@
 
     .abrir {
       background: #ffd21f;
-      color: #111;
+      color: #111111;
     }
 
     #installButton {
       display: none;
-      background: #111;
-      color: #fff;
+      background: #111111;
+      color: #ffffff;
     }
 
     .rodape {
       margin-top: 28px;
       font-size: 13px;
-      opacity: .8;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -120,6 +123,7 @@
       alt="PCB SP">
 
     <h1>PCB SÃO PAULO</h1>
+
     <h2>Recrutamento e Circulismo</h2>
 
     <div class="lema">
@@ -144,28 +148,79 @@
 
   <script>
     let deferredPrompt = null;
-    const installButton = document.getElementById('installButton');
 
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault();
-      deferredPrompt = event;
-      installButton.style.display = 'block';
-    });
+    const installButton =
+      document.getElementById('installButton');
 
-    installButton.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
+    window.addEventListener(
+      'beforeinstallprompt',
+      (event) => {
 
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
+        event.preventDefault();
 
-      deferredPrompt = null;
-      installButton.style.display = 'none';
-    });
+        deferredPrompt = event;
 
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null;
-      installButton.style.display = 'none';
-    });
+        installButton.style.display = 'block';
+      }
+    );
+
+    installButton.addEventListener(
+      'click',
+      async () => {
+
+        if (!deferredPrompt) {
+          return;
+        }
+
+        deferredPrompt.prompt();
+
+        await deferredPrompt.userChoice;
+
+        deferredPrompt = null;
+
+        installButton.style.display = 'none';
+      }
+    );
+
+    window.addEventListener(
+      'appinstalled',
+      () => {
+
+        deferredPrompt = null;
+
+        installButton.style.display = 'none';
+      }
+    );
+
+
+    /* ================================
+       SERVICE WORKER
+       ================================ */
+
+    if ('serviceWorker' in navigator) {
+
+      window.addEventListener(
+        'load',
+        () => {
+
+          navigator.serviceWorker
+            .register('./sw.js')
+            .then(() => {
+              console.log(
+                'Service Worker registrado com sucesso'
+              );
+            })
+            .catch((error) => {
+              console.error(
+                'Erro ao registrar Service Worker:',
+                error
+              );
+            });
+
+        }
+      );
+
+    }
   </script>
 
 </body>
