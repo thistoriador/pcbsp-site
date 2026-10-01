@@ -11,21 +11,40 @@ table{width:100%;border-collapse:collapse;margin-top:18px}td,th{padding:8px;bord
 </style></head><body><div class="box">
 <h1>Mapa do Voto SP</h1><div id="status" class="status">Testando API...</div><div id="resumo"></div><div id="saida"></div>
 <script>
-const URL='https://ikdphakatxrvckvnzctp.supabase.co';
+const URL='https://cthntxgopxhbaemgnttn.supabase.co';
 const KEY='sb_publishable_1mRxuQ1M3IkESIIK4V9nfw_C5iF2g-e';
 async function rpc(fn,args={}){
  const r=await fetch(`${URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{
- 'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Accept-Profile':'api_mapa','Content-Profile':'api_mapa'
+ 'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json',
+ 'Accept-Profile':'api_mapa','Content-Profile':'api_mapa'
  },body:JSON.stringify(args)});
- const t=await r.text(); if(!r.ok) throw new Error(`HTTP ${r.status}: ${t}`); return JSON.parse(t);
+ const t=await r.text();
+ if(!r.ok) throw new Error(`HTTP ${r.status}: ${t}`);
+ return JSON.parse(t);
 }
 (async()=>{
  try{
-  const [e,c18,c22]=await Promise.all([rpc('eleicoes'),rpc('candidaturas',{p_ano:2018}),rpc('candidaturas',{p_ano:2022})]);
-  const t18=c18.reduce((s,x)=>s+Number(x.votos||0),0), t22=c22.reduce((s,x)=>s+Number(x.votos||0),0);
-  document.getElementById('status').className='status ok'; document.getElementById('status').textContent='API CONECTADA ✅';
-  document.getElementById('resumo').innerHTML=`<p><b>2018:</b> ${c18.length} candidaturas • ${t18.toLocaleString('pt-BR')} votos nominais</p><p><b>2022:</b> ${c22.length} candidaturas • ${t22.toLocaleString('pt-BR')} votos nominais</p>`;
-  document.getElementById('saida').innerHTML='<table><tr><th>Ano</th><th>Nome</th><th>Cargo</th><th>Votos</th></tr>'+[...c18.map(x=>[2018,x]),...c22.map(x=>[2022,x])].map(([a,x])=>`<tr><td>${a}</td><td>${x.nome}</td><td>${x.cargo}</td><td>${Number(x.votos).toLocaleString('pt-BR')}</td></tr>`).join('')+'</table>';
- }catch(e){document.getElementById('status').className='status erro';document.getElementById('status').textContent='ERRO NA API ❌';document.getElementById('saida').textContent=e.message;}
+  const [e,c18,c22]=await Promise.all([
+    rpc('eleicoes'),
+    rpc('candidaturas',{p_ano:2018}),
+    rpc('candidaturas',{p_ano:2022})
+  ]);
+  const t18=c18.reduce((s,x)=>s+Number(x.votos||0),0);
+  const t22=c22.reduce((s,x)=>s+Number(x.votos||0),0);
+  document.getElementById('status').className='status ok';
+  document.getElementById('status').textContent='API CONECTADA ✅';
+  document.getElementById('resumo').innerHTML=
+    `<p><b>2018:</b> ${c18.length} candidaturas • ${t18.toLocaleString('pt-BR')} votos nominais</p>
+     <p><b>2022:</b> ${c22.length} candidaturas • ${t22.toLocaleString('pt-BR')} votos nominais</p>`;
+  document.getElementById('saida').innerHTML=
+    '<table><tr><th>Ano</th><th>Nome</th><th>Cargo</th><th>Votos</th></tr>'+
+    [...c18.map(x=>[2018,x]),...c22.map(x=>[2022,x])]
+      .map(([a,x])=>`<tr><td>${a}</td><td>${x.nome}</td><td>${x.cargo}</td><td>${Number(x.votos).toLocaleString('pt-BR')}</td></tr>`)
+      .join('')+'</table>';
+ }catch(e){
+  document.getElementById('status').className='status erro';
+  document.getElementById('status').textContent='ERRO NA API ❌';
+  document.getElementById('saida').textContent=e.message;
+ }
 })();
 </script></div></body></html>
