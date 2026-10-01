@@ -12,7 +12,7 @@ table{width:100%;border-collapse:collapse;margin-top:18px}td,th{padding:8px;bord
 <h1>Mapa do Voto SP</h1><div id="status" class="status">Testando API...</div><div id="resumo"></div><div id="saida"></div>
 <script>
 const URL='https://cthntxgopxhbaemgnttn.supabase.co';
-const KEY='sb_publishable_1mRxuQ1M3IkESIIK4V9nfw_C5iF2g-e';
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aG50eGdvcHhoYmFlbWdudHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjA5NTIsImV4cCI6MjEwNjM5Njk1Mn0.B0vk9yHpI4ln3jFlSfPhSPIAZvGMUo_Bu4K8_hGf5JI';
 async function rpc(fn,args={}){
  const r=await fetch(`${URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{
  'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json',
