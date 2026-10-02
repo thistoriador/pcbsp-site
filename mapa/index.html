@@ -468,7 +468,7 @@ function currentMapMax(){
 function geoStyle(f){
  const row=mapDataByName(geoName(f)),v=mapValue(row);
  return {color:'#fff',weight:.65,fillColor:colorScale(v,currentMapMax()),fillOpacity:1};
-}}
+}
 async function initRealMap(){
  const el=document.getElementById('spRealMap');
  try{
