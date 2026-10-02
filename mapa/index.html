@@ -28,7 +28,36 @@
 .section-title{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px}.section-title h2{margin:0}.candidate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.candidate{border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:15px;text-align:left}.candidate:hover{border-color:#bd7c7f;transform:translateY(-1px)}.candidate .num{display:inline-block;background:var(--red);color:#fff;padding:4px 7px;border-radius:6px;font-weight:900;margin-bottom:8px}.candidate strong{display:block;font-size:17px}.candidate small{color:var(--muted)}.candidate .total{display:block;margin-top:10px;font-size:20px;font-weight:900}
 .notice{background:#fff3cf;border:1px solid #e6cc75;padding:12px 14px;border-radius:12px;margin-bottom:15px;font-size:14px}
 .mobilebar{display:none}
-@media(max-width:980px){.featuretiles{grid-template-columns:1fr}.realmap{height:390px}.maplegend{font-size:11px;right:8px;top:8px}.app{grid-template-columns:1fr}.sidebar{display:none}.hero{grid-template-columns:1fr;padding:22px 18px;min-height:auto}.hero h1{font-size:34px}.quote{display:none}.toolbar{padding:10px 12px;overflow:auto}.search{display:none}.content{padding:16px 12px 90px}.grid{grid-template-columns:1fr}.mapwrap{min-height:360px}.candidate-grid{grid-template-columns:1fr 1fr}.mobilebar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:30}.mobilebar button{border:0;background:#fff;padding:11px 3px;font-size:11px;font-weight:800}.mobilebar button span{display:block;font-size:20px}.mobilebar button.active{color:var(--red)}}@media(max-width:560px){.candidate-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.hero p{font-size:14px}.mapwrap{min-height:290px}}
+@media(max-width:980px){.featuretiles{grid-template-columns:1fr}.realmap{height:390px}.maplegend{font-size:11px;right:8px;top:8px}.app{grid-template-columns:1fr}.sidebar{display:none}.hero{grid-template-columns:1fr;padding:22px 18px;min-height:auto}.hero h1{font-size:34px}.quote{display:none}.toolbar{padding:10px 12px;overflow:auto}.search{display:none}.content{padding:16px 12px 90px}.grid{grid-template-columns:1fr}.mapwrap{min-height:360px}.candidate-grid{grid-template-columns:1fr 1fr}.mobilebar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:30}.mobilebar button{border:0;background:#fff;padding:11px 3px;font-size:11px;font-weight:800}.mobilebar button span{display:block;font-size:20px}.mobilebar button.active{color:var(--red)}}@media(max-width:560px){.candidate-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.hero p{font-size:14px}.mapwrap{min-height:290px}}
+
+/* ===== V2 • retorno à proposta original ===== */
+.candidate-hero{padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fff8ef,#fff)}
+.candidate-hero .eyebrow{font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.candidate-hero h3{margin:5px 0 3px;font-size:20px;line-height:1.05}
+.candidate-hero .bigvote{font-size:28px;font-weight:900;color:var(--red);margin-top:8px}
+.candidate-hero .bigvote small{font-size:11px;color:#806d61;text-transform:uppercase;letter-spacing:.08em}
+.chartbox{padding:14px 16px;border-bottom:1px solid var(--line);background:#fff}
+.chartbox h4{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.barrow{display:grid;grid-template-columns:minmax(90px,1.2fr) minmax(90px,2fr) auto;gap:8px;align-items:center;margin:7px 0;font-size:11px}
+.barlabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
+.bartrack{height:10px;background:#eee7dd;border-radius:99px;overflow:hidden}
+.barfill{height:100%;background:#b50b16;border-radius:99px;min-width:2px}
+.barvalue{font-weight:900;font-variant-numeric:tabular-nums}
+.panelhint{padding:10px 16px;background:#fff7df;color:#6b5548;font-size:11px;border-bottom:1px solid #eadcb8}
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 18px}
+.compare-kpi{background:#f7f1e8;border:1px solid #e7dccd;border-radius:12px;padding:12px}
+.compare-kpi b{display:block;font-size:20px;color:#a90b15}.compare-kpi span{font-size:10px;text-transform:uppercase;font-weight:800;color:#806d61}
+.compare-bars{margin-top:16px}.compare-bars .barrow{grid-template-columns:52px minmax(120px,1fr) 82px;font-size:12px}
+.timeline{display:grid;gap:10px;margin-top:14px}.timeline-item{display:grid;grid-template-columns:58px 14px 1fr;gap:8px;align-items:start}
+.timeline-year{font-weight:900;color:#a90b15}.timeline-dot{width:10px;height:10px;border-radius:50%;background:#a90b15;margin-top:4px;box-shadow:0 0 0 4px #f4d9dc}
+.timeline-card{border-left:2px solid #ead8cc;padding:0 0 14px 12px}.timeline-card b{display:block}.timeline-card small{color:#806d61}
+@media(max-width:980px){
+ .mobilebar button{font-size:10px}
+ .candidate-hero h3{font-size:18px}
+ .compare-grid{grid-template-columns:1fr 1fr}
+ .barrow{grid-template-columns:minmax(78px,1fr) minmax(80px,1.5fr) auto}
+}
+
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="">
@@ -322,6 +351,71 @@ background-size:cover!important;background-position:center top!important;overflo
 @media(max-width:760px){.municipios-grid{grid-template-columns:1fr}.view-modal{padding:10px}.view-body{padding:10px}}
 </style>
 
+
+<style id="v8-final-ui">
+:root{--red:#b20d18;--deep:#151515;--cream:#f4efe4;--paper:#fffdf8;--yellow:#f2c12e}
+body{background:var(--cream)}
+.sidebar{background:linear-gradient(180deg,#171717,#111);border-right:1px solid #2a2a2a}
+.nav button{border-radius:0;border-left:4px solid transparent}
+.nav button.active{background:linear-gradient(90deg,#c4121c,#a30710);border-left-color:var(--yellow)}
+.main{background:linear-gradient(#f8f4eb,#f1eadc)}
+.hero{min-height:118px!important;aspect-ratio:auto!important;background:
+ linear-gradient(90deg,rgba(139,0,10,.96),rgba(126,0,8,.78),rgba(22,10,10,.82)),
+ url('/mapa/preview-mapa.jpg') center/cover!important;border-bottom:4px solid var(--yellow)!important}
+.hero>*{display:block!important}
+.hero{padding:18px 28px!important}
+.hero h1{font-size:30px!important}.hero p{font-size:12px!important;margin:7px 0 0}.hero .quote{font-size:13px!important;padding:12px!important}
+.toolbar{background:#efe9dc;border-bottom:1px solid #ddd2c1}
+.year{border-radius:7px}.year.active{box-shadow:inset 0 -3px 0 rgba(0,0,0,.16)}
+.content{padding-top:16px!important}
+.grid{grid-template-columns:minmax(560px,1.6fr) minmax(360px,.9fr)!important;gap:12px!important}
+.card{border-radius:10px!important;box-shadow:0 2px 10px rgba(52,32,20,.06)!important}
+.mapcard .cardhead{padding:13px 16px}.mapcard .cardhead h2{font-size:22px}
+.realmap{height:480px!important;min-height:480px!important}
+.stats{gap:0!important;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:8px;background:var(--paper)}
+.stat{border:0!important;border-right:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important;padding:10px!important}
+.stat:last-child{border-right:0!important}.stat b{font-size:21px!important}
+.sidecard{height:570px!important;max-height:570px!important}
+.sidecard .cardhead{padding:12px 14px!important}
+.sidecard .cardhead h2{font-size:20px!important}
+.detailtabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:#f7f1e6;flex:0 0 auto}
+.detailtabs button{border:0;border-right:1px solid var(--line);background:transparent;padding:10px 4px;font-size:11px;font-weight:800;cursor:pointer}
+.detailtabs button:last-child{border-right:0}.detailtabs button.active{background:var(--red);color:white}
+.candidate-hero{background:linear-gradient(135deg,#fff,#f8efe4)!important}
+.candidate-hero:before{content:"♟";float:left;width:52px;height:52px;margin-right:12px;border-radius:50%;display:grid;place-items:center;background:#eee4d6;color:#806d61;font-size:25px}
+.chartbox{background:#fffdf8!important}
+.barrow{grid-template-columns:minmax(100px,1.15fr) minmax(100px,2fr) auto!important}
+.featuretiles{display:none!important}
+.section-title{margin-top:16px!important}
+.candidate-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important}
+.candidate{padding:11px!important;border-radius:8px!important;min-height:118px}
+.candidate strong{font-size:14px!important}.candidate .total{font-size:17px!important;color:var(--red)}
+.candidate .num{font-size:10px!important;padding:3px 5px!important}
+@media(max-width:980px){
+ .hero{min-height:76px!important;padding:12px 14px!important;display:block!important}
+ .hero h1{font-size:22px!important}.hero p,.hero .quote{display:none!important}
+ .toolbar{position:sticky;top:0;z-index:25;padding:8px!important}
+ .years{flex-wrap:nowrap!important}.year{min-width:55px}
+ .grid{grid-template-columns:1fr!important}
+ .realmap{height:390px!important;min-height:390px!important}
+ .sidecard{height:auto!important;max-height:none!important}
+ .detailtabs{position:sticky;top:0;z-index:5}
+ .candidate-grid{grid-template-columns:1fr 1fr!important}
+ .content{padding:10px 10px 84px!important}
+ .stats{grid-template-columns:repeat(2,1fr)!important}
+ .stat:nth-child(2){border-right:0!important}
+ .mobilebar{grid-template-columns:repeat(4,1fr)!important}
+ .mobilebar button{padding:9px 2px!important}
+}
+@media(max-width:560px){
+ .mapcard .cardhead h2{font-size:19px}
+ .realmap{height:330px!important;min-height:330px!important}
+ .candidate-grid{grid-template-columns:1fr!important}
+ .barrow{grid-template-columns:86px minmax(70px,1fr) auto!important}
+ .detailtabs button{font-size:10px;padding:9px 2px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -333,8 +427,8 @@ background-size:cover!important;background-position:center top!important;overflo
     <button onclick="focusMap()"><span>◈</span> Mapa de São Paulo</button>
     <button onclick="showMunicipioList(municipios);focusMap()"><span>●</span> Municípios</button>
     <button onclick="renderMunicipios(municipios);focusMap()"><span>≡</span> Território</button>
-    <button onclick="alert('Comparação histórica entra na próxima etapa.')"><span>▥</span> Comparar eleições</button>
-    <button onclick="alert('Linha do tempo entra com a ampliação dos demais anos.')"><span>◷</span> Linha do tempo</button>
+    <button onclick="openCompareView()"><span>▥</span> Comparar eleições</button>
+    <button onclick="openTimelineView()"><span>◷</span> Linha do tempo</button>
     <button onclick="openHQView()"><span>▤</span> História em HQs</button>
   </nav>
   <div class="sidefoot"><b>PCB</b><small>SÃO PAULO<br>Dados eleitorais: TSE<br>Mapa municipal: IBGE</small></div>
@@ -372,7 +466,7 @@ background-size:cover!important;background-position:center top!important;overflo
   <div id="notice" class="notice">Carregando dados...</div>
   <div class="grid">
     <div>
-      <div class="card" id="mapCard">
+      <div class="card mapcard" id="mapCard">
         <div class="cardhead"><div><h2>São Paulo</h2><small id="mapSubtitle">Municípios com votação registrada</small></div><button class="back" onclick="openMunicipios()">Lista</button></div>
         <div class="mapwrap">
           <div id="spRealMap" class="realmap" aria-label="Mapa municipal do estado de São Paulo"></div>
@@ -387,9 +481,15 @@ background-size:cover!important;background-position:center top!important;overflo
         <div class="stat"><div><b>645</b><span>municípios paulistas no mapa</span></div></div>
       </div>
     </div>
-    <div class="card">
+    <div class="card sidecard" id="detailCard">
       <div class="cardhead"><div><h2 id="panelTitle">Território</h2><small id="panelSubtitle">Selecione um município</small></div><button id="panelBack" class="back" onclick="panelBack()" style="display:none">← Voltar</button></div>
-      <div class="panelbody" id="panel"><div class="loading">Carregando…</div></div>
+      <div class="detailtabs" id="detailTabs">
+        <button class="active" data-tab="overview" onclick="detailTab('overview')">Visão geral</button>
+        <button data-tab="municipios" onclick="detailTab('municipios')">Municípios</button>
+        <button data-tab="zonas" onclick="detailTab('zonas')">Zonas</button>
+        <button data-tab="secoes" onclick="detailTab('secoes')">Seções</button>
+      </div>
+      <div class="panelbody cardbody" id="panel"><div class="loading">Carregando…</div></div>
     </div>
   </div>
 
@@ -406,10 +506,10 @@ background-size:cover!important;background-position:center top!important;overflo
 </div>
 
 <div class="mobilebar">
-<button class="active" onclick="goHome()"><span>⌂</span>Início</button>
+<button class="active" onclick="goHome()"><span>◈</span>Mapa</button>
 <button onclick="scrollCandidates()"><span>♟</span>Candidaturas</button>
-<button onclick="focusMap()"><span>◈</span>Mapa</button>
-<button onclick="openMunicipios()"><span>●</span>Território</button>
+<button onclick="openTimelineView()"><span>◷</span>Histórico</button>
+<button onclick="openCompareView()"><span>▥</span>Comparar</button>
 </div>
 
 <script>
@@ -545,19 +645,40 @@ function renderMunicipios(rows){
 }
 
 async function openCandidate(id){
+ setDetailTab('overview');
  const c=candidates.find(x=>Number(x.candidatura_id)===Number(id)); if(!c)return;
  selectedCandidate=c; panelState={type:'candidateMunicipios'};
  title(c.nome,`${c.cargo} • ${fmt(c.votos)} votos`,true);
  document.getElementById('panel').innerHTML='<div class="loading">Carregando municípios…</div>';
- try{const rows=await rpc('candidato_municipios',{p_candidatura_id:id});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(m=>`<button class="row" onclick="openCandidateMunicipio(${m.municipio_id},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;}catch(e){err(e)}
+ try{
+   const rows=await rpc('candidato_municipios',{p_candidatura_id:id});
+   const max=Math.max(1,...rows.map(m=>Number(m.votos||0)));
+   const top=[...rows].sort((a,b)=>Number(b.votos||0)-Number(a.votos||0)).slice(0,8);
+   const bars=top.map(m=>`<div class="barrow"><span class="barlabel" title="${esc(m.municipio)}">${esc(m.municipio)}</span><span class="bartrack"><span class="barfill" style="display:block;width:${Math.max(2,Math.round(Number(m.votos||0)/max*100))}%"></span></span><span class="barvalue">${fmt(m.votos)}</span></div>`).join('');
+   document.getElementById('panel').innerHTML=`
+     <div class="candidate-hero">
+       <div class="eyebrow">${esc(c.cargo)} • nº ${c.numero??'—'} • ${esc(c.partido||'')}</div>
+       <h3>${esc(c.nome)}</h3>
+       <div class="bigvote">${fmt(c.votos)} <small>votos nominais</small></div>
+     </div>
+     <div class="chartbox"><h4>Municípios com mais votos</h4>${bars||'<div class="empty">Sem distribuição municipal.</div>'}</div>
+     <div class="panelhint">Selecione um município para abrir as zonas eleitorais e, depois, as seções.</div>
+     <div class="list">${rows.map(m=>`<button class="row" onclick="openCandidateMunicipio(${m.municipio_id},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;
+   if(window.innerWidth<=980){
+     const el=document.querySelector('.sidecard');
+     if(el) setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);
+   }
+ }catch(e){err(e)}
 }
 async function openCandidateMunicipio(mid,nome){
+ setDetailTab('zonas');
  selectedMunicipio={municipio_id:mid,municipio:nome};panelState={type:'candidateZones'};
  title(nome,`${selectedCandidate.nome} • zonas eleitorais`,true);
  document.getElementById('panel').innerHTML='<div class="loading">Carregando zonas…</div>';
  try{const rows=await rpc('candidato_zonas',{p_candidatura_id:selectedCandidate.candidatura_id,p_municipio_id:mid});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(z=>`<button class="row" onclick="openZona(${z.zona_id},${z.zona})"><div><strong>Zona ${z.zona}</strong><small>${year===2000?'Base histórica por zona':'ver seções'}</small></div><span class="votes">${fmt(z.votos)}</span></button>`).join('')}</div>`;}catch(e){err(e)}
 }
 async function openZona(zid,znum){
+ setDetailTab('secoes');
  selectedZona={zona_id:zid,zona:znum};panelState={type:'sections'};
  title(`Zona ${znum}`,`${selectedCandidate.nome} • ${selectedMunicipio.municipio}`,true);
  if(year===2000){document.getElementById('panel').innerHTML='<div class="empty"><b>2000 está preservado por zona eleitoral.</b><br><br>A base de seções históricas será incorporada na próxima etapa.</div>';return}
@@ -565,6 +686,7 @@ async function openZona(zid,znum){
  try{const rows=await rpc('candidato_secoes',{p_candidatura_id:selectedCandidate.candidatura_id,p_zona_id:zid});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(s=>`<div class="row"><div><strong>Seção ${s.secao}</strong></div><span class="votes">${fmt(s.votos)}</span></div>`).join('')}</div>`;}catch(e){err(e)}
 }
 async function openMunicipio(mid,nome){
+ setDetailTab('overview');
  selectedMunicipio={municipio_id:mid,municipio:nome};panelState={type:'municipioCandidates'};
  title(nome,`Candidaturas • ${year}`,true);document.getElementById('panel').innerHTML='<div class="loading">Carregando candidaturas…</div>';
  try{const rows=await rpc('municipio_candidaturas',{p_ano:year,p_municipio_id:mid});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(c=>`<button class="row" onclick="openCandidate(${c.candidatura_id})"><div><strong>${esc(c.nome)}</strong><small>${esc(c.cargo)} • nº ${c.numero??'—'}</small></div><span class="votes">${fmt(c.votos)}</span></button>`).join('')}</div>`;}catch(e){err(e)}
@@ -638,6 +760,52 @@ function openTerritorioView(){
  const el=document.querySelector('.sidecard');
  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+const ACTIVE_YEARS=[2000,2002,2004,2006,2008,2010,2012,2018,2022];
+
+async function openCompareView(){
+ openView('Comparar eleições','<div class="loading">Carregando série histórica…</div>');
+ try{
+   const series=await Promise.all(ACTIVE_YEARS.map(async y=>{
+     const cs=await rpc('candidaturas',{p_ano:y});
+     return {ano:y,candidaturas:cs.length,votos:cs.reduce((a,c)=>a+Number(c.votos||0),0)};
+   }));
+   const max=Math.max(1,...series.map(x=>x.votos));
+   const total=series.reduce((a,x)=>a+x.votos,0);
+   const bars=series.map(x=>`<div class="barrow"><b>${x.ano}</b><span class="bartrack"><span class="barfill" style="display:block;width:${Math.max(2,Math.round(x.votos/max*100))}%"></span></span><span class="barvalue">${fmt(x.votos)}</span></div>`).join('');
+   document.getElementById('viewBody').innerHTML=`
+     <p>Comparação dos anos atualmente publicados no Mapa do Voto SP.</p>
+     <div class="compare-grid">
+       <div class="compare-kpi"><b>${series.length}</b><span>eleições disponíveis</span></div>
+       <div class="compare-kpi"><b>${fmt(total)}</b><span>soma dos votos nominais exibidos</span></div>
+       <div class="compare-kpi"><b>${series.reduce((a,x)=>a+x.candidaturas,0)}</b><span>candidaturas na série</span></div>
+     </div>
+     <h3>Votos nominais por eleição</h3>
+     <div class="compare-bars">${bars}</div>
+     <p style="font-size:11px;color:#806d61;margin-top:16px"><b>Nota:</b> este gráfico soma os votos nominais das candidaturas disponíveis na base. Votos de legenda são tratados separadamente e não entram nesta visualização.</p>`;
+ }catch(e){
+   document.getElementById('viewBody').innerHTML=`<div class="empty">Erro ao carregar comparação: ${esc(e.message)}</div>`;
+ }
+}
+
+async function openTimelineView(){
+ openView('Linha do tempo','<div class="loading">Carregando eleições publicadas…</div>');
+ try{
+   const rows=await rpc('eleicoes',{});
+   const active=new Set(rows.map(x=>Number(x.ano)));
+   const all=[2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020,2022,2024];
+   document.getElementById('viewBody').innerHTML=`
+     <p>A linha do tempo acompanha a incorporação das bases históricas ao projeto.</p>
+     <div class="timeline">${all.map(y=>`
+       <div class="timeline-item">
+         <div class="timeline-year">${y}</div><div class="timeline-dot" style="${active.has(y)?'':'background:#cfc7b9;box-shadow:0 0 0 4px #eee8df'}"></div>
+         <div class="timeline-card"><b>${active.has(y)?'Base publicada':'Base em preparação'}</b><small>${active.has(y)?'Disponível para consulta no mapa.':'Será incorporada em etapa posterior.'}</small></div>
+       </div>`).join('')}</div>`;
+ }catch(e){
+   document.getElementById('viewBody').innerHTML=`<div class="empty">Erro ao carregar linha do tempo: ${esc(e.message)}</div>`;
+ }
+}
+
 function openHQView(){
  openView('História em HQs',`
    <div style="padding:8px 4px 14px">
@@ -658,6 +826,34 @@ function openHQView(){
 }
 
 
+</script>
+
+
+<script id="v8-tabs">
+function setDetailTab(name){
+ document.querySelectorAll('#detailTabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+}
+function detailTab(name){
+ setDetailTab(name);
+ if(name==='overview'){
+   if(selectedCandidate) return openCandidate(selectedCandidate.candidatura_id);
+   if(selectedMunicipio) return openMunicipio(selectedMunicipio.municipio_id,selectedMunicipio.municipio);
+   return showMunicipioList(municipios);
+ }
+ if(name==='municipios'){
+   if(selectedCandidate) return openCandidate(selectedCandidate.candidatura_id);
+   return showMunicipioList(municipios);
+ }
+ if(name==='zonas'){
+   if(selectedCandidate && selectedMunicipio) return openCandidateMunicipio(selectedMunicipio.municipio_id,selectedMunicipio.municipio);
+   document.getElementById('panel').innerHTML='<div class="empty"><b>Selecione primeiro um município.</b><br>As zonas eleitorais aparecem dentro do município escolhido.</div>';
+   return;
+ }
+ if(name==='secoes'){
+   if(selectedCandidate && selectedMunicipio && selectedZona) return openZona(selectedZona.zona_id,selectedZona.zona);
+   document.getElementById('panel').innerHTML='<div class="empty"><b>Selecione primeiro uma zona eleitoral.</b><br>As seções aparecem depois da escolha da zona.</div>';
+ }
+}
 </script>
 
 </body>
