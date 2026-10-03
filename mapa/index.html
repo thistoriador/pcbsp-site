@@ -1527,5 +1527,133 @@ loadYear=async function(){
 renderCandidates=renderCandidatesV663;
 </script>
 
+
+<style id="v670-2010-special">
+.candidate.special-annulled{
+  border:1px solid #d8c4a7!important;background:#fffaf1!important;
+}
+.candidate.special-annulled .num{background:#6d3f16!important}
+.candidate.special-annulled .special-tag{
+  display:block;margin:3px 0 5px;color:#7a4617;font-size:11px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.035em
+}
+.candidate.special-annulled .total{color:#6d3f16!important}
+.special-note{
+  margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#fff6e7;
+  border:1px solid #e3cfad;color:#5f4934;font-size:13px;line-height:1.35
+}
+</style>
+
+<script id="v670-2010-special">
+/* 2010: candidaturas com votos registrados/anulados ficam em fluxo separado.
+   Elas NÃO entram nos totais de votos válidos nem na timeline. */
+let candidaturasAnuladas=[];
+
+function candidatoAnuladoPorId(id){
+  return (candidaturasAnuladas||[]).find(x=>Number(x.candidatura_id)===Number(id));
+}
+function cardCandidaturaAnulada(c){
+  return `<button class="candidate special-annulled" onclick="openCandidateAnulado(${c.candidatura_id})">
+    <span class="num">${c.numero??'—'}</span>
+    <span class="special-tag">Votos registrados • candidatura inapta</span>
+    <strong>${esc(c.nome)}</strong>
+    <small>${esc(c.cargo)}${c.partido?' • '+esc(c.partido):''}</small>
+    <small>${esc(c.resultado||c.situacao||'')}</small>
+    <span class="total">${fmt(c.votos_registrados)} votos registrados</span>
+  </button>`;
+}
+
+const _renderCandidatesV670=renderCandidatesV663;
+renderCandidatesV663=function(rows){
+  _renderCandidatesV670(rows);
+  const host=document.getElementById('candidates');
+  if(!host || !(candidaturasAnuladas||[]).length) return;
+
+  const grupos=new Map();
+  candidaturasAnuladas.forEach(c=>{
+    const k=String(c.cargo||'Sem cargo');
+    if(!grupos.has(k)) grupos.set(k,[]);
+    grupos.get(k).push(c);
+  });
+  let extra='<div class="special-note"><b>Votos registrados, mas não válidos</b><br>As candidaturas abaixo tiveram votos registrados e posteriormente anulados. Esses votos não integram o Total Geral de votos válidos exibido para a eleição.</div>';
+  for(const [,lista] of grupos) extra+=lista.map(cardCandidaturaAnulada).join('');
+  host.insertAdjacentHTML('beforeend',extra);
+  document.getElementById('candCount').textContent=`${rows.length + candidaturasAnuladas.length} registros`;
+};
+renderCandidates=renderCandidatesV663;
+
+/* Encadeia a carga já existente: API normal + legenda + candidaturas anuladas. */
+const _loadYearV670=loadYear;
+loadYear=async function(){
+  candidaturasAnuladas=[];
+  await _loadYearV670();
+  try{
+    const ar=await rpc('candidaturas_anuladas',{p_ano:year});
+    candidaturasAnuladas=Array.isArray(ar)?ar:[];
+  }catch(e){
+    console.warn('Candidaturas com votos anulados indisponíveis:',e);
+  }
+  renderCandidatesV663(candidates);
+};
+
+async function openCandidateAnulado(id){
+  const c=candidatoAnuladoPorId(id); if(!c)return;
+  selectedCandidate={...c,nome:c.nome,votos:c.votos_registrados,_anulado:true};
+  selectedMunicipio=null; selectedZona=null; panelState={type:'annulledMunicipios'};
+  title(c.nome,`${c.cargo} • ${fmt(c.votos_registrados)} votos registrados`,true);
+  document.getElementById('panel').innerHTML='<div class="loading">Carregando municípios…</div>';
+  try{
+    const rows=await rpc('votos_anulados_candidato',{p_candidatura_id:id,p_nivel:'municipio'});
+    const sorted=[...rows].sort((a,b)=>Number(b.votos||0)-Number(a.votos||0));
+    const chart=chartRows(sorted,'municipio','votos',10);
+    document.getElementById('panel').innerHTML=`
+      <div class="special-note"><b>${esc(c.resultado||c.situacao||'Candidatura inapta')}</b><br>
+      ${fmt(c.votos_registrados)} votos registrados • ${fmt(c.votos_validos)} válidos • ${fmt(c.votos_anulados)} anulados.<br>
+      Estes votos não integram o Total Geral de votos válidos de ${year}.</div>
+      <div class="kpi-strip">
+        <div class="kpi-mini"><b>${fmt(c.votos_registrados)}</b><span>registrados</span></div>
+        <div class="kpi-mini"><b>${fmt(c.votos_validos)}</b><span>válidos</span></div>
+        <div class="kpi-mini"><b>${sorted.filter(x=>Number(x.votos||0)>0).length}</b><span>municípios</span></div>
+      </div>
+      <div class="chart-card"><h4>Municípios com mais votos registrados</h4>${chart||'<div class="empty">Sem dados territoriais.</div>'}</div>
+      <div class="list">${sorted.map(m=>`<button class="row" onclick="openCandidateAnuladoMunicipio(${Number(m.codigo_tse_municipio)},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;
+    if(window.innerWidth<=980) setTimeout(()=>document.getElementById('panel').scrollIntoView({behavior:'smooth',block:'start'}),60);
+  }catch(e){err(e)}
+}
+
+async function openCandidateAnuladoMunicipio(cod,nome){
+  selectedMunicipio={codigo_tse_municipio:cod,municipio:nome}; panelState={type:'annulledZones'};
+  title(nome,`${selectedCandidate.nome} • zonas eleitorais`,true);
+  document.getElementById('panel').innerHTML='<div class="loading">Carregando zonas…</div>';
+  try{
+    const all=await rpc('votos_anulados_candidato',{p_candidatura_id:selectedCandidate.candidatura_id,p_nivel:'zona'});
+    const rows=(all||[]).filter(x=>Number(x.codigo_tse_municipio)===Number(cod)).sort((a,b)=>Number(a.zona)-Number(b.zona));
+    const chart=chartRows(rows.map(z=>({...z,label:`Zona ${z.zona}`})),'label','votos',12);
+    document.getElementById('panel').innerHTML=`<div class="chart-card"><h4>Votos registrados por zona</h4>${chart||'<div class="empty">Sem votos por zona.</div>'}</div><div class="list">${rows.map(z=>`<button class="row" onclick="openCandidateAnuladoZona(${Number(z.zona)})"><div><strong>Zona ${z.zona}</strong><small>ver seções</small></div><span class="votes">${fmt(z.votos)}</span></button>`).join('')}</div>`;
+  }catch(e){err(e)}
+}
+
+async function openCandidateAnuladoZona(znum){
+  selectedZona={zona:znum}; panelState={type:'annulledSections'};
+  title(`Zona ${znum}`,`${selectedCandidate.nome} • ${selectedMunicipio.municipio}`,true);
+  document.getElementById('panel').innerHTML='<div class="loading">Carregando seções…</div>';
+  try{
+    const all=await rpc('votos_anulados_candidato',{p_candidatura_id:selectedCandidate.candidatura_id,p_nivel:'secao'});
+    const rows=(all||[]).filter(x=>Number(x.codigo_tse_municipio)===Number(selectedMunicipio.codigo_tse_municipio) && Number(x.zona)===Number(znum)).sort((a,b)=>Number(a.secao)-Number(b.secao));
+    const chart=chartRows(rows.map(x=>({...x,label:`Seção ${x.secao}`})),'label','votos',12);
+    document.getElementById('panel').innerHTML=`<div class="chart-card"><h4>Votos registrados por seção</h4>${chart||'<div class="empty">Sem votos por seção.</div>'}</div><div class="list">${rows.map(x=>`<div class="row"><div><strong>Seção ${x.secao}</strong></div><span class="votes">${fmt(x.votos)}</span></div>`).join('')}</div>`;
+  }catch(e){err(e)}
+}
+
+/* Voltar específico para o fluxo paralelo de votos anulados. */
+const _panelBackV670=panelBack;
+panelBack=function(){
+  if(panelState.type==='annulledSections') return openCandidateAnuladoMunicipio(selectedMunicipio.codigo_tse_municipio,selectedMunicipio.municipio);
+  if(panelState.type==='annulledZones') return openCandidateAnulado(selectedCandidate.candidatura_id);
+  if(panelState.type==='annulledMunicipios') return renderMunicipios(municipios);
+  return _panelBackV670();
+};
+</script>
+
 </body>
 </html>
