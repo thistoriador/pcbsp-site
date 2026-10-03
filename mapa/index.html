@@ -507,7 +507,7 @@ background-size:cover!important;background-position:center top!important;overflo
     <button class="year future" title="Base em preparação">2014</button>
     <button class="year" data-year="2016" onclick="setYear(2016)">2016</button>
     <button class="year" data-year="2018" onclick="setYear(2018)">2018</button>
-    <button class="year future" title="Base em preparação">2020</button>
+    <button class="year" data-year="2020" onclick="setYear(2020)">2020</button>
     <button class="year" data-year="2022" onclick="setYear(2022)">2022</button>
     <button class="year" data-year="2024" onclick="setYear(2024)">2024</button>
   </div>
@@ -723,7 +723,7 @@ async function loadYear(){
    ? `Base histórica disponível para ${year}`
    : `Votação PCB por município • nominal + legenda`;
   renderCandidates(candidates); renderMunicipios(municipios); updateRealMap(); setTimeout(fitState,120);
-  msg((year===2000||year===2016||year===2024)?`${year}: base Supabase ativa • navegação disponível até zona eleitoral.`:'Base Supabase ativa • navegação disponível até seção eleitoral.');
+  msg((year===2000||year===2016||year===2020||year===2024)?`${year}: base Supabase ativa • navegação disponível até zona eleitoral.`:'Base Supabase ativa • navegação disponível até seção eleitoral.');
  }catch(e){msg('Erro ao carregar os dados: '+e.message);document.getElementById('panel').innerHTML='<div class="empty">Não foi possível carregar os dados.</div>'}
 }
 function renderCandidates(rows){
@@ -908,7 +908,7 @@ const LAB_TOTALS={
   2006:{nominal:3253,legenda:17396,total:20649},2008:{nominal:18467,legenda:5603,total:24070},
   2010:{nominal:7324,legenda:18435,total:25759},2012:{nominal:4810,legenda:2443,total:7253},
   2016:{nominal:1186,legenda:1509,total:2695},
-  2018:{nominal:4905,legenda:10139,total:15044},2022:{nominal:144696,legenda:12336,total:157032},
+  2018:{nominal:4905,legenda:10139,total:15044},2020:{nominal:2857,legenda:1406,total:4263},2022:{nominal:144696,legenda:12336,total:157032},
   2024:{nominal:1498,legenda:129,total:1627}
 };
 const LAB_YEARS=[2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020,2022,2024];
@@ -919,7 +919,7 @@ function chartRows(rows,labelKey='municipio',valueKey='votos',limit=10){
  return sorted.map(x=>`<div class="chart-row"><span class="chart-label" title="${esc(x[labelKey])}">${esc(x[labelKey])}</span><span class="chart-track"><span class="chart-fill" style="display:block;width:${Math.max(2,Number(x[valueKey]||0)/max*100)}%"></span></span><span class="chart-value">${fmt(x[valueKey])}</span></div>`).join('');
 }
 function tabsHTML(active='geral'){
- const secDisabled=(year===2000||year===2016||year===2024)?'disabled':'';
+ const secDisabled=(year===2000||year===2016||year===2020||year===2024)?'disabled':'';
  return `<div class="panel-tabs">
   <button class="${active==='geral'?'active':''}" onclick="renderMunicipios(municipios)">Visão geral</button>
   <button class="${active==='municipios'?'active':''}" onclick="tabMunicipios()">Municípios</button>
