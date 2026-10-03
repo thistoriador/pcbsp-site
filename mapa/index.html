@@ -1430,5 +1430,102 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+
+<style id="v663-fixes">
+/* V6.6.3 — a navegação inferior fica sempre acima do mapa */
+@media(max-width:980px){
+  .mobilebar{z-index:10000!important}
+  .leaflet-control-container,
+  .leaflet-control,
+  .maplegend{z-index:500!important}
+}
+/* Card informativo de voto de legenda — não é candidatura */
+.candidate.legend-vote{
+  cursor:default!important;
+  border:1px solid #e3c8c9!important;
+  background:#fff7f7!important;
+  box-shadow:none!important;
+}
+.candidate.legend-vote:hover{transform:none!important;border-color:#e3c8c9!important}
+.candidate.legend-vote .num{background:#7d0b12!important}
+.candidate.legend-vote .legend-kicker{
+  display:block;margin:2px 0 4px;color:#a20d16;font-size:11px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.04em
+}
+</style>
+
+<script id="v663-legenda-candidaturas">
+/* V6.6.3 — exibe votos de legenda junto ao cargo, sem tratá-los como candidatura */
+let legendaPorCargo=[];
+
+function normCargoLegenda(v){
+  return norm(String(v||''))
+    .replace(/^deputado\s+estadual$/,'deputado estadual')
+    .replace(/^deputado\s+federal$/,'deputado federal');
+}
+function votosLegendaDoCargo(cargo){
+  const alvo=normCargoLegenda(cargo);
+  const r=(legendaPorCargo||[]).find(x=>normCargoLegenda(x.cargo||x.ds_cargo||x.nome_cargo)===alvo);
+  return Number(r?.votos ?? r?.votos_legenda ?? r?.qt_votos ?? r?.total ?? 0);
+}
+function cardLegenda(cargo,votos){
+  return `<div class="candidate legend-vote" role="note">
+    <span class="num">21</span>
+    <span class="legend-kicker">Voto de legenda</span>
+    <strong>PCB • 21</strong>
+    <small>${esc(cargo)}</small>
+    <span class="total">${fmt(votos)} votos</span>
+  </div>`;
+}
+function renderCandidatesV663(rows){
+  const host=document.getElementById('candidates');
+  document.getElementById('candCount').textContent=`${rows.length} registros`;
+  if(!rows.length){host.innerHTML='<div class="empty">Nenhuma candidatura encontrada.</div>';return}
+
+  const grupos=new Map();
+  rows.forEach(c=>{
+    const k=String(c.cargo||'Sem cargo');
+    if(!grupos.has(k))grupos.set(k,[]);
+    grupos.get(k).push(c);
+  });
+
+  let html='';
+  for(const [cargo,lista] of grupos){
+    const vl=votosLegendaDoCargo(cargo);
+    if(vl>0) html+=cardLegenda(cargo,vl);
+    html+=lista.map(c=>{
+      const d=candidateDisplay(c);
+      return `<button class="candidate" onclick="openCandidate(${c.candidatura_id})">
+        <span class="num">${c.numero??'—'}</span>
+        <strong>${esc(d.titulo)}</strong>
+        ${d.coletiva?`<small class="collective">Candidatura coletiva • ${esc(d.coletiva)}</small>`:''}
+        ${d.civil?`<small class="civil-name">${esc(d.civil)}</small>`:''}
+        <small>${esc(c.cargo)}${c.partido?' • '+esc(c.partido):' • PCB'}</small>
+        ${d.cidade?`<small class="city">📍 ${esc(d.cidade)}</small>`:''}
+        <span class="total">${fmt(c.votos)} votos</span>
+      </button>`;
+    }).join('');
+  }
+  host.innerHTML=html;
+}
+
+/* Mantém o site funcional mesmo se a RPC de legenda não responder. */
+const _loadYearV663=loadYear;
+loadYear=async function(){
+  legendaPorCargo=[];
+  await _loadYearV663();
+  try{
+    const lr=await rpc('legenda_resumo',{p_ano:year});
+    legendaPorCargo=Array.isArray(lr)?lr:[];
+  }catch(e){
+    console.warn('Votos de legenda por cargo indisponíveis:',e);
+  }
+  renderCandidatesV663(candidates);
+};
+
+/* Busca/filtro continua usando o mesmo padrão visual. */
+renderCandidates=renderCandidatesV663;
+</script>
+
 </body>
 </html>
