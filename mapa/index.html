@@ -505,11 +505,11 @@ background-size:cover!important;background-position:center top!important;overflo
     <button class="year" data-year="2010" onclick="setYear(2010)">2010</button>
     <button class="year" data-year="2012" onclick="setYear(2012)">2012</button>
     <button class="year future" title="Base em preparação">2014</button>
-    <button class="year future" title="Base em preparação">2016</button>
+    <button class="year" data-year="2016" onclick="setYear(2016)">2016</button>
     <button class="year" data-year="2018" onclick="setYear(2018)">2018</button>
     <button class="year future" title="Base em preparação">2020</button>
     <button class="year" data-year="2022" onclick="setYear(2022)">2022</button>
-    <button class="year future" title="Base em preparação">2024</button>
+    <button class="year" data-year="2024" onclick="setYear(2024)">2024</button>
   </div>
   <input id="search" class="search" placeholder="Buscar município ou candidatura..." oninput="applySearch()">
 </div>
@@ -723,7 +723,7 @@ async function loadYear(){
    ? `Base histórica disponível para ${year}`
    : `Votação PCB por município • nominal + legenda`;
   renderCandidates(candidates); renderMunicipios(municipios); updateRealMap(); setTimeout(fitState,120);
-  msg(year===2000?'2000: base histórica preservada; navegação disponível até zona eleitoral.':'Base Supabase ativa • navegação disponível até seção eleitoral.');
+  msg((year===2000||year===2016||year===2024)?`${year}: base Supabase ativa • navegação disponível até zona eleitoral.`:'Base Supabase ativa • navegação disponível até seção eleitoral.');
  }catch(e){msg('Erro ao carregar os dados: '+e.message);document.getElementById('panel').innerHTML='<div class="empty">Não foi possível carregar os dados.</div>'}
 }
 function renderCandidates(rows){
@@ -907,7 +907,9 @@ const LAB_TOTALS={
   2002:{nominal:4761,legenda:16662,total:21423},2004:{nominal:23501,legenda:4576,total:28077},
   2006:{nominal:3253,legenda:17396,total:20649},2008:{nominal:18467,legenda:5603,total:24070},
   2010:{nominal:7324,legenda:18435,total:25759},2012:{nominal:4810,legenda:2443,total:7253},
-  2018:{nominal:4905,legenda:10139,total:15044},2022:{nominal:144696,legenda:12336,total:157032}
+  2016:{nominal:1186,legenda:1509,total:2695},
+  2018:{nominal:4905,legenda:10139,total:15044},2022:{nominal:144696,legenda:12336,total:157032},
+  2024:{nominal:1498,legenda:129,total:1627}
 };
 const LAB_YEARS=[2000,2002,2004,2006,2008,2010,2012,2014,2016,2018,2020,2022,2024];
 function electionKind(y){return y%4===0?'Eleições Municipais':'Eleições Gerais'}
@@ -917,7 +919,7 @@ function chartRows(rows,labelKey='municipio',valueKey='votos',limit=10){
  return sorted.map(x=>`<div class="chart-row"><span class="chart-label" title="${esc(x[labelKey])}">${esc(x[labelKey])}</span><span class="chart-track"><span class="chart-fill" style="display:block;width:${Math.max(2,Number(x[valueKey]||0)/max*100)}%"></span></span><span class="chart-value">${fmt(x[valueKey])}</span></div>`).join('');
 }
 function tabsHTML(active='geral'){
- const secDisabled=year===2000?'disabled':'';
+ const secDisabled=(year===2000||year===2016||year===2024)?'disabled':'';
  return `<div class="panel-tabs">
   <button class="${active==='geral'?'active':''}" onclick="renderMunicipios(municipios)">Visão geral</button>
   <button class="${active==='municipios'?'active':''}" onclick="tabMunicipios()">Municípios</button>
@@ -1525,134 +1527,6 @@ loadYear=async function(){
 
 /* Busca/filtro continua usando o mesmo padrão visual. */
 renderCandidates=renderCandidatesV663;
-</script>
-
-
-<style id="v670-2010-special">
-.candidate.special-annulled{
-  border:1px solid #d8c4a7!important;background:#fffaf1!important;
-}
-.candidate.special-annulled .num{background:#6d3f16!important}
-.candidate.special-annulled .special-tag{
-  display:block;margin:3px 0 5px;color:#7a4617;font-size:11px;font-weight:900;
-  text-transform:uppercase;letter-spacing:.035em
-}
-.candidate.special-annulled .total{color:#6d3f16!important}
-.special-note{
-  margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#fff6e7;
-  border:1px solid #e3cfad;color:#5f4934;font-size:13px;line-height:1.35
-}
-</style>
-
-<script id="v670-2010-special">
-/* 2010: candidaturas com votos registrados/anulados ficam em fluxo separado.
-   Elas NÃO entram nos totais de votos válidos nem na timeline. */
-let candidaturasAnuladas=[];
-
-function candidatoAnuladoPorId(id){
-  return (candidaturasAnuladas||[]).find(x=>Number(x.candidatura_id)===Number(id));
-}
-function cardCandidaturaAnulada(c){
-  return `<button class="candidate special-annulled" onclick="openCandidateAnulado(${c.candidatura_id})">
-    <span class="num">${c.numero??'—'}</span>
-    <span class="special-tag">Votos registrados • candidatura inapta</span>
-    <strong>${esc(c.nome)}</strong>
-    <small>${esc(c.cargo)}${c.partido?' • '+esc(c.partido):''}</small>
-    <small>${esc(c.resultado||c.situacao||'')}</small>
-    <span class="total">${fmt(c.votos_registrados)} votos registrados</span>
-  </button>`;
-}
-
-const _renderCandidatesV670=renderCandidatesV663;
-renderCandidatesV663=function(rows){
-  _renderCandidatesV670(rows);
-  const host=document.getElementById('candidates');
-  if(!host || !(candidaturasAnuladas||[]).length) return;
-
-  const grupos=new Map();
-  candidaturasAnuladas.forEach(c=>{
-    const k=String(c.cargo||'Sem cargo');
-    if(!grupos.has(k)) grupos.set(k,[]);
-    grupos.get(k).push(c);
-  });
-  let extra='<div class="special-note"><b>Votos registrados, mas não válidos</b><br>As candidaturas abaixo tiveram votos registrados e posteriormente anulados. Esses votos não integram o Total Geral de votos válidos exibido para a eleição.</div>';
-  for(const [,lista] of grupos) extra+=lista.map(cardCandidaturaAnulada).join('');
-  host.insertAdjacentHTML('beforeend',extra);
-  document.getElementById('candCount').textContent=`${rows.length + candidaturasAnuladas.length} registros`;
-};
-renderCandidates=renderCandidatesV663;
-
-/* Encadeia a carga já existente: API normal + legenda + candidaturas anuladas. */
-const _loadYearV670=loadYear;
-loadYear=async function(){
-  candidaturasAnuladas=[];
-  await _loadYearV670();
-  try{
-    const ar=await rpc('candidaturas_anuladas',{p_ano:year});
-    candidaturasAnuladas=Array.isArray(ar)?ar:[];
-  }catch(e){
-    console.warn('Candidaturas com votos anulados indisponíveis:',e);
-  }
-  renderCandidatesV663(candidates);
-};
-
-async function openCandidateAnulado(id){
-  const c=candidatoAnuladoPorId(id); if(!c)return;
-  selectedCandidate={...c,nome:c.nome,votos:c.votos_registrados,_anulado:true};
-  selectedMunicipio=null; selectedZona=null; panelState={type:'annulledMunicipios'};
-  title(c.nome,`${c.cargo} • ${fmt(c.votos_registrados)} votos registrados`,true);
-  document.getElementById('panel').innerHTML='<div class="loading">Carregando municípios…</div>';
-  try{
-    const rows=await rpc('votos_anulados_candidato',{p_candidatura_id:id,p_nivel:'municipio'});
-    const sorted=[...rows].sort((a,b)=>Number(b.votos||0)-Number(a.votos||0));
-    const chart=chartRows(sorted,'municipio','votos',10);
-    document.getElementById('panel').innerHTML=`
-      <div class="special-note"><b>${esc(c.resultado||c.situacao||'Candidatura inapta')}</b><br>
-      ${fmt(c.votos_registrados)} votos registrados • ${fmt(c.votos_validos)} válidos • ${fmt(c.votos_anulados)} anulados.<br>
-      Estes votos não integram o Total Geral de votos válidos de ${year}.</div>
-      <div class="kpi-strip">
-        <div class="kpi-mini"><b>${fmt(c.votos_registrados)}</b><span>registrados</span></div>
-        <div class="kpi-mini"><b>${fmt(c.votos_validos)}</b><span>válidos</span></div>
-        <div class="kpi-mini"><b>${sorted.filter(x=>Number(x.votos||0)>0).length}</b><span>municípios</span></div>
-      </div>
-      <div class="chart-card"><h4>Municípios com mais votos registrados</h4>${chart||'<div class="empty">Sem dados territoriais.</div>'}</div>
-      <div class="list">${sorted.map(m=>`<button class="row" onclick="openCandidateAnuladoMunicipio(${Number(m.codigo_tse_municipio)},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;
-    if(window.innerWidth<=980) setTimeout(()=>document.getElementById('panel').scrollIntoView({behavior:'smooth',block:'start'}),60);
-  }catch(e){err(e)}
-}
-
-async function openCandidateAnuladoMunicipio(cod,nome){
-  selectedMunicipio={codigo_tse_municipio:cod,municipio:nome}; panelState={type:'annulledZones'};
-  title(nome,`${selectedCandidate.nome} • zonas eleitorais`,true);
-  document.getElementById('panel').innerHTML='<div class="loading">Carregando zonas…</div>';
-  try{
-    const all=await rpc('votos_anulados_candidato',{p_candidatura_id:selectedCandidate.candidatura_id,p_nivel:'zona'});
-    const rows=(all||[]).filter(x=>Number(x.codigo_tse_municipio)===Number(cod)).sort((a,b)=>Number(a.zona)-Number(b.zona));
-    const chart=chartRows(rows.map(z=>({...z,label:`Zona ${z.zona}`})),'label','votos',12);
-    document.getElementById('panel').innerHTML=`<div class="chart-card"><h4>Votos registrados por zona</h4>${chart||'<div class="empty">Sem votos por zona.</div>'}</div><div class="list">${rows.map(z=>`<button class="row" onclick="openCandidateAnuladoZona(${Number(z.zona)})"><div><strong>Zona ${z.zona}</strong><small>ver seções</small></div><span class="votes">${fmt(z.votos)}</span></button>`).join('')}</div>`;
-  }catch(e){err(e)}
-}
-
-async function openCandidateAnuladoZona(znum){
-  selectedZona={zona:znum}; panelState={type:'annulledSections'};
-  title(`Zona ${znum}`,`${selectedCandidate.nome} • ${selectedMunicipio.municipio}`,true);
-  document.getElementById('panel').innerHTML='<div class="loading">Carregando seções…</div>';
-  try{
-    const all=await rpc('votos_anulados_candidato',{p_candidatura_id:selectedCandidate.candidatura_id,p_nivel:'secao'});
-    const rows=(all||[]).filter(x=>Number(x.codigo_tse_municipio)===Number(selectedMunicipio.codigo_tse_municipio) && Number(x.zona)===Number(znum)).sort((a,b)=>Number(a.secao)-Number(b.secao));
-    const chart=chartRows(rows.map(x=>({...x,label:`Seção ${x.secao}`})),'label','votos',12);
-    document.getElementById('panel').innerHTML=`<div class="chart-card"><h4>Votos registrados por seção</h4>${chart||'<div class="empty">Sem votos por seção.</div>'}</div><div class="list">${rows.map(x=>`<div class="row"><div><strong>Seção ${x.secao}</strong></div><span class="votes">${fmt(x.votos)}</span></div>`).join('')}</div>`;
-  }catch(e){err(e)}
-}
-
-/* Voltar específico para o fluxo paralelo de votos anulados. */
-const _panelBackV670=panelBack;
-panelBack=function(){
-  if(panelState.type==='annulledSections') return openCandidateAnuladoMunicipio(selectedMunicipio.codigo_tse_municipio,selectedMunicipio.municipio);
-  if(panelState.type==='annulledZones') return openCandidateAnulado(selectedCandidate.candidatura_id);
-  if(panelState.type==='annulledMunicipios') return renderMunicipios(municipios);
-  return _panelBackV670();
-};
 </script>
 
 </body>
