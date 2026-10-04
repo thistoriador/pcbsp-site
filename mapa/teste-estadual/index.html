@@ -36,10 +36,10 @@ const SB_URL='https://cthntxgopxhbaemgnttn.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aG50eGdvcHhoYmFlbWdudHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjA5NTIsImV4cCI6MjEwNjM5Njk1Mn0.B0vk9yHpI4ln3jFlSfPhSPIAZvGMUo_Bu4K8_hGf5JI';
 municipios.forEach(x=>{let o=document.createElement('option');o.value=x.cd_mun;o.textContent=x.municipio;mun.appendChild(o)}); mun.value='3516200';
 let setores=null,data=[],W=900,H=650,baseBox={x:0,y:0,w:W,h:H},viewBox={...baseBox},drag=null,raf=0,projection=null;
-let electoralMunicipios=null,selectedElectoral=null,zonaRows=[];
+let electoralMunicipios=null,selectedElectoral=null,zonaRows=[],locationRows=[];
 function esc(x){return String(x??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function norm(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
-function fmt(n){return Number(n||0).toLocaleString('pt-BR')}
+function fmt(n){return Number(n||0).toLocaleString('pt-BR')}\nfunction slug(v){return norm(v).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 async function rpc(fn,args={}){
  const r=await fetch(`${SB_URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json','Content-Profile':'api_mapa','Accept-Profile':'api_mapa'},body:JSON.stringify(args)});
  if(!r.ok)throw new Error(`${fn}: HTTP ${r.status}`);
@@ -104,6 +104,16 @@ async function loadZona(){
 zona.onchange=loadZona;busca.oninput=render;
 $('#tabMapa').onclick=()=>{$('#mapbox').style.display='block';$('#lista').style.display='none';$('#tabMapa').classList.add('active');$('#tabLista').classList.remove('active')};
 $('#tabLista').onclick=()=>{$('#mapbox').style.display='none';$('#lista').style.display='block';$('#tabLista').classList.add('active');$('#tabMapa').classList.remove('active')};
+async function loadMunicipioPontos(meta){
+ try{
+  const [lr,secRows]=await Promise.all([fetch('locais/'+slug(meta.municipio)+'.json',{cache:'force-cache'}).then(r=>r.ok?r.json():[]),rpc('municipio_secoes_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)})]);
+  if(mun.value!==meta.cd_mun)return;
+  locationRows=lr;
+  const lm=new Map(lr.map(l=>[String(l.NR_ZONA)+'|'+String(l.NR_SECAO),l]));
+  data=secRows.map(x=>{const l=lm.get(String(x.zona)+'|'+String(x.secao))||{};return {NR_ZONA:x.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||x.codigo_local||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||x.local_nome||'',DS_ENDERECO:l.DS_ENDERECO||x.endereco||'',NM_BAIRRO:l.NM_BAIRRO||x.bairro||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE??null,NR_LONGITUDE:l.NR_LONGITUDE??null,VOTOS_PCB:x.votos_total}};
+  render();
+ }catch(e){console.warn('Camada de pontos indisponível:',e)}
+}
 async function loadMunicipio(){
  const meta=municipios.find(x=>x.cd_mun===mun.value);stats.textContent='Carregando '+meta.municipio+'…';tip.style.display='none';reset();zona.innerHTML='<option>CARREGANDO ZONAS…</option>';
  try{
@@ -113,6 +123,7 @@ async function loadMunicipio(){
   zonaRows=selectedElectoral?await rpc('municipio_zonas_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)}):[];
   data=mun.value==='3516200'?francaData:[];
   setupProjection();buildZones();render();
+  if(mun.value!=='3516200'&&selectedElectoral) loadMunicipioPontos(meta);
  }catch(e){stats.innerHTML='<b>Não foi possível carregar este município.</b> '+esc(e.message)}
 }
 mun.onchange=loadMunicipio;loadMunicipio();
