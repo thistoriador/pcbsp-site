@@ -1,6 +1,10 @@
 name: Build TSE 2022 polling places
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/scripts/build-locais-2022.js'
+      - '.github/workflows/build-locais-2022.yml'
 permissions:
   contents: write
 jobs:
