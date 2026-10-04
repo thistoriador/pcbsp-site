@@ -101,13 +101,28 @@ $('#tabLista').onclick=()=>{$('#mapbox').style.display='none';$('#lista').style.
 async function loadPontos2022(meta){
  try{
   const lr=await fetch('teste-estadual/locais/'+norm(meta.municipio).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.json',{cache:'force-cache'}).then(r=>r.ok?r.json():[]);
-  const rows=await rpc(Number(selectedElectoral.municipio_id)===14?'municipio_secoes_pcb_leve':'municipio_secoes_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)});
   if(mun.value!==meta.cd_mun)return;
   const lm=new Map(lr.map(l=>[String(l.NR_ZONA)+'|'+String(l.NR_SECAO),l]));
-  data=rows.map(x=>{const l=lm.get(String(x.zona)+'|'+String(x.secao))||{};return {NR_ZONA:x.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||'',DS_ENDERECO:l.DS_ENDERECO||'',NM_BAIRRO:l.NM_BAIRRO||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE==null?null:l.NR_LATITUDE,NR_LONGITUDE:l.NR_LONGITUDE==null?null:l.NR_LONGITUDE,VOTOS_PCB:Number(x.votos_total||0)}});
-  if(!zonaRows.length)buildZonesFromData();
-  render();
- }catch(e){console.error('pontos 2022',e)}
+  function cv(x){const l=lm.get(String(x.zona)+'|'+String(x.secao))||{};return {NR_ZONA:x.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||'',DS_ENDERECO:l.DS_ENDERECO||'',NM_BAIRRO:l.NM_BAIRRO||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE==null?null:l.NR_LATITUDE,NR_LONGITUDE:l.NR_LONGITUDE==null?null:l.NR_LONGITUDE,VOTOS_PCB:Number(x.votos_total||0)}}
+  if(Number(selectedElectoral.municipio_id)===14){
+   const zs=await rpc('municipio_zonas_leve',{p_municipio_id:14});
+   if(mun.value!==meta.cd_mun)return;
+   const size=Math.ceil(zs.length/5);data=[];zonaRows=[];
+   for(let i=0;i<5;i++){
+    const bloco=zs.slice(i*size,(i+1)*size);if(!bloco.length)continue;
+    stats.innerHTML='<b>São Paulo</b> · carregando área '+(i+1)+' de 5…';
+    const promessas=bloco.map(async z=>{const rr=await rpc('zona_secoes_pcb',{p_ano:2022,p_zona_id:Number(z.zona_id)});return rr.map(x=>Object.assign({},x,{zona:z.zona}))});
+    const partes=await Promise.all(promessas);
+    if(mun.value!==meta.cd_mun)return;
+    data.push(...partes.flat().map(cv));buildZonesFromData();render();
+    await new Promise(resolve=>setTimeout(resolve,0));
+   }
+   render();return;
+  }
+  const rows=await rpc('municipio_secoes_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)});
+  if(mun.value!==meta.cd_mun)return;
+  data=rows.map(cv);if(!zonaRows.length)buildZonesFromData();render();
+ }catch(e){console.error('pontos 2022',e);stats.innerHTML='<b>Falha ao carregar os votos.</b> '+esc(e.message)}
 }
 async function loadMunicipio(){
  const meta=municipios.find(x=>x.cd_mun===mun.value);stats.textContent='Carregando '+meta.municipio+'…';tip.style.display='none';reset();zona.innerHTML='<option>CARREGANDO ZONAS…</option>';
