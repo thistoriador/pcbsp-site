@@ -16,12 +16,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Recover compact geometry source
+        run: |
+          mkdir -p mapa/teste-estadual
+          git show ecf8c42c41a9a268fa95a2dc08ad2750ce8bf1b9:mapa/teste-estadual/setores-sp.js > mapa/teste-estadual/setores-sp.js
+          test -s mapa/teste-estadual/setores-sp.js
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
       - name: Expand municipal GeoJSON files
         run: node .github/scripts/expand-statewide.js
+      - name: Verify generated geometry
+        run: |
+          test "$(find mapa/teste-estadual/setores -maxdepth 1 -name '*.geojson' | wc -l)" -eq 645
+          grep -q "fetch('setores/'+mun.value+'.geojson'" mapa/teste-estadual/index.html
+          test ! -e mapa/teste-estadual/setores-sp.js
       - name: Commit generated files
         run: |
           git config user.name "github-actions[bot]"
