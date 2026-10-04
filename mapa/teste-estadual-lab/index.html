@@ -89,18 +89,7 @@ svg.addEventListener('pointerdown',e=>{if(e.target.closest('.pt'))return;svg.set
 svg.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;let r=svg.getBoundingClientRect();viewBox.x=drag.start.x-(e.clientX-drag.x)*drag.start.w/r.width;viewBox.y=drag.start.y-(e.clientY-drag.y)*drag.start.h/r.height;schedule()});
 ['pointerup','pointercancel'].forEach(t=>svg.addEventListener(t,e=>{if(drag&&drag.id===e.pointerId)drag=null}));
 $('#zin').onclick=()=>zoom(1.35);$('#zout').onclick=()=>zoom(1/1.35);$('#home').onclick=reset;
-async function loadZona(){
- reset();
- if(mun.value==='3516200'){data=francaData;render();return}
- if(zona.value==='all'){data=[];render();return}
- const zr=selectedZone(); if(!zr){data=[];render();return}
- stats.innerHTML='<b>Carregando seções da Zona '+zr.zona+'…</b>';
- try{
-  const rows=await rpc('zona_secoes_pcb',{p_ano:2022,p_zona_id:Number(zr.zona_id)});
-  data=rows.map(x=>({NR_ZONA:zr.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:x.codigo_local||'',NM_LOCAL_VOTACAO:x.local_nome||'',DS_ENDERECO:x.endereco||'',NM_BAIRRO:x.bairro||'',NR_CEP:'',NR_LATITUDE:null,NR_LONGITUDE:null,VOTOS_PCB:x.votos_total}));
-  render();
- }catch(e){data=[];stats.innerHTML='<b>Erro ao carregar votação da zona.</b> '+esc(e.message);renderList([])}
-}
+function loadZona(){reset();render()}
 zona.onchange=loadZona;busca.oninput=render;
 $('#tabMapa').onclick=()=>{$('#mapbox').style.display='block';$('#lista').style.display='none';$('#tabMapa').classList.add('active');$('#tabLista').classList.remove('active')};
 $('#tabLista').onclick=()=>{$('#mapbox').style.display='none';$('#lista').style.display='block';$('#tabLista').classList.add('active');$('#tabMapa').classList.remove('active')};
