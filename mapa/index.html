@@ -67,9 +67,18 @@ function buildZonesFromData(){
 function render(){
  if(!setores)return; let a=filtered(),h='';
  for(const f of setores.features)h+=`<path class="sector ${String(f.properties.SITUACAO||'').toLowerCase().includes('rural')?'rural':''}" d="${pathGeom(f.geometry)}"/>`;
- const loc=new Map();for(const x of a){if(x.NR_LATITUDE==null||x.NR_LONGITUDE==null)continue;let k=x.NR_ZONA+'|'+x.NR_LOCAL_VOTACAO;if(!loc.has(k))loc.set(k,{...x,secoes:[],votos:0});let l=loc.get(k);l.secoes.push(x.NR_SECAO);l.votos+=Number(x.VOTOS_PCB||0)}
- const ls=[...loc.values()],mx=Math.max(1,...ls.map(x=>x.votos));ls.forEach((l,i)=>{let r=4+8*Math.sqrt(l.votos/mx);h+=`<circle class="pt" data-i="${i}" cx="${projection.px(+l.NR_LONGITUDE)}" cy="${projection.py(+l.NR_LATITUDE)}" r="${r}" fill-opacity="${.35+.6*l.votos/mx}"/>`});
- vp.innerHTML=h;vp.querySelectorAll('.pt').forEach(el=>el.onclick=e=>{e.stopPropagation();let l=ls[+el.dataset.i];tip.innerHTML=`<b>${esc(l.NM_LOCAL_VOTACAO)}</b><br>${esc(l.DS_ENDERECO)}<br>${esc(l.NM_BAIRRO)}<br>Zona ${l.NR_ZONA} · ${l.secoes.length} seções<br>Votos PCB: <b>${fmt(l.votos)}</b>`;tip.style.left='12px';tip.style.top='12px';tip.style.display='block'});
+ let ls=[];
+ const capital=Number(selectedElectoral?.municipio_id)===14;
+ if(capital && zona.value==='all'){
+   const zm=new Map();
+   for(const x of a){if(x.NR_LATITUDE==null||x.NR_LONGITUDE==null)continue;const k=String(x.NR_ZONA);if(!zm.has(k))zm.set(k,{NR_ZONA:x.NR_ZONA,latSum:0,lonSum:0,n:0,votos:0,secoes:0});const z=zm.get(k);z.latSum+=Number(x.NR_LATITUDE);z.lonSum+=Number(x.NR_LONGITUDE);z.n++;z.votos+=Number(x.VOTOS_PCB||0);z.secoes++}
+   ls=[...zm.values()].map(z=>({NR_ZONA:z.NR_ZONA,NR_LATITUDE:z.latSum/z.n,NR_LONGITUDE:z.lonSum/z.n,votos:z.votos,secoes:z.secoes,agregada:true}));
+ }else{
+   const loc=new Map();for(const x of a){if(x.NR_LATITUDE==null||x.NR_LONGITUDE==null)continue;let k=x.NR_ZONA+'|'+x.NR_LOCAL_VOTACAO;if(!loc.has(k))loc.set(k,{...x,secoes:[],votos:0});let l=loc.get(k);l.secoes.push(x.NR_SECAO);l.votos+=Number(x.VOTOS_PCB||0)}
+   ls=[...loc.values()];
+ }
+ const mx=Math.max(1,...ls.map(x=>x.votos));ls.forEach((l,i)=>{let r=(capital&&zona.value==='all'?5:3)+(capital&&zona.value==='all'?10:6)*Math.sqrt(l.votos/mx);h+=`<circle class="pt" data-i="${i}" cx="${projection.px(+l.NR_LONGITUDE)}" cy="${projection.py(+l.NR_LATITUDE)}" r="${r}" fill-opacity="${capital&&zona.value==='all'?.72:(.28+.55*l.votos/mx)}"/>`});
+ vp.innerHTML=h;vp.querySelectorAll('.pt').forEach(el=>el.onclick=e=>{e.stopPropagation();let l=ls[+el.dataset.i];tip.innerHTML=l.agregada?`<b>Zona ${l.NR_ZONA}</b><br>${fmt(l.secoes)} seções com votos<br>Votos PCB: <b>${fmt(l.votos)}</b><br><small>Selecione esta zona no menu para ver os locais.</small>`:`<b>${esc(l.NM_LOCAL_VOTACAO)}</b><br>${esc(l.DS_ENDERECO)}<br>${esc(l.NM_BAIRRO)}<br>Zona ${l.NR_ZONA} · ${l.secoes.length} seções<br>Votos PCB: <b>${fmt(l.votos)}</b>`;tip.style.left='12px';tip.style.top='12px';tip.style.display='block'});
  const meta=municipios.find(x=>x.cd_mun===mun.value);
  if(selectedElectoral){
    stats.innerHTML=`<b>${meta.municipio}</b> · ${meta.setores} setores IBGE · <b>${fmt(selectedElectoral.votos_total)} votos PCB</b> (${fmt(selectedElectoral.votos_nominais)} nominais + ${fmt(selectedElectoral.votos_legenda)} legenda) · ${zonaRows.length} zonas com votos`;
