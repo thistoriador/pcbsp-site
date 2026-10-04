@@ -108,7 +108,7 @@ async function loadPontos(meta){try{const lr=await fetch('../locais/'+slug(meta.
 async function loadMunicipio(){
  const meta=municipios.find(x=>x.cd_mun===mun.value);stats.textContent='Carregando '+meta.municipio+'…';tip.style.display='none';reset();zona.innerHTML='<option>CARREGANDO ZONAS…</option>';
  try{
-  const [gr]=await Promise.all([fetch('setores/'+mun.value+'.geojson',{cache:'force-cache'}),electoralMunicipios?Promise.resolve():rpc('mapa_municipios',{p_ano:2022}).then(x=>electoralMunicipios=x)]);
+  const [gr]=await Promise.all([fetch('../setores/'+mun.value+'.geojson',{cache:'force-cache'}),electoralMunicipios?Promise.resolve():rpc('mapa_municipios',{p_ano:2022}).then(x=>electoralMunicipios=x)]);
   if(!gr.ok)throw new Error('geometria HTTP '+gr.status); setores=await gr.json();
   selectedElectoral=(electoralMunicipios||[]).find(x=>norm(x.municipio)===norm(meta.municipio))||null;
   zonaRows=selectedElectoral?await rpc('municipio_zonas_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)}):[];
