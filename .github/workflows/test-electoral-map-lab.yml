@@ -1,0 +1,28 @@
+name: Test electoral map lab
+on:
+  push:
+    paths:
+      - 'mapa/teste-estadual/lab-pontos/index.html'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - name: Check inline JavaScript syntax
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          const s=fs.readFileSync('mapa/teste-estadual/lab-pontos/index.html','utf8');
+          const blocks=[...s.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map(x=>x[1]).filter(Boolean);
+          for(const b of blocks)new vm.Script(b);
+          console.log('JavaScript sintaticamente válido:',blocks.length,'blocos');
+          NODE
+      - name: Verify required data
+        run: |
+          test -s mapa/teste-estadual/setores/3509502.geojson
+          test -s mapa/teste-estadual/locais/campinas.json
+          test -s mapa/teste-estadual/locais/santos.json
+          test -s mapa/teste-estadual/locais/sao-paulo.json
+          test -s mapa/teste-estadual/locais/franca.json
