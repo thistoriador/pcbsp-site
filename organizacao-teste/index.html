@@ -73,7 +73,7 @@ function orgForm(x=['','','Interior','Ativa',0],title='Novo organismo'){
  <div class="field"><label>Tipo</label><select id="otype"><option>Célula</option><option>Núcleo</option><option>Subnúcleo</option><option>Organismo virtual</option><option>Outro</option></select></div>
  <div class="field"><label>Situação</label><select id="ostatus">${['Ativa','Inativa','Reativada','Virtual','Em formação','Sem dado'].map(v=>`<option ${v===x[3]?'selected':''}>${v}</option>`).join('')}</select></div>
  <div class="field wide"><label>Município(s) / abrangência</label><input id="ocity" value="${x[1]||''}" placeholder="Um ou mais municípios"></div>
- <div class="field"><label>Regional</label><input id="oreg" value="${x[2]||''}" placeholder="Regional / território"></div>
+ <div class="field"><label>Regional</label><select id="oreg"><option value="">Selecione a Regional</option>${['Macro Nordeste','Macro Oeste','Macro Vale do Paraíba','Macro Centro-Leste','Macro Litoral','Macro Metropolitana','Macro Noroeste'].map(v=>`<option ${v===x[2]?'selected':''}>${v}</option>`).join('')}</select></div>
  <div class="field"><label>Militantes (teste)</label><input id="ocount" type="number" min="0" value="${x[4]||0}"></div>
  <div class="field"><label>Data de fundação / ativação</label><input id="odate" type="date"></div>
  <div class="field"><label>Responsável</label><input id="oresp" placeholder="Nome — teste"></div>
