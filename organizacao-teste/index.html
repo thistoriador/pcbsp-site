@@ -70,7 +70,8 @@ function closeOrg(){orgModal.classList.remove('on')}
 function orgForm(x=['','','Interior','Ativa',0],title='Novo organismo'){
  orgView.innerHTML=`<h2>${title}</h2><div class="formgrid">
  <div class="field wide"><label>Nome do organismo</label><input id="oname" value="${x[0]||''}" placeholder="Ex.: Célula João Amazonas"></div>
- <div class="field"><label>Tipo</label><select id="otype"><option>Célula</option><option>Núcleo</option><option>Subnúcleo</option><option>Organismo virtual</option><option>Outro</option></select></div>
+ <div class="field"><label>Organização</label><select id="oorg"><option>PCB</option><option>UC</option><option>UJC</option></select></div>
+ <div class="field"><label>Tipo de organismo</label><select id="otype"><option>Célula</option><option>Comitê Municipal</option><option>Comitê de Base (UC)</option><option>Núcleo (UJC)</option></select></div>
  <div class="field"><label>Situação</label><select id="ostatus">${['Ativa','Inativa','Reativada','Virtual','Em formação','Sem dado'].map(v=>`<option ${v===x[3]?'selected':''}>${v}</option>`).join('')}</select></div>
  <div class="field wide"><label>Município(s) / abrangência</label><input id="ocity" value="${x[1]||''}" placeholder="Um ou mais municípios"></div>
  <div class="field"><label>Regional</label><select id="oreg"><option value="">Selecione a Regional</option>${['Macro Nordeste','Macro Oeste','Macro Vale do Paraíba','Macro Centro-Leste','Macro Litoral','Macro Metropolitana','Macro Noroeste'].map(v=>`<option ${v===x[2]?'selected':''}>${v}</option>`).join('')}</select></div>
