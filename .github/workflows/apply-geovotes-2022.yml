@@ -2,7 +2,8 @@ name: Apply geovotes 2022
 on:
   push:
     paths:
-      - '.github/scripts/patch-geovotos-2022.js'\n      - '.github/scripts/geovotes-trigger.txt'
+      - '.github/scripts/patch-geovotos-2022.js'
+      - '.github/scripts/geovotes-trigger.txt'
 permissions:
   contents: write
 jobs:
