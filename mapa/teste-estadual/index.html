@@ -39,8 +39,15 @@ function esc(x){return String(x??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt
 function norm(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
 function geomCoords(g){return g.type==='Polygon'?g.coordinates.flat():g.type==='MultiPolygon'?g.coordinates.flat(2):[]}
 function setupProjection(){
- const pts=setores.features.flatMap(f=>geomCoords(f.geometry)); const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
- const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys),pad=20,dx=maxx-minx,dy=maxy-miny,sc=Math.min((W-2*pad)/dx,(H-2*pad)/dy),ox=(W-dx*sc)/2,oy=(H-dy*sc)/2;
+ let minx=Infinity,maxx=-Infinity,miny=Infinity,maxy=-Infinity;
+ for(const f of setores.features){
+   for(const p of geomCoords(f.geometry)){
+     const x=+p[0],y=+p[1];
+     if(x<minx)minx=x;if(x>maxx)maxx=x;
+     if(y<miny)miny=y;if(y>maxy)maxy=y;
+   }
+ }
+ const pad=20,dx=maxx-minx,dy=maxy-miny,sc=Math.min((W-2*pad)/dx,(H-2*pad)/dy),ox=(W-dx*sc)/2,oy=(H-dy*sc)/2;
  projection={px:x=>ox+(x-minx)*sc,py:y=>oy+(maxy-y)*sc};
 }
 function pathGeom(g){const ring=r=>r.map((p,i)=>(i?'L':'M')+projection.px(p[0]).toFixed(1)+','+projection.py(p[1]).toFixed(1)).join(' ')+'Z';return g.type==='Polygon'?g.coordinates.map(ring).join(' '):g.type==='MultiPolygon'?g.coordinates.flatMap(p=>p.map(ring)).join(' '):''}
