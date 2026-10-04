@@ -1,0 +1,10 @@
+const fs=require('fs');const p='mapa/teste-estadual/index.html';let s=fs.readFileSync(p,'utf8');
+s=s.replace('let electoralMunicipios=null,selectedElectoral=null,zonaRows=[];','let electoralMunicipios=null,selectedElectoral=null,zonaRows=[],locationRows=[];');
+if(!s.includes('function slug(v)'))s=s.replace(/function fmt\(n\)\{[^\n]+\}/,m=>m+"\nfunction slug(v){return norm(v).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}");
+s=s.replace(/data=rows\.map\(x=>\(\{NR_ZONA:zr\.zona,NR_SECAO:x\.secao,[^\n]+VOTOS_PCB:x\.votos_total\}\)\);/, "const locMap=new Map(locationRows.filter(l=>String(l.NR_ZONA)===String(zr.zona)).map(l=>[String(l.NR_ZONA)+'|'+String(l.NR_SECAO),l]));\n  data=rows.map(x=>{const l=locMap.get(String(zr.zona)+'|'+String(x.secao))||{};return {NR_ZONA:zr.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||x.codigo_local||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||x.local_nome||'',DS_ENDERECO:l.DS_ENDERECO||x.endereco||'',NM_BAIRRO:l.NM_BAIRRO||x.bairro||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE??null,NR_LONGITUDE:l.NR_LONGITUDE??null,VOTOS_PCB:x.votos_total}};");
+s=s.replace("const [gr]=await Promise.all([fetch('setores/'+mun.value+'.geojson',{cache:'force-cache'}),electoralMunicipios?Promise.resolve():rpc('mapa_municipios',{p_ano:2022}).then(x=>electoralMunicipios=x)]);","const [gr,lr]=await Promise.all([fetch('setores/'+mun.value+'.geojson',{cache:'force-cache'}),fetch('locais/'+slug(meta.municipio)+'.json',{cache:'force-cache'}),electoralMunicipios?Promise.resolve():rpc('mapa_municipios',{p_ano:2022}).then(x=>electoralMunicipios=x)]);");
+s=s.replace("if(!gr.ok)throw new Error('geometria HTTP '+gr.status); setores=await gr.json();","if(!gr.ok)throw new Error('geometria HTTP '+gr.status); setores=await gr.json();\n  locationRows=lr.ok?await lr.json():[];");
+s=s.replace("data=mun.value==='3516200'?francaData:[];","data=[];");
+s=s.replace("if(zona.value==='all' && mun.value!=='3516200'){","if(zona.value==='all'){");
+for(const q of ['locationRows=lr.ok','const locMap=new Map','function slug(v)'])if(!s.includes(q))throw Error('patch ausente '+q);
+fs.writeFileSync(p,s);console.log('OK');
