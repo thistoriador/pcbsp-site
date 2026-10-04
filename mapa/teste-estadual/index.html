@@ -114,7 +114,9 @@ async function loadMunicipio(){
   locationRows=lr.ok?await lr.json():[];
   selectedElectoral=(electoralMunicipios||[]).find(x=>norm(x.municipio)===norm(meta.municipio))||null;
   zonaRows=selectedElectoral?await rpc('municipio_zonas_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)}):[];
-  data=[];
+  const secRows=selectedElectoral?await rpc('municipio_secoes_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)}):[];
+  const locMapAll=new Map(locationRows.map(l=>[String(l.NR_ZONA)+'|'+String(l.NR_SECAO),l]));
+  data=secRows.map(x=>{const l=locMapAll.get(String(x.zona)+'|'+String(x.secao))||{};return {NR_ZONA:x.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||x.codigo_local||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||x.local_nome||'',DS_ENDERECO:l.DS_ENDERECO||x.endereco||'',NM_BAIRRO:l.NM_BAIRRO||x.bairro||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE??null,NR_LONGITUDE:l.NR_LONGITUDE??null,VOTOS_PCB:x.votos_total}};
   setupProjection();buildZones();render();
  }catch(e){stats.innerHTML='<b>Não foi possível carregar este município.</b> '+esc(e.message)}
 }
