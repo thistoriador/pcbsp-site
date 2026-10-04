@@ -53,11 +53,16 @@ function setupProjection(){
  projection={px:x=>ox+(x-minx)*sc,py:y=>oy+(maxy-y)*sc};
 }
 function pathGeom(g){const ring=r=>r.map((p,i)=>(i?'L':'M')+projection.px(p[0]).toFixed(1)+','+projection.py(p[1]).toFixed(1)).join(' ')+'Z';return g.type==='Polygon'?g.coordinates.map(ring).join(' '):g.type==='MultiPolygon'?g.coordinates.flatMap(p=>p.map(ring)).join(' '):''}
-function selectedZone(){return zonaRows.find(z=>String(z.zona_id)===String(zona.value))}
+function selectedZone(){return zonaRows.find(z=>String(z.zona_id)===String(zona.value)||('n:'+z.zona)===String(zona.value))}
 function filtered(){let a=data;const zr=selectedZone();if(zr)a=a.filter(x=>String(x.NR_ZONA)===String(zr.zona));let q=norm(busca.value);if(q)a=a.filter(x=>norm([x.NR_ZONA,x.NR_SECAO,x.NM_BAIRRO,x.NM_LOCAL_VOTACAO,x.DS_ENDERECO,x.NR_CEP].join(' ')).includes(q));return a}
 function buildZones(){
  zona.innerHTML='<option value="all">TODAS AS ZONAS</option>';
- zonaRows.forEach(z=>{let o=document.createElement('option');o.value=z.zona_id;o.textContent=z.zona+'ª ZONA · '+fmt(z.votos_total)+' votos';zona.appendChild(o)});
+ zonaRows.forEach(z=>{let o=document.createElement('option');o.value=z.zona_id||('n:'+z.zona);o.textContent=z.zona+'ª ZONA · '+fmt(z.votos_total)+' votos';zona.appendChild(o)});
+}
+function buildZonesFromData(){
+ const m=new Map();
+ for(const x of data){const k=String(x.NR_ZONA);if(!m.has(k))m.set(k,{zona:Number(x.NR_ZONA),zona_id:'n:'+k,votos_total:0,votos_nominais:0,votos_legenda:0});m.get(k).votos_total+=Number(x.VOTOS_PCB||0)}
+ zonaRows=[...m.values()].sort((a,b)=>a.zona-b.zona);buildZones();
 }
 function render(){
  if(!setores)return; let a=filtered(),h='';
@@ -100,6 +105,7 @@ async function loadPontos2022(meta){
   if(mun.value!==meta.cd_mun)return;
   const lm=new Map(lr.map(l=>[String(l.NR_ZONA)+'|'+String(l.NR_SECAO),l]));
   data=rows.map(x=>{const l=lm.get(String(x.zona)+'|'+String(x.secao))||{};return {NR_ZONA:x.zona,NR_SECAO:x.secao,NR_LOCAL_VOTACAO:l.NR_LOCAL_VOTACAO||'',NM_LOCAL_VOTACAO:l.NM_LOCAL_VOTACAO||'',DS_ENDERECO:l.DS_ENDERECO||'',NM_BAIRRO:l.NM_BAIRRO||'',NR_CEP:l.NR_CEP||'',NR_LATITUDE:l.NR_LATITUDE==null?null:l.NR_LATITUDE,NR_LONGITUDE:l.NR_LONGITUDE==null?null:l.NR_LONGITUDE,VOTOS_PCB:Number(x.votos_total||0)}});
+  if(!zonaRows.length)buildZonesFromData();
   render();
  }catch(e){console.error('pontos 2022',e)}
 }
@@ -109,7 +115,8 @@ async function loadMunicipio(){
   const [gr]=await Promise.all([fetch('teste-estadual/setores/'+mun.value+'.geojson',{cache:'force-cache'}),electoralMunicipios?Promise.resolve():rpc('mapa_municipios',{p_ano:2022}).then(x=>electoralMunicipios=x)]);
   if(!gr.ok)throw new Error('geometria HTTP '+gr.status); setores=await gr.json();
   selectedElectoral=(electoralMunicipios||[]).find(x=>norm(x.municipio)===norm(meta.municipio))||null;
-  zonaRows=selectedElectoral?await rpc('municipio_zonas_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)}):[];
+  zonaRows=[];
+  if(selectedElectoral){try{zonaRows=await rpc('municipio_zonas_pcb',{p_ano:2022,p_municipio_id:Number(selectedElectoral.municipio_id)})}catch(e){console.warn('zonas por RPC indisponíveis; serão montadas pelos votos',e)}}
   data=mun.value==='3516200'?francaData:[];
   setupProjection();buildZones();render();
   if(mun.value!=='3516200'&&selectedElectoral)setTimeout(()=>loadPontos2022(meta),50);
