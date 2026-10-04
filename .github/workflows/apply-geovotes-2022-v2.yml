@@ -1,0 +1,24 @@
+name: Apply geovotes 2022 v2
+on:
+  push:
+    paths:
+      - '.github/scripts/geovotes-v2-trigger.txt'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/scripts/patch-geovotos-2022-v2.js
+      - run: |
+          grep -q "locationRows=lr.ok" mapa/teste-estadual/index.html
+          grep -q "const locMap=new Map" mapa/teste-estadual/index.html
+          test -s mapa/teste-estadual/locais/campinas.json
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add mapa/teste-estadual/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Georreferencia votos 2022 pelos locais oficiais do TSE"
+          git push
