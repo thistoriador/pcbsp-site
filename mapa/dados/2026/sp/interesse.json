@@ -1,0 +1,324 @@
+[
+  {
+    "arquivo": "c0006.json",
+    "n": "5013",
+    "sqcand": "250002539616",
+    "nm": "FABIO JOSE RODRIGUES DE MELLO",
+    "nmu": "FABIO MELLO",
+    "dt": "03/02/1975",
+    "dvt": "Válido",
+    "seq": "268",
+    "e": "n",
+    "st": "",
+    "vap": "8011",
+    "pvap": "0,03",
+    "pvapn": "0,033811379"
+  },
+  {
+    "arquivo": "c0006.json",
+    "n": "5010",
+    "sqcand": "250002539624",
+    "nm": "NATALIA SZERMETA",
+    "nmu": "NATÁLIA BOULOS",
+    "dt": "21/09/1987",
+    "dvt": "Válido",
+    "seq": "42",
+    "e": "n",
+    "st": "",
+    "vap": "114532",
+    "pvap": "0,48",
+    "pvapn": "0,483395937"
+  },
+  {
+    "arquivo": "c0005.json",
+    "n": "250001801242",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "tp": "i",
+    "com": "PCB",
+    "vag": "0",
+    "par": [
+      {
+        "n": "21",
+        "sg": "PCB",
+        "nm": "PARTIDO COMUNISTA BRASILEIRO",
+        "nfed": "",
+        "tvtn": "28305",
+        "tvan": "28305",
+        "cand": [
+          {
+            "n": "211",
+            "sqcand": "250002552153",
+            "nm": "PETTER MAAHS DA SILVA",
+            "nmu": "PETTER MAAHS",
+            "dt": "08/11/1974",
+            "dvt": "Válido",
+            "seq": "11",
+            "e": "n",
+            "st": "",
+            "vap": "28305",
+            "pvap": "0,07",
+            "pvapn": "0,065254531",
+            "vs": [
+              {
+                "tp": "s1",
+                "sqcand": "250002552151",
+                "nm": "OLGA SOARES GALLATTI",
+                "nmu": "OLGA SOARES",
+                "sgp": "PCB"
+              },
+              {
+                "tp": "s2",
+                "sqcand": "250002552152",
+                "nm": "VINÍCIUS JARDIM CARVALHO",
+                "nmu": "VINICIUS JARDIM",
+                "sgp": "PCB"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0005.json",
+    "n": "21",
+    "sg": "PCB",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "nfed": "",
+    "tvtn": "28305",
+    "tvan": "28305",
+    "cand": [
+      {
+        "n": "211",
+        "sqcand": "250002552153",
+        "nm": "PETTER MAAHS DA SILVA",
+        "nmu": "PETTER MAAHS",
+        "dt": "08/11/1974",
+        "dvt": "Válido",
+        "seq": "11",
+        "e": "n",
+        "st": "",
+        "vap": "28305",
+        "pvap": "0,07",
+        "pvapn": "0,065254531",
+        "vs": [
+          {
+            "tp": "s1",
+            "sqcand": "250002552151",
+            "nm": "OLGA SOARES GALLATTI",
+            "nmu": "OLGA SOARES",
+            "sgp": "PCB"
+          },
+          {
+            "tp": "s2",
+            "sqcand": "250002552152",
+            "nm": "VINÍCIUS JARDIM CARVALHO",
+            "nmu": "VINICIUS JARDIM",
+            "sgp": "PCB"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0005.json",
+    "n": "211",
+    "sqcand": "250002552153",
+    "nm": "PETTER MAAHS DA SILVA",
+    "nmu": "PETTER MAAHS",
+    "dt": "08/11/1974",
+    "dvt": "Válido",
+    "seq": "11",
+    "e": "n",
+    "st": "",
+    "vap": "28305",
+    "pvap": "0,07",
+    "pvapn": "0,065254531",
+    "vs": [
+      {
+        "tp": "s1",
+        "sqcand": "250002552151",
+        "nm": "OLGA SOARES GALLATTI",
+        "nmu": "OLGA SOARES",
+        "sgp": "PCB"
+      },
+      {
+        "tp": "s2",
+        "sqcand": "250002552152",
+        "nm": "VINÍCIUS JARDIM CARVALHO",
+        "nmu": "VINICIUS JARDIM",
+        "sgp": "PCB"
+      }
+    ]
+  },
+  {
+    "arquivo": "c0005.json",
+    "tp": "s1",
+    "sqcand": "250002552151",
+    "nm": "OLGA SOARES GALLATTI",
+    "nmu": "OLGA SOARES",
+    "sgp": "PCB"
+  },
+  {
+    "arquivo": "c0005.json",
+    "tp": "s2",
+    "sqcand": "250002552152",
+    "nm": "VINÍCIUS JARDIM CARVALHO",
+    "nmu": "VINICIUS JARDIM",
+    "sgp": "PCB"
+  },
+  {
+    "arquivo": "c0003.json",
+    "n": "250001801160",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "tp": "i",
+    "com": "PCB",
+    "vag": "0",
+    "par": [
+      {
+        "n": "21",
+        "sg": "PCB",
+        "nm": "PARTIDO COMUNISTA BRASILEIRO",
+        "nfed": "",
+        "tvtn": "58848",
+        "tvan": "58848",
+        "cand": [
+          {
+            "n": "21",
+            "sqcand": "250002550913",
+            "nm": "CARLOS ALBERTO MACHADO",
+            "nmu": "CARLOS MACHADO",
+            "dt": "02/03/1985",
+            "dvt": "Válido",
+            "seq": "5",
+            "e": "n",
+            "st": "",
+            "vap": "58848",
+            "pvap": "0,25",
+            "pvapn": "0,254478355",
+            "vs": [
+              {
+                "tp": "v",
+                "sqcand": "250002550912",
+                "nm": "FELIPE DE OLIVEIRA QUEIROZ",
+                "nmu": "FELIPE QUEIROZ",
+                "sgp": "PCB"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0003.json",
+    "n": "21",
+    "sg": "PCB",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "nfed": "",
+    "tvtn": "58848",
+    "tvan": "58848",
+    "cand": [
+      {
+        "n": "21",
+        "sqcand": "250002550913",
+        "nm": "CARLOS ALBERTO MACHADO",
+        "nmu": "CARLOS MACHADO",
+        "dt": "02/03/1985",
+        "dvt": "Válido",
+        "seq": "5",
+        "e": "n",
+        "st": "",
+        "vap": "58848",
+        "pvap": "0,25",
+        "pvapn": "0,254478355",
+        "vs": [
+          {
+            "tp": "v",
+            "sqcand": "250002550912",
+            "nm": "FELIPE DE OLIVEIRA QUEIROZ",
+            "nmu": "FELIPE QUEIROZ",
+            "sgp": "PCB"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0003.json",
+    "n": "21",
+    "sqcand": "250002550913",
+    "nm": "CARLOS ALBERTO MACHADO",
+    "nmu": "CARLOS MACHADO",
+    "dt": "02/03/1985",
+    "dvt": "Válido",
+    "seq": "5",
+    "e": "n",
+    "st": "",
+    "vap": "58848",
+    "pvap": "0,25",
+    "pvapn": "0,254478355",
+    "vs": [
+      {
+        "tp": "v",
+        "sqcand": "250002550912",
+        "nm": "FELIPE DE OLIVEIRA QUEIROZ",
+        "nmu": "FELIPE QUEIROZ",
+        "sgp": "PCB"
+      }
+    ]
+  },
+  {
+    "arquivo": "c0003.json",
+    "tp": "v",
+    "sqcand": "250002550912",
+    "nm": "FELIPE DE OLIVEIRA QUEIROZ",
+    "nmu": "FELIPE QUEIROZ",
+    "sgp": "PCB"
+  },
+  {
+    "arquivo": "c0007.json",
+    "n": "13500",
+    "sqcand": "250002536825",
+    "nm": "PRISCILA CINTRA NEVES GOMIDE",
+    "nmu": "PROFESSORA PRISCILA",
+    "dt": "12/07/1983",
+    "dvt": "Válido",
+    "seq": "303",
+    "e": "n",
+    "st": "",
+    "vap": "11504",
+    "pvap": "0,05",
+    "pvapn": "0,049353429"
+  },
+  {
+    "arquivo": "c0007.json",
+    "n": "13622",
+    "sqcand": "250002536840",
+    "nm": "JOAO PAULO RILLO",
+    "nmu": "JOÃO PAULO RILLO",
+    "dt": "01/01/1977",
+    "dvt": "Válido",
+    "seq": "89",
+    "e": "n",
+    "st": "",
+    "vap": "70341",
+    "pvap": "0,30",
+    "pvapn": "0,301770649"
+  },
+  {
+    "arquivo": "c0007.json",
+    "n": "50500",
+    "sqcand": "250002539937",
+    "nm": "DEBORA ALVES CAMILO",
+    "nmu": "DÉBORA CAMILO",
+    "dt": "02/12/1979",
+    "dvt": "Válido",
+    "seq": "50",
+    "e": "n",
+    "st": "",
+    "vap": "94885",
+    "pvap": "0,41",
+    "pvapn": "0,407067116"
+  }
+]
