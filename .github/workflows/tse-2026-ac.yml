@@ -12,14 +12,14 @@ jobs:
       - name: Coletar TSE e IBGE
         shell: python
         run: |
-          import json,urllib.request,pathlib,unicodedata,time
+          import json,urllib.request,pathlib,unicodedata,time,gzip
           from concurrent.futures import ThreadPoolExecutor
           out=pathlib.Path("mapa/dados/2026/ac");out.mkdir(parents=True,exist_ok=True)
           H={"User-Agent":"Mozilla/5.0"}
           def get(url):
             for i in range(4):
               try:
-                with urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=30) as r:return json.load(r)
+                with urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=30) as r:\n                  raw=r.read()\n                  if raw[:2]==b"\\x1f\\x8b": raw=gzip.decompress(raw)\n                  return json.loads(raw.decode("utf-8"))
               except Exception as e:
                 if i==3: raise
                 time.sleep(2+i)
