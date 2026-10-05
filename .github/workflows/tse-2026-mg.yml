@@ -1,4 +1,4 @@
-name: Baixar resultados TSE 2026 MG
+name: TSE 2026 MG - votos municipais
 on:
   workflow_dispatch:
   push:
@@ -7,90 +7,63 @@ on:
 permissions:
   contents: write
 jobs:
-  baixar:
+  gerar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Baixar resultados oficiais
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p mapa/dados/2026/mg
-          curl --fail --retry 3 -A "Mozilla/5.0" "https://resultados.tse.jus.br/oficial/ele2026/6259/config/mun-e006259-cm.json" -o mapa/dados/2026/mg/municipios-config.json
-          python -m json.tool mapa/dados/2026/mg/municipios-config.json >/dev/null
-          base="https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg"
-          for cargo in 0003 0007; do
-            url="$base/mg-c$cargo-e006259-u.json"
-            echo "$url"
-            curl --fail --retry 3 --retry-delay 2 -A "Mozilla/5.0" "$url" -o "mapa/dados/2026/mg/c$cargo.json"
-            python -m json.tool "mapa/dados/2026/mg/c$cargo.json" >/dev/null
-          done
-                - name: Gerar votação municipal das candidaturas acompanhadas
+      - name: Gerar votos municipais MG
         shell: python
         run: |
-          import json, pathlib, urllib.request, unicodedata
+          import json, pathlib, urllib.request, unicodedata, time
           from concurrent.futures import ThreadPoolExecutor
-          base=pathlib.Path("mapa/dados/2026/mg")
+          outdir=pathlib.Path("mapa/dados/2026/mg"); outdir.mkdir(parents=True,exist_ok=True)
           cfg=json.load(open("mapa/dados/2026/sp/municipios-config.json"))
-          sp=next(x for x in cfg["abr"] if x["cd"]=="mg")
-          alvos={
-            "PROFESSOR TÚLIO LOPES":("0003","6259"),
-            "MÁRIO MARIANO":("0007","6259"),
-            "JÉSSICA CARVALHO":("0007","6259"),
-            "ZULU":("0007","6259")}
+          mg=next(x for x in cfg["abr"] if x["cd"]=="mg")
+          targets={
+            "TULIO LOPES":"TÚLIO LOPES",
+            "PROFESSOR TULIO LOPES":"TÚLIO LOPES",
+            "MARIO MARIANO":"MÁRIO MARIANO",
+            "JESSICA CARVALHO":"JÉSSICA CARVALHO",
+            "ZULU":"ZULU",
+            "JOSE AUGUSTO BERNARDES":"ZULU"}
           def norm(s):
             return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
-          wanted={norm(k):(k,c,e) for k,(c,e) in alvos.items()}
           headers={"User-Agent":"Mozilla/5.0"}
-          def baixar(m):
-            row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":{}}
-            for cargo,ele in [("0003","6259"),("0007","6259")]:
-              url=f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/mg/sp{m['cd']}-c{cargo}-e00{ele}-u.json"
+          def get(url):
+            for n in range(3):
               try:
-                with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=20) as r:d=json.load(r)
-              except Exception as e:
-                row.setdefault("erros",[]).append({"cargo":cargo,"erro":str(e)});continue
-              def walk(x):
-                if isinstance(x,dict):
-                  nm=norm(x.get("nmu",""))
-                  if nm in wanted and "vap" in x:
-                    canon,_,_=wanted[nm];row["candidatos"][canon]=int(x.get("vap") or 0)
-                  for v in x.values():walk(v)
-                elif isinstance(x,list):
-                  for v in x:walk(v)
-              walk(d)
+                with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=25) as r:return json.load(r)
+              except Exception:
+                if n==2: raise
+                time.sleep(1+n)
+          def walk(x,found):
+            if isinstance(x,dict):
+              nm=norm(x.get("nmu",""))
+              if nm in targets and "vap" in x: found[targets[nm]]=int(x.get("vap") or 0)
+              for v in x.values(): walk(v,found)
+            elif isinstance(x,list):
+              for v in x: walk(v,found)
+          def one(m):
+            found={}
+            errors=[]
+            for cargo in ("0003","0007"):
+              url=f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c{cargo}-e006259-u.json"
+              try: walk(get(url),found)
+              except Exception as e: errors.append(cargo+":"+str(e))
+            row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
+            if errors: row["erros"]=errors
             return row
-          with ThreadPoolExecutor(max_workers=16) as ex:
-            out=list(ex.map(baixar,sp["mu"]))
-          json.dump(out,open(base/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
-          print("municípios:",len(out),"com dados:",sum(bool(x["candidatos"]) for x in out))
-      - name: Resumo dos candidatos de interesse
-        shell: python
-        run: |
-          import json, pathlib, unicodedata
-          base=pathlib.Path("mapa/dados/2026/mg")
-          wanted=["PCB","PROFESSOR TÚLIO LOPES","TÚLIO LOPES","MÁRIO MARIANO","JÉSSICA CARVALHO","ZULU"]
-          def norm(s):
-            return ''.join(c for c in unicodedata.normalize('NFD',str(s).upper()) if unicodedata.category(c)!='Mn')
-          out=[]
-          for p in base.glob("c*.json"):
-            d=json.load(open(p))
-            def walk(x):
-              if isinstance(x,dict):
-                blob=" ".join(str(v) for v in x.values() if isinstance(v,(str,int,float)))
-                nb=norm(blob)
-                if any(norm(w) in nb for w in wanted): out.append({"arquivo":p.name,**x})
-                for v in x.values(): walk(v)
-              elif isinstance(x,list):
-                for v in x: walk(v)
-            walk(d)
-          json.dump(out,open(base/"interesse.json","w"),ensure_ascii=False,indent=2)
-          print("registros de interesse:",len(out))
+          with ThreadPoolExecutor(max_workers=10) as ex: rows=list(ex.map(one,mg["mu"]))
+          json.dump(rows,open(outdir/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
+          sums={}
+          for r in rows:
+            for k,v in r["candidatos"].items(): sums[k]=sums.get(k,0)+v
+          print("municipios",len(rows),"com_votos",sum(bool(r["candidatos"]) for r in rows),"totais",sums)
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mapa/dados/2026/mg
+          git add mapa/dados/2026/mg/municipios-interesse.json
           git diff --cached --quiet && exit 0
-          git commit -m "Atualiza apuração TSE 2026 MG"
+          git commit -m "Atualiza votos municipais TSE 2026 MG"
           git push
