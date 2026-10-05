@@ -30,7 +30,8 @@ jobs:
       - name: Gerar votação municipal das candidaturas acompanhadas
         shell: python
         run: |
-          import json, pathlib, urllib.request, unicodedata\n          from concurrent.futures import ThreadPoolExecutor
+          import json, pathlib, urllib.request, unicodedata
+          from concurrent.futures import ThreadPoolExecutor
           base=pathlib.Path("mapa/dados/2026/sp")
           cfg=json.load(open(base/"municipios-config.json"))
           sp=next(x for x in cfg["abr"] if x["cd"]=="sp")
