@@ -222,6 +222,15 @@ function newMil(){editingMil=-1;milForm()}
 function editMil(i){editingMil=i;milForm(D.mil[i],'Editar militante')}
 function saveMil(){let row=[mname.value.trim(),mcity.value.trim(),mcell.value,mstatus.value,mfunc.value.trim(),morg.value];if(!row[0]||!row[1]||!row[2]){showToast('Informe nome, município e organismo.');return}if(editingMil<0){D.mil.push(row);showToast('Militante de teste cadastrado.')}else{D.mil[editingMil]=row;showToast('Militante de teste atualizado.')}renderMil();closeOrg()}
 
+CENSO_SNAPSHOTS['2025-07'].cells=[
+['Cunhambebe','Ubatuba / Caraguatatuba / Litoral Norte','Macro Litoral','Ativa',20],['Santos','Santos','Macro Litoral','Ativa',10],['Vitor Gallatti','São Vicente / Cubatão / Praia Grande','Macro Litoral','Ativa',5],
+['Assis','Assis / virtual','Macro Oeste','Ativa',1],['Marília - Bauru','Marília / Bauru','Macro Oeste','Ativa',6],
+['Campinas','Campinas','Macro Centro-Leste','Ativa',7],['CM Piracicaba','Piracicaba','Macro Centro-Leste','Ativa',14],['Araras + Conchal','Araras / Conchal','Macro Centro-Leste','Ativa',5],['Atibaia + Jarinu + Bom Jesus','Atibaia / Jarinu / Bom Jesus dos Perdões','Macro Centro-Leste','Ativa',10],['Bragança','Bragança Paulista','Macro Centro-Leste','Ativa',6],['Rio Claro','Rio Claro','Macro Centro-Leste','Ativa',8],['Limeira - Americana','Limeira / Americana','Macro Centro-Leste','Ativa',3],
+['Franca - Batatais','Franca / Batatais','Macro Nordeste','Ativa',8],['Ribeirão Preto - Barretos','Ribeirão Preto / Barretos','Macro Nordeste','Ativa',9],['Pitangueiras','Pitangueiras','Macro Nordeste','Ativa',4],['Araraquara','Araraquara','Macro Nordeste','Ativa',6],
+['S. J. do Rio Preto','São José do Rio Preto','Macro Noroeste','Ativa',14],['Jales - Urânia - Fernandópolis','Jales / Urânia / Fernandópolis','Macro Noroeste','Ativa',6],['Ibitinga','Ibitinga','Macro Noroeste','Ativa',5],
+['Pindamonhangaba','Pindamonhangaba','Macro Sudeste','Ativa','—'],['Grande SP / Metropolitana','Grande São Paulo','Macro Metropolitana','Ativa',21],['Capital','São Paulo','Capital','Ativa',55],['Virtual estadual','Estadual / virtual','Virtual estadual','Ativa',2]
+];
+CENSO_SNAPSHOTS['2025-07'].note='Capital: total declarado 55; soma das células listadas na fonte 64. Divergência preservada. Macro Litoral registra ainda 4 afastados separadamente.';
 const FOUNDATION={'Franca - Batatais':'2007','Araraquara':'2021','Ribeirão Preto - Barretos':'2022','Litoral Norte':'2021','Ibitinga':'junho/2025','Jales - Fernandópolis':'2017','Pitangueiras':'2019'};
 let editing=-1;
 function showToast(t){toast.textContent=t;toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),1800)}
