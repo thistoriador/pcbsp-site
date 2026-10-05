@@ -1,0 +1,55 @@
+name: Baixar resultados TSE 2026 SP
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/tse-2026-sp.yml'
+permissions:
+  contents: write
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar resultados oficiais
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p mapa/dados/2026/sp
+          base="https://resultados.tse.jus.br/oficial/ele2026/6259/dados/sp"
+          for cargo in 0003 0005 0006 0007; do
+            url="$base/sp-c$cargo-e006259-u.json"
+            echo "$url"
+            curl --fail --retry 3 --retry-delay 2 -A "Mozilla/5.0" "$url" -o "mapa/dados/2026/sp/c$cargo.json"
+            python -m json.tool "mapa/dados/2026/sp/c$cargo.json" >/dev/null
+          done
+      - name: Resumo dos candidatos de interesse
+        shell: python
+        run: |
+          import json, pathlib, unicodedata
+          base=pathlib.Path("mapa/dados/2026/sp")
+          wanted=["PCB","CARLOS MACHADO","PETTER MAAHS","NATALIA BOULOS","FÁBIO MELLO","FABIO MELLO","JOÃO PAULO RILLO","JOAO PAULO RILLO","PRISCILA CINTRA","PROFESSORA PRISCILA","DÉBORA CAMILO","DEBORA CAMILO"]
+          def norm(s):
+            return ''.join(c for c in unicodedata.normalize('NFD',str(s).upper()) if unicodedata.category(c)!='Mn')
+          out=[]
+          for p in base.glob("c*.json"):
+            d=json.load(open(p))
+            def walk(x):
+              if isinstance(x,dict):
+                blob=" ".join(str(v) for v in x.values() if isinstance(v,(str,int,float)))
+                nb=norm(blob)
+                if any(norm(w) in nb for w in wanted): out.append({"arquivo":p.name,**x})
+                for v in x.values(): walk(v)
+              elif isinstance(x,list):
+                for v in x: walk(v)
+            walk(d)
+          json.dump(out,open(base/"interesse.json","w"),ensure_ascii=False,indent=2)
+          print("registros de interesse:",len(out))
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/dados/2026/sp
+          git diff --cached --quiet && exit 0
+          git commit -m "Atualiza apuração TSE 2026 SP"
+          git push
