@@ -52,7 +52,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <div id="orgModal" class="modal"><div class="dialog"><div id="orgView"></div></div></div><div id="toast" class="toast"></div></main></div>
 <script>
 const ACCESS_USERS={
- 'tito':{hash:'f091546200f8cf76daa719620678e09b544dc622a8d7f097b510122caa447176',role:'SUPERADMIN',scope:'Estado',views:['inicio','censo','mapa','militantes','celulas','historico','relatorios','cot','usuarios','config']},
+ 'tito':{hash:'e704828df8a8dd1bf8338b6357f5f5b28cb74f27ff2d12a5b79b4ad682938c68',role:'SUPERADMIN',scope:'Estado',views:['inicio','censo','mapa','militantes','celulas','historico','relatorios','cot','usuarios','config']},
  'admin.cr':{hash:'f301068321c59d40cc74693a977228f241e898a62f7b0553425be858f2a25fe5',role:'ADMIN CR',scope:'Estado',views:['inicio','censo','historico','relatorios','cot']},
  'admin.macro':{hash:'0f97267579156b1c6ef618ce7c7d76b92e69d34cbf0c37eda72909919a034af3',role:'ADMIN MACRO',scope:'Macro atribuída',views:['inicio','censo','mapa','militantes','celulas','historico','relatorios']},
  'admin.local':{hash:'c4dcf2965ff26ff9f7518842515b6cd17de55aea59a1d0fa5b8d31044d16f85e',role:'ADMIN LOCAL',scope:'Organismo atribuído',views:['inicio','censo','mapa','militantes','celulas']}
@@ -71,7 +71,7 @@ loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Ent
 setTimeout(()=>{try{const a=JSON.parse(localStorage.getItem('pcb_org_access')||'null'),now=Date.now();if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash&&now-a.started<ACCESS_TTL&&now-a.last<ACCESS_IDLE)applyAccess(a.user,ACCESS_USERS[a.user],a.started);else expireAccess(a?'Sessão anterior expirada. Entre novamente.':'')}catch(e){expireAccess('')}},0);
 
 const CENSO_SNAPSHOTS={
- '2026-08':{label:'Agosto/2026',source:'Levantamento consolidado informado em agosto/2026',mil:195,org:27,active:26,cities:'—',cm:'—',
+ '2026-08':{label:'Agosto/2026',source:'Levantamento consolidado informado em agosto/2026',mil:195,org:27,active:26,cities:36,cm:'—',
  cells:[
  ['Americana - Nova Odessa - Santa Bárbara','Americana / Nova Odessa / Santa Bárbara','', 'Ativa',4],
  ['Araraquara','Araraquara','', 'Ativa',6],['Araras + Conchal','Araras / Conchal','', 'Ativa',4],
