@@ -30,7 +30,7 @@ jobs:
       - name: Gerar votação municipal das candidaturas acompanhadas
         shell: python
         run: |
-          import json, pathlib, urllib.request, time, unicodedata
+          import json, pathlib, urllib.request, unicodedata\n          from concurrent.futures import ThreadPoolExecutor
           base=pathlib.Path("mapa/dados/2026/sp")
           cfg=json.load(open(base/"municipios-config.json"))
           sp=next(x for x in cfg["abr"] if x["cd"]=="sp")
@@ -42,9 +42,8 @@ jobs:
           def norm(s):
             return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
           wanted={norm(k):(k,c,e) for k,(c,e) in alvos.items()}
-          out=[]
           headers={"User-Agent":"Mozilla/5.0"}
-          for i,m in enumerate(sp["mu"],1):
+          def baixar(m):
             row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":{}}
             for cargo,ele in [("0001","6257"),("0003","6259"),("0005","6259"),("0006","6259"),("0007","6259")]:
               url=f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/sp/sp{m['cd']}-c{cargo}-e00{ele}-u.json"
@@ -61,9 +60,9 @@ jobs:
                 elif isinstance(x,list):
                   for v in x:walk(v)
               walk(d)
-              time.sleep(.015)
-            out.append(row)
-            if i%50==0: print(i,"/",len(sp["mu"]))
+            return row
+          with ThreadPoolExecutor(max_workers=16) as ex:
+            out=list(ex.map(baixar,sp["mu"]))
           json.dump(out,open(base/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
           print("municípios:",len(out),"com dados:",sum(bool(x["candidatos"]) for x in out))
       - name: Resumo dos candidatos de interesse
