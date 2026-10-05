@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '.github/workflows/tse-2026-sp.yml'
+      - '.github/workflows/tse-2026-mg.yml'
 permissions:
   contents: write
 jobs:
