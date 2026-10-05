@@ -16,6 +16,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p mapa/dados/2026/sp
+          curl --fail --retry 3 -A "Mozilla/5.0" "https://resultados.tse.jus.br/oficial/ele2026/6259/config/mun-e006259-cm.json" -o mapa/dados/2026/sp/municipios-config.json
+          python -m json.tool mapa/dados/2026/sp/municipios-config.json >/dev/null
           base="https://resultados.tse.jus.br/oficial/ele2026/6259/dados/sp"
           for cargo in 0003 0005 0006 0007; do
             url="$base/sp-c$cargo-e006259-u.json"
