@@ -35,7 +35,7 @@ jobs:
           cargos={"0001":("6257","Presidente"),"0003":("6259","Governador"),"0005":("6259","Senador"),"0006":("6259","Deputado Federal"),"0007":("6259","Deputado Estadual")}
           cands={}
           for cargo,(ele,rotulo) in cargos.items():
-            d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/{'br' if cargo=='0001' else 'ac'}/{'br' if cargo=='0001' else 'ac'}-c{cargo}-e00{ele}-u.json")
+            d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/ac/ac-c{cargo}-e00{ele}-u.json")
             def walk(x):
               if isinstance(x,dict):
                 nm=x.get("nmu")
