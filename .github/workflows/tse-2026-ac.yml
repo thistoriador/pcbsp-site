@@ -41,7 +41,7 @@ jobs:
                 nm=x.get("nmu")
                 if nm and x.get("vap") is not None:
                   blob=norm(" ".join(str(v) for v in x.values() if isinstance(v,(str,int,float))))
-                  if (cargo=="0001" and norm(nm)=="EDMILSON COSTA") or (cargo!="0001" and "PCB" in blob):
+                  if (cargo=="0001" and norm(nm)=="EDMILSON COSTA") or (cargo=="0003" and norm(nm)=="EUDO RAFFAEL"):
                     cands[norm(nm)]={"nome":str(nm).upper(),"cargo":rotulo,"numero":str(x.get("n") or x.get("nr") or ""),"total":int(x.get("vap") or 0),"cargo_codigo":cargo,"ele":ele}
                 for v in x.values():walk(v)
               elif isinstance(x,list):
