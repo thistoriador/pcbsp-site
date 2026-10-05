@@ -69,6 +69,8 @@ async function doLogin(){const u=loginUser.value.trim().toLowerCase(),p=ACCESS_U
 loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>expireAccess('');
 ['click','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,touchAccess,{passive:true}));
 setTimeout(()=>{try{const a=JSON.parse(localStorage.getItem('pcb_org_access')||'null'),now=Date.now();if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash&&now-a.started<ACCESS_TTL&&now-a.last<ACCESS_IDLE)applyAccess(a.user,ACCESS_USERS[a.user],a.started);else expireAccess(a?'Sessão anterior expirada. Entre novamente.':'')}catch(e){expireAccess('')}},0);
+// garante atualização do painel mesmo com cache/sessão restaurada
+setTimeout(()=>{if(window.censoPeriod&&CENSO_SNAPSHOTS['2026-08']){CENSO_SNAPSHOTS['2026-08'].cities=36;renderCensoPeriod()}},50);
 
 const CENSO_SNAPSHOTS={
  '2026-08':{label:'Agosto/2026',source:'Levantamento consolidado informado em agosto/2026',mil:195,org:27,active:26,cities:36,cm:'—',
