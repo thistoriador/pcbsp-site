@@ -47,30 +47,19 @@ jobs:
               d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/mg/mg{m['cd']}-c{cargo}-e00{ele}-u.json")
               if d:walk(d,found)
             d7=get(f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c0007-e006259-u.json")
-            def leg21(x):
-              vals=[]
+            def legenda21(x):
               if isinstance(x,dict):
-                blob=" ".join(str(v).upper() for v in x.values() if isinstance(v,(str,int,float)))
-                if "PCB" in blob or "PARTIDO COMUNISTA BRASILEIRO" in blob:
-                  for k in ("vleg","vl","vap"):
-                    if k in x:
-                      try: vals.append(int(x[k] or 0))
-                      except: pass
-                for v in x.values(): vals+=leg21(v)
+                if str(x.get("n") or "")=="21" and str(x.get("sg") or "").upper()=="PCB" and "tvtl" in x:
+                  return int(x.get("tvtl") or 0)
+                for v in x.values():
+                  z=legenda21(v)
+                  if z is not None:return z
               elif isinstance(x,list):
-                for v in x: vals+=leg21(v)
-              return vals
-            def find21(x):
-              vals=[]
-              if isinstance(x,dict):
-                if str(x.get("n") or x.get("nr") or x.get("npar") or x.get("nrpar") or "")=="21":
-                  vals.append({k:v for k,v in x.items() if isinstance(v,(str,int,float))})
-                for v in x.values(): vals+=find21(v)
-              elif isinstance(x,list):
-                for v in x: vals+=find21(v)
-              return vals
-            found["LEGENDA 21"]=max(leg21(d7) or [0])
-            if m["nm"]=="BELO HORIZONTE": print("PCB21_DEBUG",json.dumps(find21(d7)[:30],ensure_ascii=False))
+                for v in x:
+                  z=legenda21(v)
+                  if z is not None:return z
+              return None
+            found["LEGENDA 21"]=int(legenda21(d7) or 0)
             return {"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
           with ThreadPoolExecutor(max_workers=12) as ex: rows=list(ex.map(one,cities))
           os.makedirs("tmp",exist_ok=True)
