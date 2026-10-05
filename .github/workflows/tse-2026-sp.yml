@@ -1,4 +1,4 @@
-name: Baixar resultados TSE 2026 SP
+name: Baixar resultados TSE 2026 SP — urgente
 on:
   workflow_dispatch:
   push:
