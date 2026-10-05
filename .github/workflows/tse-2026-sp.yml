@@ -19,12 +19,14 @@ jobs:
           curl --fail --retry 3 -A "Mozilla/5.0" "https://resultados.tse.jus.br/oficial/ele2026/6259/config/mun-e006259-cm.json" -o mapa/dados/2026/sp/municipios-config.json
           python -m json.tool mapa/dados/2026/sp/municipios-config.json >/dev/null
           base="https://resultados.tse.jus.br/oficial/ele2026/6259/dados/sp"
-          for cargo in 0001 0003 0005 0006 0007; do
+          for cargo in 0003 0005 0006 0007; do
             url="$base/sp-c$cargo-e006259-u.json"
             echo "$url"
             curl --fail --retry 3 --retry-delay 2 -A "Mozilla/5.0" "$url" -o "mapa/dados/2026/sp/c$cargo.json"
             python -m json.tool "mapa/dados/2026/sp/c$cargo.json" >/dev/null
           done
+          curl --fail --retry 3 --retry-delay 2 -A "Mozilla/5.0" "https://resultados.tse.jus.br/oficial/ele2026/6257/dados/sp/sp-c0001-e006257-u.json" -o "mapa/dados/2026/sp/c0001.json"
+          python -m json.tool "mapa/dados/2026/sp/c0001.json" >/dev/null
       - name: Resumo dos candidatos de interesse
         shell: python
         run: |
