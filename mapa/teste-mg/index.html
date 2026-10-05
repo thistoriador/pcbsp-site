@@ -1,34 +1,6 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mapa dos Votos PCB-SP · Minas Gerais · TESTE SP-BASE</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3eee4;color:#191817}.hero{background:linear-gradient(90deg,#65070c,#8d0810);color:#fff;padding:24px 28px;border-bottom:6px solid #f0c52b}.hero b{font-size:28px}.hero em{color:#f0c52b;font-style:normal}.bar{background:#fff;padding:12px 20px;border-bottom:1px solid #ded6c9}.bar button{padding:9px 14px;border:1px solid #ded6c9;border-radius:24px;background:#fff;font-weight:800;cursor:pointer}.wrap{padding:18px;display:grid;grid-template-columns:1.3fr .7fr;gap:16px}.card{background:#fffdf8;border:1px solid #ded6c9;border-radius:15px;overflow:hidden}.head{padding:15px 17px;border-bottom:1px solid #ded6c9}.head h1{margin:0;font-size:24px}#mgRealMap{height:560px;background:#e5dfd4}.status{padding:12px 17px;background:#fff3cf;font-weight:700}.list{height:560px;overflow:auto}.row{padding:10px 13px;border-bottom:1px solid #eee;font-weight:700}.ok{color:#176b34}@media(max-width:850px){.wrap{grid-template-columns:1fr}#mgRealMap{height:420px}.list{height:300px}}</style></head><body>
-<div class="hero"><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>TERRITÓRIO • HISTÓRIA • ELEIÇÕES</div></div>
-<div class="bar"><button onclick="location.href='/mapa/'">← SÃO PAULO</button> &nbsp; MINAS GERAIS · TESTE BASE SP</div>
-<div id="status" class="status">Carregando Minas com a mesma rotina do mapa de São Paulo…</div>
-<div class="wrap"><div class="card"><div class="head"><h1>Minas Gerais</h1><small>853 municípios · mesma rotina Leaflet do SP</small></div><div id="mgRealMap"></div></div>
-<div class="card"><div class="head"><h1>Municípios</h1><small id="count">aguarde…</small></div><div id="list" class="list"></div></div></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
-const GEO_URLS=[
-'https://cdn.jsdelivr.net/gh/henriquemalvar/br-geojson@main/dist/municipios/MG.geojson',
-'https://raw.githubusercontent.com/henriquemalvar/br-geojson/main/dist/municipios/MG.geojson'
-];
-let leafletMap=null,geoLayer=null,geoData=null;
-function geoName(f){const p=f.properties||{};return p.name||p.nome||p.NM_MUN||p.nm_mun||p.NOME||p.municipio||''}
-async function initRealMap(){
- const el=document.getElementById('mgRealMap'),st=document.getElementById('status');
- try{
-  if(!window.L)throw new Error('biblioteca Leaflet não carregou');
-  let lastErr=null;
-  for(const url of GEO_URLS){try{const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw new Error('HTTP '+r.status);geoData=await r.json();if(geoData?.features?.length)break}catch(e){lastErr=e;geoData=null}}
-  if(!geoData)throw lastErr||new Error('malha municipal não carregou');
-  leafletMap=L.map(el,{zoomControl:true,attributionControl:false,scrollWheelZoom:true,minZoom:5,maxZoom:12,zoomSnap:.25,zoomDelta:.25});
-  geoLayer=L.geoJSON(geoData,{style:{color:'#fff',weight:.65,fillColor:'#d9d1c5',fillOpacity:1},onEachFeature:(f,l)=>{const nm=geoName(f);l.bindTooltip(nm,{sticky:true});l.on('click',()=>st.textContent='Município selecionado: '+nm)}}).addTo(leafletMap);
-  leafletMap.fitBounds(geoLayer.getBounds(),{padding:[18,18],animate:false});
-  const names=geoData.features.map(geoName).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  document.getElementById('count').textContent=names.length+' municípios carregados';
-  document.getElementById('list').innerHTML=names.map(n=>'<div class="row">'+n+'</div>').join('');
-  st.innerHTML='<span class="ok">✓ MAPA CARREGADO</span> · '+names.length+' municípios · rotina idêntica à usada em São Paulo.';
- }catch(e){console.error(e);st.textContent='ERRO: '+e.message;el.innerHTML='<div style="padding:24px">Não foi possível carregar a malha municipal.</div>'}
-}
-initRealMap();
-</script></body></html>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mapa dos Votos PCB-SP · MG · TESTE</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3eee4;color:#191817}header{background:#79090f;color:#fff;padding:20px 26px;border-bottom:6px solid #f0c52b}header b{font-size:28px}header em{color:#f0c52b;font-style:normal}.bar{background:#fff;padding:11px 18px;border-bottom:1px solid #ddd}.bar button{padding:10px 15px;border:1px solid #ccc;border-radius:24px;background:#fff;font-weight:bold;cursor:pointer}.status{padding:10px 18px;background:#fff3cf;font-weight:bold}.grid{padding:16px;display:grid;grid-template-columns:1.45fr .55fr;gap:15px}.card{background:#fff;border:1px solid #ddd;border-radius:14px;overflow:hidden}.hd{padding:14px 16px;border-bottom:1px solid #ddd}.hd h1{margin:0;font-size:24px}.hd small{color:#666}#map{height:590px}.search{padding:10px}.search input{width:100%;font-size:17px;padding:11px;border:1px solid #ccc;border-radius:9px}#cities{height:535px;overflow:auto}.city{padding:9px 12px;border-top:1px solid #eee;font-weight:bold;cursor:pointer}.city:hover{background:#fff3cf;color:#8d0810}@media(max-width:800px){.grid{grid-template-columns:1fr}#map{height:420px}#cities{height:300px}}</style></head><body><header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>TERRITÓRIO • HISTÓRIA • ELEIÇÕES</div></header><div class="bar"><button onclick="location.href='/mapa/'">← SÃO PAULO</button> &nbsp; <b>MINAS GERAIS · TESTE BASE SP</b></div><div id="status" class="status">Carregando a mesma estrutura municipal usada no SP 2026…</div><main class="grid"><section class="card"><div class="hd"><h1>Minas Gerais</h1><small>Mapa municipal · códigos IBGE ligados à configuração TSE</small></div><div id="map"></div></section><section class="card"><div class="hd"><h1>Municípios</h1><small id="count">carregando…</small></div><div class="search"><input id="q" placeholder="Buscar município"></div><div id="cities"></div></section></main><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
+let map,geo,rows=[],byIbge=new Map(),layers=new Map();
+function render(a){let b=document.getElementById('cities');b.innerHTML='';a.forEach(m=>{let d=document.createElement('div');d.className='city';d.textContent=m.nm;d.onclick=()=>focus(m);b.appendChild(d)})}
+function focus(m){let l=layers.get(m.cdi);if(l){map.fitBounds(l.getBounds(),{padding:[25,25]});l.openPopup()}}
+async function init(){try{let [cr,gr]=await Promise.all([fetch('/mapa/dados/2026/mg/municipios-config.json?spbase=1',{cache:'no-store'}),fetch('/mapa/dados/2026/mg/municipios.geojson?spbase=1',{cache:'no-store'})]);if(!cr.ok||!gr.ok)throw Error('arquivos locais '+cr.status+'/'+gr.status);let cfg=await cr.json(),gj=await gr.json();rows=cfg.municipios;rows.forEach(x=>byIbge.set(String(x.cdi),x));map=L.map('map');geo=L.geoJSON(gj,{style:{color:'#fff',weight:.65,fillColor:'#d1c8bb',fillOpacity:1},onEachFeature:(f,l)=>{let id=String(f.properties.id),m=byIbge.get(id);if(m){layers.set(id,l);l.bindPopup('<b>'+m.nm+'</b><br>Código TSE '+m.cd+' · IBGE '+m.cdi+'<br>Zona(s): '+m.z.join(', '))}}}).addTo(map);map.fitBounds(geo.getBounds());render(rows);document.getElementById('count').textContent=rows.length+' municípios';document.getElementById('status').textContent='✓ BASE SP REPLICADA: '+rows.length+' municípios TSE ligados à malha de Minas.'}catch(e){document.getElementById('status').textContent='ERRO: '+e.message}}
+document.getElementById('q').oninput=e=>{let q=e.target.value.toLocaleLowerCase('pt-BR');render(rows.filter(x=>x.nm.toLocaleLowerCase('pt-BR').includes(q)))};init();</script></body></html>
