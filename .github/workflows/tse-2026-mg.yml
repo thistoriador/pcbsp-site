@@ -24,7 +24,7 @@ jobs:
           mg=next(x for x in cfg["abr"] if x["cd"]=="mg")
           shard=int("${{ matrix.shard }}")
           cities=[m for i,m in enumerate(mg["mu"]) if i%8==shard]
-          aliases={"TULIO LOPES":"TÚLIO LOPES","PROFESSOR TULIO LOPES":"TÚLIO LOPES","PROF TULIO LOPES":"TÚLIO LOPES","MARIO MARIANO":"MÁRIO MARIANO","PROFESSOR MARIO MARIANO":"MÁRIO MARIANO","JESSICA CARVALHO":"JÉSSICA CARVALHO","ZULU":"ZULU","JOSE AUGUSTO BERNARDES":"ZULU"}
+          aliases={"TULIO LOPES":"TÚLIO LOPES","PROFESSOR TULIO LOPES":"TÚLIO LOPES","PROF TULIO LOPES":"TÚLIO LOPES","MARIO MARIANO":"MÁRIO MARIANO","PROFESSOR MARIO MARIANO":"MÁRIO MARIANO","JESSICA CARVALHO":"JÉSSICA CARVALHO","ZULU":"ZULU","JOSE AUGUSTO BERNARDES":"ZULU","EDMILSON COSTA":"EDMILSON COSTA"}
           def norm(s): return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
           H={"User-Agent":"Mozilla/5.0"}
           def get(url):
@@ -43,9 +43,24 @@ jobs:
               for v in x:walk(v,found)
           def one(m):
             found={}
-            for cargo in ("0003","0007"):
-              d=get(f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c{cargo}-e006259-u.json")
+            for cargo,ele in (("0001","6257"),("0003","6259"),("0007","6259")):
+              d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/mg/mg{m['cd']}-c{cargo}-e00{ele}-u.json")
               if d:walk(d,found)
+            d7=get(f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c0007-e006259-u.json")
+            def leg21(x):
+              vals=[]
+              if isinstance(x,dict):
+                blob=" ".join(str(v).upper() for v in x.values() if isinstance(v,(str,int,float)))
+                if "PCB" in blob or "PARTIDO COMUNISTA BRASILEIRO" in blob:
+                  for k in ("vleg","vl","vap"):
+                    if k in x:
+                      try: vals.append(int(x[k] or 0))
+                      except: pass
+                for v in x.values(): vals+=leg21(v)
+              elif isinstance(x,list):
+                for v in x: vals+=leg21(v)
+              return vals
+            found["LEGENDA 21"]=max(leg21(d7) or [0])
             return {"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
           with ThreadPoolExecutor(max_workers=12) as ex: rows=list(ex.map(one,cities))
           os.makedirs("tmp",exist_ok=True)
