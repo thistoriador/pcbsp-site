@@ -1,0 +1,80 @@
+name: Gerar mapa Acre 2026
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/tse-2026-ac.yml']
+permissions: {contents: write}
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Coletar TSE e IBGE
+        shell: python
+        run: |
+          import json,urllib.request,pathlib,unicodedata,time
+          from concurrent.futures import ThreadPoolExecutor
+          out=pathlib.Path("mapa/dados/2026/ac");out.mkdir(parents=True,exist_ok=True)
+          H={"User-Agent":"Mozilla/5.0"}
+          def get(url):
+            for i in range(4):
+              try:
+                with urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=30) as r:return json.load(r)
+              except Exception as e:
+                if i==3: raise
+                time.sleep(2+i)
+          cfg=get("https://resultados.tse.jus.br/oficial/ele2026/6259/config/mun-e006259-cm.json")
+          ac=next(x for x in cfg["abr"] if x["cd"]=="ac")
+          json.dump({"ele":"6259","uf":"ac","estado":"ACRE","municipios":ac["mu"]},open(out/"municipios-config.json","w"),ensure_ascii=False,separators=(",",":"))
+          gj=get("https://servicodados.ibge.gov.br/api/v3/malhas/estados/12?formato=application/vnd.geo%2Bjson&qualidade=minima&intrarregiao=municipio")
+          json.dump(gj,open(out/"municipios.geojson","w"),ensure_ascii=False,separators=(",",":"))
+          def norm(s):return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
+          cargos={"0001":("6257","Presidente"),"0003":("6259","Governador"),"0005":("6259","Senador"),"0006":("6259","Deputado Federal"),"0007":("6259","Deputado Estadual")}
+          cands={}
+          for cargo,(ele,rotulo) in cargos.items():
+            d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/{'br' if cargo=='0001' else 'ac'}/{'br' if cargo=='0001' else 'ac'}-c{cargo}-e00{ele}-u.json")
+            def walk(x):
+              if isinstance(x,dict):
+                nm=x.get("nmu")
+                if nm and x.get("vap") is not None:
+                  blob=norm(" ".join(str(v) for v in x.values() if isinstance(v,(str,int,float))))
+                  if (cargo=="0001" and norm(nm)=="EDMILSON COSTA") or (cargo!="0001" and "PCB" in blob):
+                    cands[norm(nm)]={"nome":str(nm).upper(),"cargo":rotulo,"numero":str(x.get("n") or x.get("nr") or ""),"total":int(x.get("vap") or 0),"cargo_codigo":cargo,"ele":ele}
+                for v in x.values():walk(v)
+              elif isinstance(x,list):
+                for v in x:walk(v)
+            walk(d)
+          if "EDMILSON COSTA" not in cands: raise Exception("Edmilson não encontrado")
+          if "EUDO RAFFAEL" not in cands: raise Exception("Eudo Raffael não encontrado")
+          json.dump(list(cands.values()),open(out/"candidatos.json","w"),ensure_ascii=False,separators=(",",":"))
+          def municipio(m):
+            row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":{}}
+            groups={}
+            for k,c in cands.items():groups.setdefault((c["cargo_codigo"],c["ele"]),[]).append((k,c["nome"]))
+            for (cargo,ele),wanted in groups.items():
+              try:d=get(f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/ac/ac{m['cd']}-c{cargo}-e00{ele}-u.json")
+              except Exception:continue
+              def walk(x):
+                if isinstance(x,dict):
+                  nm=norm(x.get("nmu",""))
+                  for key,canon in wanted:
+                    if nm==key and x.get("vap") is not None:row["candidatos"][canon]=int(x.get("vap") or 0)
+                  for v in x.values():walk(v)
+                elif isinstance(x,list):
+                  for v in x:walk(v)
+              walk(d)
+            for c in cands.values():row["candidatos"].setdefault(c["nome"],0)
+            return row
+          with ThreadPoolExecutor(max_workers=8) as ex: rows=list(ex.map(municipio,ac["mu"]))
+          if len(rows)!=22:raise Exception(f"Esperados 22 municípios, obtidos {len(rows)}")
+          for c in cands.values():
+            s=sum(r["candidatos"].get(c["nome"],0) for r in rows)
+            if s!=c["total"]:raise Exception(f"Total divergente {c['nome']}: municípios {s}, estado {c['total']}")
+          json.dump(rows,open(out/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
+          print("Candidatos:",json.dumps(list(cands.values()),ensure_ascii=False))
+      - name: Commit dados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/dados/2026/ac
+          git diff --cached --quiet || (git commit -m "Acre 2026: dados municipais TSE e malha IBGE" && git push)
