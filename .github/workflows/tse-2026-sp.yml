@@ -27,6 +27,45 @@ jobs:
           done
           curl --fail --retry 3 --retry-delay 2 -A "Mozilla/5.0" "https://resultados.tse.jus.br/oficial/ele2026/6257/dados/sp/sp-c0001-e006257-u.json" -o "mapa/dados/2026/sp/c0001.json"
           python -m json.tool "mapa/dados/2026/sp/c0001.json" >/dev/null
+      - name: Gerar votação municipal das candidaturas acompanhadas
+        shell: python
+        run: |
+          import json, pathlib, urllib.request, time, unicodedata
+          base=pathlib.Path("mapa/dados/2026/sp")
+          cfg=json.load(open(base/"municipios-config.json"))
+          sp=next(x for x in cfg["abr"] if x["cd"]=="sp")
+          alvos={
+            "EDMILSON COSTA":("0001","6257"),"CARLOS MACHADO":("0003","6259"),
+            "PETTER MAAHS":("0005","6259"),"NATÁLIA BOULOS":("0006","6259"),
+            "FABIO MELLO":("0006","6259"),"JOÃO PAULO RILLO":("0007","6259"),
+            "PROFESSORA PRISCILA":("0007","6259"),"DÉBORA CAMILO":("0007","6259")}
+          def norm(s):
+            return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
+          wanted={norm(k):(k,c,e) for k,(c,e) in alvos.items()}
+          out=[]
+          headers={"User-Agent":"Mozilla/5.0"}
+          for i,m in enumerate(sp["mu"],1):
+            row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":{}}
+            for cargo,ele in [("0001","6257"),("0003","6259"),("0005","6259"),("0006","6259"),("0007","6259")]:
+              url=f"https://resultados.tse.jus.br/oficial/ele2026/{ele}/dados/sp/sp{m['cd']}-c{cargo}-e00{ele}-u.json"
+              try:
+                with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=20) as r:d=json.load(r)
+              except Exception as e:
+                row.setdefault("erros",[]).append({"cargo":cargo,"erro":str(e)});continue
+              def walk(x):
+                if isinstance(x,dict):
+                  nm=norm(x.get("nmu",""))
+                  if nm in wanted and "vap" in x:
+                    canon,_,_=wanted[nm];row["candidatos"][canon]=int(x.get("vap") or 0)
+                  for v in x.values():walk(v)
+                elif isinstance(x,list):
+                  for v in x:walk(v)
+              walk(d)
+              time.sleep(.015)
+            out.append(row)
+            if i%50==0: print(i,"/",len(sp["mu"]))
+          json.dump(out,open(base/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
+          print("municípios:",len(out),"com dados:",sum(bool(x["candidatos"]) for x in out))
       - name: Resumo dos candidatos de interesse
         shell: python
         run: |
