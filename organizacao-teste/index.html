@@ -33,7 +33,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <button class="nav" data-v="cot">▤　Cotizações</button>
 <button class="nav" data-v="usuarios">●　Usuários e Permissões</button>
 <button class="nav" data-v="config">⚙　Configurações</button>
-</aside><main><div class="notice">AMBIENTE DE TESTE • CHECKPOINT • INTERFACE REVISADA • 05/10/2026 • base histórica My Maps/KMZ integrada • snapshots históricos 2018–2026 • agosto/2026: 195 militantes em 27 registros • dados pessoais/financeiros fictícios • sem Supabase.</div>
+</aside><main><div class="notice">AMBIENTE DE TESTE • CHECKPOINT • CIDADES CORRIGIDAS • 05/10/2026 • base histórica My Maps/KMZ integrada • snapshots históricos 2018–2026 • agosto/2026: 195 militantes em 27 registros • dados pessoais/financeiros fictícios • sem Supabase.</div>
 <section id="censo" class="view on"><div class="panel" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><b>PERÍODO DO CENSO</b><select id="censoPeriod" style="padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:16px"><option value="2026-08" selected>Agosto/2026</option><option value="2025-07">Julho/2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2018">2018</option></select><span id="censoSource" class="hint" style="margin:0">Levantamento consolidado informado em agosto/2026</span></div><div class="headrow"><div><h1>Painel Organizativo</h1><p class="lead">Uma única visão dos dados atuais e históricos do PCB em São Paulo</p></div></div>
 <div class="metrics" id="censoMetrics"></div>
 <div class="grid3"><div class="panel"><h2>Mapa da organização</h2><div class="hint">Mapa territorial real • clique para abrir o mapa completo</div><div id="homeMapSvg" class="map" style="cursor:pointer;overflow:hidden" onclick="go('mapa')" title="Abrir Mapa de Organização"></div></div>
@@ -171,11 +171,33 @@ function selectHomeCity(city){
  const mil=rows.reduce((a,x)=>a+(Number(x[4])||0),0);
  box.innerHTML='<b style="font-size:18px">'+city+'</b><br>'+rows.map(x=>'<span class="pill '+(x[3]!=='Ativa'?'warn':'')+'">'+x[0]+' · '+x[3]+' · '+x[4]+' militantes</span>').join(' ')+'<div class="hint" style="margin-top:8px">Total nos registros correspondentes: <b>'+mil+'</b></div><button class="btn alt" style="margin-top:10px" onclick="openCity(\''+city.replace(/'/g,"\\'")+'\')">VER ORGANISMO(S) →</button>';
 }
+const TERRITORY_ALIASES={
+ 'Litoral Norte':['São Sebastião','Ilhabela','Caraguatatuba','Ubatuba'],
+ 'ABCD':['Santo André','São Bernardo do Campo','Diadema'],
+ 'Centro':['São Paulo'],
+ 'João Câmara':['São Paulo'],
+ 'ZNO':['São Paulo'],
+ 'ZO + Osasco':['São Paulo','Osasco'],
+ 'Kollontai':['São Paulo'],
+ 'ZS':['São Paulo'],
+ 'Santa Bárbara':['Santa Bárbara d’Oeste'],
+ 'São Bernardo':['São Bernardo do Campo']
+};
+function exactMunicipalityName(token,geoNames){
+ const n=normCity(token.replace(/\s*-\s*(centro|zona.*)$/i,'').trim());
+ return geoNames.find(city=>normCity(city)===n)||null;
+}
 function organizedCities(){
  const geoNames=MUNICIPIOS_GEO.features.map(f=>f.properties.nome);
  const found=new Map();
  D.cells.filter(x=>x[3]!=='Inativa'&&x[1]&&!/virtual|estadual/i.test(x[1])).forEach(x=>{
-   geoNames.forEach(city=>{if(normCity(x[1]).includes(normCity(city)))found.set(normCity(city),city)});
+   const aliases=TERRITORY_ALIASES[x[0]]||[];
+   const raw=String(x[1]).split(/\s*\/\s*/).map(v=>v.trim()).filter(Boolean);
+   [...raw,...aliases].forEach(token=>{
+     const alias=TERRITORY_ALIASES[token]?.[0]||token;
+     const city=exactMunicipalityName(alias,geoNames);
+     if(city)found.set(normCity(city),city);
+   });
  });
  return [...found.values()].sort((a,b)=>a.localeCompare(b,'pt-BR'));
 }
