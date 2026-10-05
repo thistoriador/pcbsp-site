@@ -57,13 +57,18 @@ const ACCESS_USERS={
  'admin.macro':{hash:'0f97267579156b1c6ef618ce7c7d76b92e69d34cbf0c37eda72909919a034af3',role:'ADMIN MACRO',scope:'Macro atribuída',views:['inicio','censo','mapa','militantes','celulas','historico','relatorios']},
  'admin.local':{hash:'c4dcf2965ff26ff9f7518842515b6cd17de55aea59a1d0fa5b8d31044d16f85e',role:'ADMIN LOCAL',scope:'Organismo atribuído',views:['inicio','censo','mapa','militantes','celulas']}
 };
-let ACCESS_CURRENT=null;
+const ACCESS_TTL=60*60*1000, ACCESS_IDLE=10*60*1000;
+let ACCESS_CURRENT=null,accessTimer=null;
 async function sha256(v){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function applyAccess(user,p){ACCESS_CURRENT={user,...p};currentUser.textContent=user+' • '+p.scope;currentRole.textContent=p.role;document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('hiddenByRole',!p.views.includes(el.dataset.v)));sessionStorage.setItem('pcb_org_access',JSON.stringify({user,hash:p.hash}));loginGate.style.display='none';const active=document.querySelector('.view.on')?.id;if(active&&!p.views.includes(active))go(p.views.includes('censo')?'censo':p.views[0])}
+function saveAccess(user,p,started=Date.now()){localStorage.setItem('pcb_org_access',JSON.stringify({user,hash:p.hash,started,last:Date.now()}))}
+function applyAccess(user,p,started=Date.now()){ACCESS_CURRENT={user,...p};currentUser.textContent=user+' • '+p.scope;currentRole.textContent=p.role;document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('hiddenByRole',!p.views.includes(el.dataset.v)));saveAccess(user,p,started);loginGate.style.display='none';const active=document.querySelector('.view.on')?.id;if(active&&!p.views.includes(active))go(p.views.includes('censo')?'censo':p.views[0]);armAccessTimer()}
+function expireAccess(msg='Sessão encerrada. Entre novamente.'){ACCESS_CURRENT=null;localStorage.removeItem('pcb_org_access');clearTimeout(accessTimer);loginGate.style.display='grid';loginErr.textContent=msg;loginPin.value='';currentUser.textContent='Acesso não iniciado';currentRole.textContent='TESTE';loginUser.focus()}
+function armAccessTimer(){clearTimeout(accessTimer);accessTimer=setTimeout(()=>expireAccess('Sessão encerrada após 10 minutos sem atividade.'),ACCESS_IDLE)}
+function touchAccess(){if(!ACCESS_CURRENT)return;let a;try{a=JSON.parse(localStorage.getItem('pcb_org_access')||'null')}catch(e){};if(!a)return;const now=Date.now();if(now-a.started>=ACCESS_TTL){expireAccess('Sessão de 1 hora encerrada. Entre novamente.');return}a.last=now;localStorage.setItem('pcb_org_access',JSON.stringify(a));armAccessTimer()}
 async function doLogin(){const u=loginUser.value.trim().toLowerCase(),p=ACCESS_USERS[u];if(!p){loginErr.textContent='Usuário ou PIN inválido.';return}const h=await sha256(loginPin.value.trim());if(h!==p.hash){loginErr.textContent='Usuário ou PIN inválido.';return}loginErr.textContent='';applyAccess(u,p)}
-loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>{sessionStorage.removeItem('pcb_org_access');loginPin.value='';loginGate.style.display='grid';loginUser.focus()};
-setTimeout(()=>{try{const a=JSON.parse(sessionStorage.getItem('pcb_org_access')||'null');if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash)applyAccess(a.user,ACCESS_USERS[a.user]);else loginUser.focus()}catch(e){loginUser.focus()}},0);
-
+loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>expireAccess('');
+['click','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,touchAccess,{passive:true}));
+setTimeout(()=>{try{const a=JSON.parse(localStorage.getItem('pcb_org_access')||'null'),now=Date.now();if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash&&now-a.started<ACCESS_TTL&&now-a.last<ACCESS_IDLE)applyAccess(a.user,ACCESS_USERS[a.user],a.started);else expireAccess(a?'Sessão anterior expirada. Entre novamente.':'')}catch(e){expireAccess('')}},0);
 
 const CENSO_SNAPSHOTS={
  '2026-08':{label:'Agosto/2026',source:'Levantamento consolidado informado em agosto/2026',mil:195,org:27,active:26,cities:'—',cm:'—',
