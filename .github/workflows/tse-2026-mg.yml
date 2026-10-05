@@ -2,68 +2,87 @@ name: TSE 2026 MG - votos municipais
 on:
   workflow_dispatch:
   push:
-    paths:
-      - '.github/workflows/tse-2026-mg.yml'
+    paths: ['.github/workflows/tse-2026-mg.yml']
 permissions:
   contents: write
 jobs:
-  gerar:
+  coletar:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Gerar votos municipais MG
+      - name: Coletar lote
         shell: python
         run: |
-          import json, pathlib, urllib.request, unicodedata, time
+          import json,urllib.request,unicodedata,time,os
           from concurrent.futures import ThreadPoolExecutor
-          outdir=pathlib.Path("mapa/dados/2026/mg"); outdir.mkdir(parents=True,exist_ok=True)
           cfg=json.load(open("mapa/dados/2026/sp/municipios-config.json"))
           mg=next(x for x in cfg["abr"] if x["cd"]=="mg")
-          targets={
-            "TULIO LOPES":"TÚLIO LOPES",
-            "PROFESSOR TULIO LOPES":"TÚLIO LOPES",
-            "MARIO MARIANO":"MÁRIO MARIANO",
-            "JESSICA CARVALHO":"JÉSSICA CARVALHO",
-            "ZULU":"ZULU",
-            "JOSE AUGUSTO BERNARDES":"ZULU"}
-          def norm(s):
-            return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
-          headers={"User-Agent":"Mozilla/5.0"}
+          shard=int("${{ matrix.shard }}")
+          cities=[m for i,m in enumerate(mg["mu"]) if i%8==shard]
+          aliases={"TULIO LOPES":"TÚLIO LOPES","PROFESSOR TULIO LOPES":"TÚLIO LOPES","PROF TULIO LOPES":"TÚLIO LOPES","MARIO MARIANO":"MÁRIO MARIANO","PROFESSOR MARIO MARIANO":"MÁRIO MARIANO","JESSICA CARVALHO":"JÉSSICA CARVALHO","ZULU":"ZULU","JOSE AUGUSTO BERNARDES":"ZULU"}
+          def norm(s): return ''.join(c for c in unicodedata.normalize("NFD",str(s).upper()) if unicodedata.category(c)!="Mn")
+          H={"User-Agent":"Mozilla/5.0"}
           def get(url):
             for n in range(3):
               try:
-                with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=25) as r:return json.load(r)
+                with urllib.request.urlopen(urllib.request.Request(url,headers=H),timeout=12) as r:return json.load(r)
               except Exception:
-                if n==2: raise
-                time.sleep(1+n)
+                if n==2:return None
+                time.sleep(.5)
           def walk(x,found):
             if isinstance(x,dict):
-              nm=norm(x.get("nmu",""))
-              if nm in targets and "vap" in x: found[targets[nm]]=int(x.get("vap") or 0)
-              for v in x.values(): walk(v,found)
+              n=norm(x.get("nmu",""))
+              if n in aliases and "vap" in x: found[aliases[n]]=int(x.get("vap") or 0)
+              for v in x.values():walk(v,found)
             elif isinstance(x,list):
-              for v in x: walk(v,found)
+              for v in x:walk(v,found)
           def one(m):
             found={}
-            errors=[]
             for cargo in ("0003","0007"):
-              url=f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c{cargo}-e006259-u.json"
-              try: walk(get(url),found)
-              except Exception as e: errors.append(cargo+":"+str(e))
-            row={"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
-            if errors: row["erros"]=errors
-            return row
-          with ThreadPoolExecutor(max_workers=10) as ex: rows=list(ex.map(one,mg["mu"]))
-          json.dump(rows,open(outdir/"municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
+              d=get(f"https://resultados.tse.jus.br/oficial/ele2026/6259/dados/mg/mg{m['cd']}-c{cargo}-e006259-u.json")
+              if d:walk(d,found)
+            return {"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
+          with ThreadPoolExecutor(max_workers=12) as ex: rows=list(ex.map(one,cities))
+          os.makedirs("tmp",exist_ok=True)
+          json.dump(rows,open(f"tmp/shard-{shard}.json","w"),ensure_ascii=False)
+          print("lote",shard,"municipios",len(rows),"com votos",sum(bool(r["candidatos"]) for r in rows))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mg-${{ matrix.shard }}
+          path: tmp/shard-${{ matrix.shard }}.json
+  juntar:
+    needs: coletar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: mg-*
+          path: tmp
+          merge-multiple: true
+      - name: Juntar e validar
+        shell: python
+        run: |
+          import json,glob,os
+          rows=[]
+          for p in glob.glob("tmp/shard-*.json"): rows+=json.load(open(p))
+          rows.sort(key=lambda r:r["municipio"])
+          assert len(rows)==853, f"Esperados 853, obtidos {len(rows)}"
           sums={}
           for r in rows:
-            for k,v in r["candidatos"].items(): sums[k]=sums.get(k,0)+v
-          print("municipios",len(rows),"com_votos",sum(bool(r["candidatos"]) for r in rows),"totais",sums)
+            for k,v in r["candidatos"].items():sums[k]=sums.get(k,0)+v
+          print("TOTAIS",sums)
+          os.makedirs("mapa/dados/2026/mg",exist_ok=True)
+          json.dump(rows,open("mapa/dados/2026/mg/municipios-interesse.json","w"),ensure_ascii=False,separators=(",",":"))
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mapa/dados/2026/mg/municipios-interesse.json
-          git diff --cached --quiet && exit 0
           git commit -m "Atualiza votos municipais TSE 2026 MG"
           git push
