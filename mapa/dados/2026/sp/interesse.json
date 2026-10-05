@@ -12,7 +12,7 @@
     "st": "",
     "vap": "8011",
     "pvap": "0,03",
-    "pvapn": "0,033811379"
+    "pvapn": "0,033800098"
   },
   {
     "arquivo": "c0006.json",
@@ -22,12 +22,12 @@
     "nmu": "NATÁLIA BOULOS",
     "dt": "21/09/1987",
     "dvt": "Válido",
-    "seq": "42",
+    "seq": "41",
     "e": "n",
     "st": "",
-    "vap": "114532",
+    "vap": "114549",
     "pvap": "0,48",
-    "pvapn": "0,483395937"
+    "pvapn": "0,483306376"
   },
   {
     "arquivo": "c0005.json",
@@ -42,8 +42,8 @@
         "sg": "PCB",
         "nm": "PARTIDO COMUNISTA BRASILEIRO",
         "nfed": "",
-        "tvtn": "28305",
-        "tvan": "28305",
+        "tvtn": "28308",
+        "tvan": "28308",
         "cand": [
           {
             "n": "211",
@@ -55,9 +55,9 @@
             "seq": "11",
             "e": "n",
             "st": "",
-            "vap": "28305",
+            "vap": "28308",
             "pvap": "0,07",
-            "pvapn": "0,065254531",
+            "pvapn": "0,065254625",
             "vs": [
               {
                 "tp": "s1",
@@ -85,8 +85,8 @@
     "sg": "PCB",
     "nm": "PARTIDO COMUNISTA BRASILEIRO",
     "nfed": "",
-    "tvtn": "28305",
-    "tvan": "28305",
+    "tvtn": "28308",
+    "tvan": "28308",
     "cand": [
       {
         "n": "211",
@@ -98,9 +98,9 @@
         "seq": "11",
         "e": "n",
         "st": "",
-        "vap": "28305",
+        "vap": "28308",
         "pvap": "0,07",
-        "pvapn": "0,065254531",
+        "pvapn": "0,065254625",
         "vs": [
           {
             "tp": "s1",
@@ -131,9 +131,9 @@
     "seq": "11",
     "e": "n",
     "st": "",
-    "vap": "28305",
+    "vap": "28308",
     "pvap": "0,07",
-    "pvapn": "0,065254531",
+    "pvapn": "0,065254625",
     "vs": [
       {
         "tp": "s1",
@@ -180,8 +180,8 @@
         "sg": "PCB",
         "nm": "PARTIDO COMUNISTA BRASILEIRO",
         "nfed": "",
-        "tvtn": "58848",
-        "tvan": "58848",
+        "tvtn": "58858",
+        "tvan": "58858",
         "cand": [
           {
             "n": "21",
@@ -193,9 +193,9 @@
             "seq": "5",
             "e": "n",
             "st": "",
-            "vap": "58848",
+            "vap": "58858",
             "pvap": "0,25",
-            "pvapn": "0,254478355",
+            "pvapn": "0,254494878",
             "vs": [
               {
                 "tp": "v",
@@ -216,8 +216,8 @@
     "sg": "PCB",
     "nm": "PARTIDO COMUNISTA BRASILEIRO",
     "nfed": "",
-    "tvtn": "58848",
-    "tvan": "58848",
+    "tvtn": "58858",
+    "tvan": "58858",
     "cand": [
       {
         "n": "21",
@@ -229,9 +229,9 @@
         "seq": "5",
         "e": "n",
         "st": "",
-        "vap": "58848",
+        "vap": "58858",
         "pvap": "0,25",
-        "pvapn": "0,254478355",
+        "pvapn": "0,254494878",
         "vs": [
           {
             "tp": "v",
@@ -255,9 +255,9 @@
     "seq": "5",
     "e": "n",
     "st": "",
-    "vap": "58848",
+    "vap": "58858",
     "pvap": "0,25",
-    "pvapn": "0,254478355",
+    "pvapn": "0,254494878",
     "vs": [
       {
         "tp": "v",
@@ -277,6 +277,115 @@
     "sgp": "PCB"
   },
   {
+    "arquivo": "c0001.json",
+    "n": "280001801228",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "tp": "i",
+    "com": "PCB",
+    "vag": "0",
+    "par": [
+      {
+        "n": "21",
+        "sg": "PCB",
+        "nm": "PARTIDO COMUNISTA BRASILEIRO",
+        "nfed": "",
+        "tvtn": "6129",
+        "tvan": "6129",
+        "cand": [
+          {
+            "n": "21",
+            "sqcand": "280002551975",
+            "nm": "EDMILSON SILVA COSTA",
+            "nmu": "EDMILSON COSTA",
+            "dt": "08/04/1950",
+            "dvt": "Válido",
+            "seq": "10",
+            "e": "n",
+            "st": "",
+            "vap": "6129",
+            "pvap": "0,02",
+            "pvapn": "0,024634629",
+            "vs": [
+              {
+                "tp": "v",
+                "sqcand": "280002551976",
+                "nm": "CLEUSA DOS SANTOS",
+                "nmu": "CLEUSA SANTOS",
+                "sgp": "PCB"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0001.json",
+    "n": "21",
+    "sg": "PCB",
+    "nm": "PARTIDO COMUNISTA BRASILEIRO",
+    "nfed": "",
+    "tvtn": "6129",
+    "tvan": "6129",
+    "cand": [
+      {
+        "n": "21",
+        "sqcand": "280002551975",
+        "nm": "EDMILSON SILVA COSTA",
+        "nmu": "EDMILSON COSTA",
+        "dt": "08/04/1950",
+        "dvt": "Válido",
+        "seq": "10",
+        "e": "n",
+        "st": "",
+        "vap": "6129",
+        "pvap": "0,02",
+        "pvapn": "0,024634629",
+        "vs": [
+          {
+            "tp": "v",
+            "sqcand": "280002551976",
+            "nm": "CLEUSA DOS SANTOS",
+            "nmu": "CLEUSA SANTOS",
+            "sgp": "PCB"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "arquivo": "c0001.json",
+    "n": "21",
+    "sqcand": "280002551975",
+    "nm": "EDMILSON SILVA COSTA",
+    "nmu": "EDMILSON COSTA",
+    "dt": "08/04/1950",
+    "dvt": "Válido",
+    "seq": "10",
+    "e": "n",
+    "st": "",
+    "vap": "6129",
+    "pvap": "0,02",
+    "pvapn": "0,024634629",
+    "vs": [
+      {
+        "tp": "v",
+        "sqcand": "280002551976",
+        "nm": "CLEUSA DOS SANTOS",
+        "nmu": "CLEUSA SANTOS",
+        "sgp": "PCB"
+      }
+    ]
+  },
+  {
+    "arquivo": "c0001.json",
+    "tp": "v",
+    "sqcand": "280002551976",
+    "nm": "CLEUSA DOS SANTOS",
+    "nmu": "CLEUSA SANTOS",
+    "sgp": "PCB"
+  },
+  {
     "arquivo": "c0007.json",
     "n": "13500",
     "sqcand": "250002536825",
@@ -287,9 +396,9 @@
     "seq": "303",
     "e": "n",
     "st": "",
-    "vap": "11504",
+    "vap": "11506",
     "pvap": "0,05",
-    "pvapn": "0,049353429"
+    "pvapn": "0,049333450"
   },
   {
     "arquivo": "c0007.json",
@@ -299,12 +408,12 @@
     "nmu": "JOÃO PAULO RILLO",
     "dt": "01/01/1977",
     "dvt": "Válido",
-    "seq": "89",
+    "seq": "83",
     "e": "n",
     "st": "",
-    "vap": "70341",
-    "pvap": "0,30",
-    "pvapn": "0,301770649"
+    "vap": "72486",
+    "pvap": "0,31",
+    "pvapn": "0,310793015"
   },
   {
     "arquivo": "c0007.json",
@@ -317,8 +426,8 @@
     "seq": "50",
     "e": "n",
     "st": "",
-    "vap": "94885",
+    "vap": "94895",
     "pvap": "0,41",
-    "pvapn": "0,407067116"
+    "pvapn": "0,406874474"
   }
 ]
