@@ -60,7 +60,17 @@ jobs:
               elif isinstance(x,list):
                 for v in x: vals+=leg21(v)
               return vals
+            def find21(x):
+              vals=[]
+              if isinstance(x,dict):
+                if str(x.get("n") or x.get("nr") or x.get("npar") or x.get("nrpar") or "")=="21":
+                  vals.append({k:v for k,v in x.items() if isinstance(v,(str,int,float))})
+                for v in x.values(): vals+=find21(v)
+              elif isinstance(x,list):
+                for v in x: vals+=find21(v)
+              return vals
             found["LEGENDA 21"]=max(leg21(d7) or [0])
+            if m["nm"]=="BELO HORIZONTE": print("PCB21_DEBUG",json.dumps(find21(d7)[:30],ensure_ascii=False))
             return {"codigo_tse":m["cd"],"codigo_ibge":m["cdi"],"municipio":m["nm"],"candidatos":found}
           with ThreadPoolExecutor(max_workers=12) as ex: rows=list(ex.map(one,cities))
           os.makedirs("tmp",exist_ok=True)
