@@ -57,5 +57,497 @@
       26917,
       29014
     ]
-  }
+  },
+  "contexts": {
+    "rillo": "otos registrados (${645-count})`;\n   label.textContent=mapMode==='candidato'?`${selectedCandidate?.nome||''} • escala por votos nominais`:`PCB • nominal + legenda • escala por votos`;\n }\n if(geoLayer) geoLayer.setStyle(geoStyle);\n}\nasync function rpc(fn,args={}){\n const r=await fetch(`${SB_URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,'Content-Type':'application/json','Content-Profile':'api_mapa','Accept-Profile':'api_mapa'},body:JSON.stringify(args)});\n if(!r.ok) throw new Error(`${fn}: ${r.status} ${await r.text()}`);\n return await r.json();\n}\nfunction msg(t){document.getElementById('notice').textContent=t}\nasync function setYear(y){\n year=y; selectedCandidate=selectedMunicipio=selectedZona=null;\n document.querySelectorAll('.year[data-year]').forEach(b=>b.classList.toggle('active',Number(b.dataset.year)===y));\n document.getElementById('search').value='';\n await loadYear();\n}\nasync function loadYear(){\n msg(`Carregando ${year}…`);\n document.getElementById('candidates').innerHTML='<div class=\"loading\">Carregando candidaturas…</div>';\n document.getElementById('panel').innerHTML='<div class=\"loading\">Carregando território…</div>';\n try{\n  mapMode='geral'; candidateMapRows=[]; mapaMunicipios=[];\n  if(year===2026){\n   if(!dados2026){const r=await fetch('dados/2026/sp/municipios-interesse.json',{cache:'no-store'});if(!r.ok)throw new Error('dados 2026: HTTP '+r.status);dados2026=await r.json();}\n   const defs=[\n    [2026001,'21','EDMILSON COSTA','Presidente','PCB'],[2026002,'21','CARLOS MACHADO','Governador','PCB'],[2026003,'211','PETTER MAAHS','Senador','PCB'],\n    [2026004,'5010','NATÁLIA BOULOS','Deputada Federal','Apoiada pelo PCB'],[2026005,'5013','FABIO MELLO','Deputado Federal','Apoiado pelo PCB'],\n    [2026006,'13622','JOÃO PAULO RILLO','Deputado Estadual','Apoiado pelo PCB'],[2026007,'13500','PROFESSORA PRISCILA','Deputada Estadual','Apoiada pelo PCB'],[2026008,'50500','DÉBORA CAMILO','Deputada Estadual','Apoiada pelo PCB']];\n   candidates=defs.map(d=>({candidatura_id:d[0],numero:d[1],nome:d[2],cargo:d[3],partido:d[4],votos:dados2026.reduce((n,m)=>n+Number(m.candidatos?.[d[2]]||0),0)}));\n   municipios=dados2026.map(m=>({municipio_id:Number(m.codigo_tse),municipio:m.municipio,codigo_tse:m.codigo_tse}));\n   mapaMunicipios=dados2026.map(m=>({municipio_id:Number(m.codigo_tse),municipio:m.municipio,votos_total:Number(m.candidatos?.['EDMILSON COSTA']||0)+Number(m.candidatos?.['CARLOS MACHADO']||0)+Number(m.candidatos?.['PETTER MAAHS']||0)}));\n   resumo={candidaturas:candidates.length,municipios:645,zonas:0};resumoRows=[resumo];\n   document.getElementById('statCandidates').textContent=fmt(candidates.length);document.getElementById('statMunicipios').textContent='645';document.getElementById('statZonas').textContent='—';\n   document.getElementById('mapLabel').textContent='645 municípios • 2026';document.getElementById('mapSubtitle').textContent='Apuração 2026 • candidaturas do PCB e apoiadas • dados municipais do TSE';\n   renderCandidates(candidates);renderMunicipios(municipios);updateRealMap();setTimeout(fitState,120);\n   msg('2026: apuração oficial do TSE • dados municipais provisórios durante a totalização.');return;\n  }\n  [candidates,municipios,resumoRows]=await Promise.all([\n   rpc('candidaturas',{p_ano:year}),\n   rpc('municipios',{p_ano:year}),\n   rpc('resumo_eleicao',{p_ano:year})\n  ]);\n  mapaMunicipios=await rpc('mapa_municipios',{p_ano:year});\n  resumo=(Array.isArray(resumoRows)?resumoRows[0]:resumoRows)||null;\n  const total=candidates.reduce((a,c)=>a+Number(c.votos||0),0);\n  document.getElementById('statCandidates').textContent=fmt(resumo?.candidaturas ?? candidates.length);\n  document.getElementById('statMunicipios').textContent=fmt(resumo?.municipios ?? municipios.length);\n const z=document.getElementById('statZonas'); if(z) z.textContent=fmt(resumo?.zonas ?? 0);\n  document.getElementById('mapLabel').textContent=`${municipios.length} municípios • ${year}`;\n  document.getElementById('mapSubtitle').textContent=year===2000\n   ? `Base histórica disponível para ${year}`\n   : `Votação PCB por município • nominal + legenda`;\n  renderCandidates(candidates); renderMunicipios(municipios); updateRealMap(); setTimeout(fitState,120);\n  msg(year===1996?'1996: base Supabase ativa • fonte histórica disponível até município.':((year===2000||year===2016||year===2020||year===2024)?`${year}: base Supabase ativa • navegação disponível até zona eleitoral.`:'Base Supabase ativa • navegação disponível até seção eleitoral.'));\n }catch(e){msg('Erro ao carregar os dados: '+e.message);doc",
+    "geo": "\"0 0 24 24\"><path d=\"M3 11l9-8 9 8v10h-6v-6H9v6H3z\"/></svg></span>Início</button>\n<button onclick=\"scrollCandidates()\"><span><svg viewBox=\"0 0 24 24\"><circle cx=\"9\" cy=\"8\" r=\"3\"/><circle cx=\"16\" cy=\"9\" r=\"2.5\"/><path d=\"M3 20v-3c0-4 2.5-6 6-6s6 2 6 6v3z\"/><path d=\"M14 20v-3c0-2-.6-3.5-1.6-4.6 1-.6 2.1-.9 3.6-.9 3 0 5 2 5 5.5v3z\"/></svg></span>Candidaturas</button>\n<button onclick=\"openMunicipios()\"><span><svg viewBox=\"0 0 24 24\"><path d=\"M12 2a7 7 0 0 0-7 7c0 5.5 7 13 7 13s7-7.5 7-13a7 7 0 0 0-7-7zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z\"/></svg></span>Território</button>\n<button onclick=\"document.getElementById('timelineCard').scrollIntoView({behavior:'smooth'})\"><span><svg viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"13\" width=\"4\" height=\"8\"/><rect x=\"10\" y=\"8\" width=\"4\" height=\"13\"/><rect x=\"17\" y=\"3\" width=\"4\" height=\"18\"/></svg></span>Panorama</button>\n<button onclick=\"openAboutView()\"><span><svg viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"7\" r=\"1.3\"/><rect x=\"11\" y=\"10\" width=\"2\" height=\"7\"/></svg></span>Sobre</button>\n</div>\n\n<script>\nconst SB_URL='https://cthntxgopxhbaemgnttn.supabase.co';\nconst SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aG50eGdvcHhoYmFlbWdudHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjA5NTIsImV4cCI6MjEwNjM5Njk1Mn0.B0vk9yHpI4ln3jFlSfPhSPIAZvGMUo_Bu4K8_hGf5JI';\nlet year=2000,candidates=[],municipios=[],resumo=null,resumoRows=[],mapaMunicipios=[],mapMode='geral',candidateMapRows=[],panelState={type:'municipios'},selectedCandidate=null,selectedMunicipio=null,selectedZona=null,dados2026=null;\nconst fmt=n=>Number(n||0).toLocaleString('pt-BR');\nlet leafletMap=null, geoLayer=null, geoData=null;\nconst GEO_URLS=[\n'https://cdn.jsdelivr.net/gh/henriquemalvar/br-geojson@main/dist/municipios/SP.geojson',\n'https://raw.githubusercontent.com/henriquemalvar/br-geojson/main/dist/municipios/SP.geojson'\n];\nfunction geoName(f){const p=f.properties||{};return p.name||p.nome||p.NM_MUN||p.nm_mun||p.NOME||p.municipio||''}\nfunction activeByName(name){const n=norm(name);return municipios.find(m=>norm(m.municipio)===n)}\nfunction mapDataByName(name){\n const n=norm(name);\n const src=mapMode==='candidato'?candidateMapRows:mapaMunicipios;\n return src.find(m=>norm(m.municipio)===n);\n}\nfunction mapValue(row){\n if(!row)return 0;\n return Number(mapMode==='candidato' ? row.votos : row.votos_total || 0);\n}\nfunction colorScale(v,max){\n if(!v || v<=0)return '#e5dfd4';\n const r=Math.log1p(v)/Math.log1p(Math.max(1,max));\n if(r<=.20)return '#fde0d6';\n if(r<=.40)return '#f7b6a6';\n if(r<=.60)return '#ed776d';\n if(r<=.80)return '#d9343e';\n return '#9f0711';\n}\nfunction currentMapMax(){\n const src=mapMode==='candidato'?candidateMapRows:mapaMunicipios;\n return Math.max(1,...src.map(mapValue));\n}\nfunction geoStyle(f){\n const row=mapDataByName(geoName(f)),v=mapValue(row);\n return {color:'#fff',weight:.65,fillColor:colorScale(v,currentMapMax()),fillOpacity:1};\n}\nasync function initRealMap(){\n const el=document.getElementById('spRealMap');\n try{\n  if(!window.L) throw new Error('biblioteca Leaflet não carregou');\n  if(leafletMap){try{leafletMap.remove()}catch(_e){} leafletMap=null;geoLayer=null;}\n  if(!geoData){\n    let lastErr=null;\n    for(const url of GEO_URLS){\n      try{\n        const r=await fetch(url,{cache:'force-cache'});\n        if(!r.ok) throw new Error('HTTP '+r.status);\n        geoData=await r.json();\n        if(geoData && geoData.features && geoData.features.length) break;\n      }catch(e){lastErr=e;geoData=null;}\n    }\n    if(!geoData) throw lastErr||new Error('malha municipal não carregou');\n  }\n  leafletMap=L.map(el,{zoomControl:true,attributionControl:false,scrollWheelZoom:true,minZoom:5,maxZoom:12,zoomSnap:.25,zoomDelta:.25});\n  geoLayer=L.geoJSON(geoData,{style:geoStyle,onEachFeature:(f,l)=>{\n    const nm=geoName(f);\n    l.bindTooltip(nm,{sticky:true});\n    l.on('click',()=>{\n      const row=mapDataByName(nm);\n      const hit=activeByName(nm);\n      if(mapMode==='candidato'){\n        if(row && Number(row.votos||0)>0) openCandidateMunicipio(row.municipio_id,row.municipio);\n        else msg(`${nm}: 0 votos para ${selectedCandidate?.nome||'a candidatura selecionada'} em ${year}.`);\n      }else{\n        if(hit) openMunicipio(hit.municipio_id,hit.municipio);\n        else if(row && Number(row.votos_total||0)>0) msg(`${nm}: ${fmt(row.votos_total)} votos PCB registrados em ${year}.`);\n        else msg(`${nm}: nenhum voto PCB registrado na base de ${year}.`);\n      }\n    });\n  }}).addTo(leafletMap);\n  const refit=()=>{\n    if(!leafletMap||",
+    "hq": "ia(max-width:980px){.featuretiles{grid-template-columns:1fr}.realmap{height:390px}.maplegend{font-size:11px;right:8px;top:8px}.app{grid-template-columns:1fr}.sidebar{display:none}.hero{grid-template-columns:1fr;padding:22px 18px;min-height:auto}.hero h1{font-size:34px}.quote{display:none}.toolbar{padding:10px 12px;overflow:auto}.search{display:none}.content{padding:16px 12px 90px}.grid{grid-template-columns:1fr}.mapwrap{min-height:360px}.candidate-grid{grid-template-columns:1fr 1fr}.mobilebar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:30}.mobilebar button{border:0;background:#fff;padding:11px 3px;font-size:11px;font-weight:800}.mobilebar button span{display:block;font-size:20px}.mobilebar button.active{color:var(--red)}}@media(max-width:560px){.candidate-grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.hero p{font-size:14px}.mapwrap{min-height:290px}}\n</style>\n<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" crossorigin=\"\"/>\n<script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\" crossorigin=\"\">\ndocument.addEventListener('click',e=>{\n const b=e.target.closest('button');\n if(b && b.textContent.trim()==='Lista'){showMunicipioList(municipios);}\n});\n\n</script>\n\n<style>\n/* V5 — identidade visual baseada diretamente na referência aprovada */\n.app{grid-template-columns:220px 1fr}\n.sidebar{\n  padding:0; position:sticky; top:0; height:100vh;\n  background-image:url(\"data:image/jpeg;base64,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"
+  },
+  "tags_near_data": [
+    {
+      "tag": "div",
+      "pos": 698062,
+      "head": "<div class=\"pcb-sp\""
+    },
+    {
+      "tag": "div",
+      "pos": 698104,
+      "head": "<div class=\"pcb-source\""
+    },
+    {
+      "tag": "div",
+      "pos": 698241,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 698430,
+      "head": "<div class=\"quote\""
+    },
+    {
+      "tag": "div",
+      "pos": 698525,
+      "head": "<div class=\"toolbar\""
+    },
+    {
+      "tag": "div",
+      "pos": 698549,
+      "head": "<div class=\"years\""
+    },
+    {
+      "tag": "div",
+      "pos": 701821,
+      "head": "<div class=\"content\""
+    },
+    {
+      "tag": "div",
+      "pos": 701845,
+      "head": "<div id=\"notice\" class=\"notice\""
+    },
+    {
+      "tag": "div",
+      "pos": 701905,
+      "head": "<div class=\"grid\""
+    },
+    {
+      "tag": "div",
+      "pos": 701928,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 701940,
+      "head": "<div class=\"card\" id=\"mapCard\""
+    },
+    {
+      "tag": "div",
+      "pos": 701980,
+      "head": "<div class=\"cardhead\""
+    },
+    {
+      "tag": "div",
+      "pos": 702002,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 702173,
+      "head": "<div class=\"mapwrap\""
+    },
+    {
+      "tag": "div",
+      "pos": 702205,
+      "head": "<div id=\"spRealMap\" class=\"realmap\" aria-label=\"Mapa municipal do estado de São Paulo\""
+    },
+    {
+      "tag": "div",
+      "pos": 702309,
+      "head": "<div class=\"maplegend\""
+    },
+    {
+      "tag": "div",
+      "pos": 702373,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 702456,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 702542,
+      "head": "<div style=\"margin-top:5px\""
+    },
+    {
+      "tag": "div",
+      "pos": 702641,
+      "head": "<div class=\"maplabel\" id=\"mapLabel\""
+    },
+    {
+      "tag": "div",
+      "pos": 702745,
+      "head": "<div class=\"stats\""
+    },
+    {
+      "tag": "div",
+      "pos": 702773,
+      "head": "<div class=\"stat\""
+    },
+    {
+      "tag": "div",
+      "pos": 702791,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 702878,
+      "head": "<div class=\"stat\""
+    },
+    {
+      "tag": "div",
+      "pos": 702896,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 702982,
+      "head": "<div class=\"stat\""
+    },
+    {
+      "tag": "div",
+      "pos": 703000,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 703078,
+      "head": "<div class=\"stat\""
+    },
+    {
+      "tag": "div",
+      "pos": 703096,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 703193,
+      "head": "<div class=\"card\""
+    },
+    {
+      "tag": "div",
+      "pos": 703218,
+      "head": "<div class=\"cardhead\""
+    },
+    {
+      "tag": "div",
+      "pos": 703240,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 703451,
+      "head": "<div class=\"panelbody\" id=\"panel\""
+    },
+    {
+      "tag": "div",
+      "pos": 703485,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 703553,
+      "head": "<div class=\"featuretiles\""
+    },
+    {
+      "tag": "div",
+      "pos": 704345,
+      "head": "<div class=\"timeline-scroll\" id=\"timelineScroll\""
+    },
+    {
+      "tag": "div",
+      "pos": 704417,
+      "head": "<div class=\"section-title\" id=\"candTitle\""
+    },
+    {
+      "tag": "div",
+      "pos": 704519,
+      "head": "<div class=\"candidate-grid\" id=\"candidates\""
+    },
+    {
+      "tag": "div",
+      "pos": 704563,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 704631,
+      "head": "<div class=\"mobilebar\""
+    },
+    {
+      "tag": "script",
+      "pos": 705827,
+      "head": "<script"
+    },
+    {
+      "tag": "div",
+      "pos": 709624,
+      "head": "<div style=\"padding:24px;color:#7a6256\""
+    },
+    {
+      "tag": "div",
+      "pos": 712100,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 712199,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 715696,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 716225,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 716618,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 716735,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 717104,
+      "head": "<div class=\"election-summary\" style=\"padding:14px\""
+    },
+    {
+      "tag": "div",
+      "pos": 717161,
+      "head": "<div style=\"font-size:12px;color:#806d61;margin-bottom:12px\""
+    },
+    {
+      "tag": "div",
+      "pos": 717279,
+      "head": "<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px\""
+    },
+    {
+      "tag": "div",
+      "pos": 717351,
+      "head": "<div class=\"mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 717449,
+      "head": "<div class=\"mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 717557,
+      "head": "<div class=\"mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 717637,
+      "head": "<div class=\"mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 717940,
+      "head": "<div style=\"margin-top:13px;font-size:11px;line-height:1.45;color:#806d61\""
+    },
+    {
+      "tag": "div",
+      "pos": 718477,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 718883,
+      "head": "<div class=\"chart-row\""
+    },
+    {
+      "tag": "div",
+      "pos": 719197,
+      "head": "<div class=\"kpi-strip\""
+    },
+    {
+      "tag": "div",
+      "pos": 719220,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 719288,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 719381,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 719446,
+      "head": "<div class=\"chart-card\""
+    },
+    {
+      "tag": "div",
+      "pos": 719518,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 719646,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 720137,
+      "head": "<div class=\"chart-row\""
+    },
+    {
+      "tag": "div",
+      "pos": 720496,
+      "head": "<div class=\"kpi-strip\""
+    },
+    {
+      "tag": "div",
+      "pos": 720527,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 720603,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 720715,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 720795,
+      "head": "<div class=\"chart-card\""
+    },
+    {
+      "tag": "div",
+      "pos": 720863,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 720924,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 721052,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 721686,
+      "head": "<div class=\"kpi-strip\""
+    },
+    {
+      "tag": "div",
+      "pos": 721709,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 721812,
+      "head": "<div class=\"kpi-mini\""
+    },
+    {
+      "tag": "div",
+      "pos": 721878,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 722125,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 722332,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 722428,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 722883,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 723080,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 723284,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 723317,
+      "head": "<div class=\"row\""
+    },
+    {
+      "tag": "div",
+      "pos": 723334,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 723762,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 723866,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 724141,
+      "head": "<div class=\"loading\""
+    },
+    {
+      "tag": "div",
+      "pos": 724323,
+      "head": "<div class=\"list\""
+    },
+    {
+      "tag": "div",
+      "pos": 724421,
+      "head": "<div"
+    },
+    {
+      "tag": "div",
+      "pos": 726126,
+      "head": "<div class=\"empty\""
+    },
+    {
+      "tag": "div",
+      "pos": 726543,
+      "head": "<div id=\"viewModal\" class=\"view-modal\" aria-hidden=\"true\""
+    },
+    {
+      "tag": "div",
+      "pos": 726603,
+      "head": "<div class=\"view-sheet\""
+    },
+    {
+      "tag": "div",
+      "pos": 726630,
+      "head": "<div class=\"view-head\""
+    },
+    {
+      "tag": "div",
+      "pos": 726753,
+      "head": "<div class=\"view-body\" id=\"viewBody\""
+    },
+    {
+      "tag": "script",
+      "pos": 726814,
+      "head": "<script"
+    }
+  ]
 }
