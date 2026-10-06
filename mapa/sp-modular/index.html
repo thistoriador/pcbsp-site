@@ -710,7 +710,7 @@ async function loadYear(){
  try{
   mapMode='geral'; candidateMapRows=[]; mapaMunicipios=[];
   if(year===2026){
-   if(!dados2026){const r=await fetch('dados/2026/sp/municipios-interesse.json',{cache:'no-store'});if(!r.ok)throw new Error('dados 2026: HTTP '+r.status);dados2026=await r.json();}
+   if(!dados2026){const r=await fetch('/mapa/dados/2026/sp/municipios-interesse.json',{cache:'no-store'});if(!r.ok)throw new Error('dados 2026: HTTP '+r.status);dados2026=await r.json();}
    const defs=[
     [2026001,'21','EDMILSON COSTA','Presidente','PCB'],[2026002,'21','CARLOS MACHADO','Governador','PCB'],[2026003,'211','PETTER MAAHS','Senador','PCB'],
     [2026004,'5010','NATÁLIA BOULOS','Deputada Federal','Apoiada pelo PCB'],[2026005,'5013','FABIO MELLO','Deputado Federal','Apoiado pelo PCB'],
