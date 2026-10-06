@@ -1690,5 +1690,15 @@ panelBack=function(){
 };
 </script>
 
+
+<script>
+function toggleEstados(){
+ const m=document.getElementById("estadosMenu"),a=document.getElementById("estadosSeta");
+ if(!m)return;
+ const abrir=m.style.display==="none"||!m.style.display;
+ m.style.display=abrir?"grid":"none";
+ if(a)a.textContent=abrir?"▴":"▾";
+}
+</script>
 </body>
 </html>
