@@ -1,0 +1,27 @@
+name: Testar mapas 2018 publicados
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/testar-2018-publicados.yml']
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar paginas, JSON e geometrias
+        shell: python
+        run: |
+          import urllib.request,json,re
+          UFS=['al','ap','ce','df','es','go','ma','mg','pa','pe','pi','rj','rr','rs','sc','sp']
+          ibge={'al':'27','ap':'16','ce':'23','es':'32','go':'52','ma':'21','mg':'31','pa':'15','pe':'26','pi':'22','rj':'33','rr':'14','rs':'43','sc':'42','sp':'35'}
+          for uf in UFS:
+            base=f'https://pcbsp.com.br/mapa/{uf}/2018/'
+            h=urllib.request.urlopen(base,timeout=30).read().decode('utf-8')
+            assert '2018' in h and 'MAPA DOS VOTOS' in h,(uf,'html')
+            d=json.load(urllib.request.urlopen(base+'dados.json',timeout=30))
+            assert d['ano']==2018 and d['uf'].lower()==uf,(uf,'json')
+            assert len(d['candidatos'])>0,(uf,'candidatos')
+            if uf!='df':
+              gu=f"https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-{ibge[uf]}-mun.json"
+              g=json.load(urllib.request.urlopen(gu,timeout=60))
+              assert len(g.get('features',[]))>0,(uf,'geo')
+            print(uf.upper(),'OK',len(d['candidatos']),'candidaturas',len(d['municipios']),'municipios com dados')
