@@ -2,7 +2,7 @@ name: Gerar GO 2022
 on:
   workflow_dispatch:
   push:
-    paths: ['.github/workflows/tse-2022-rj.yml']
+    paths: ['.github/workflows/tse-2022-go.yml']
 permissions: {contents: write}
 jobs:
   gerar:
