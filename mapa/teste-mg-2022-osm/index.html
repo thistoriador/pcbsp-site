@@ -29,7 +29,7 @@ function rowMap(){let m=new Map();D.municipios.forEach(r=>m.set(norm(r.nome),r))
 function votes(name){let r=rowMap().get(norm(name));return r?Number(r.candidatos[selected]||0):0}
 function update(){let vals=D.municipios.map(r=>Number(r.candidatos[selected]||0)),max=Math.max(1,...vals);geo.eachLayer(l=>{let n=l.feature.properties.name||l.feature.properties.nome||l.feature.properties.NM_MUN||l.feature.properties.description||"";let v=votes(n);l.setStyle({fillColor:color(v,max),fillOpacity:v?.72:.18,color:"#6f675f",weight:.8});l.bindTooltip("<b>"+n+"</b><br>"+fmt(v)+" votos")});renderList();cards();legend(max)}
 function cards(){
- let rank=a=>a.slice().sort((a,b)=>b.total-a.total||a.nome.localeCompare(b.nome));
+ let rank=a=>a.slice().sort((a,b)=>a.nome.localeCompare(b.nome,"pt-BR"));
  let major=D.candidatos.filter(c=>["Presidente","Governador","Senador"].includes(c.cargo)).sort((a,b)=>["Presidente","Governador","Senador"].indexOf(a.cargo)-["Presidente","Governador","Senador"].indexOf(b.cargo));
  let est=[...rank(D.candidatos.filter(c=>c.cargo==="Deputado Estadual"&&c.nome!=="LEGENDA 21")),...D.candidatos.filter(c=>c.cargo==="Deputado Estadual"&&c.nome==="LEGENDA 21")];
  let fed=[...rank(D.candidatos.filter(c=>c.cargo==="Deputado Federal"&&c.nome!=="LEGENDA 21")),...D.candidatos.filter(c=>c.cargo==="Deputado Federal"&&c.nome==="LEGENDA 21")];
