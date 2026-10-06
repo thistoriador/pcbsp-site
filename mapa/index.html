@@ -500,7 +500,7 @@ background-size:cover!important;background-position:center top!important;overflo
   <div class="years">
     <button class="year" data-year="1996" onclick="setYear(1996)">1996</button>
     <button class="year" data-year="1998" onclick="setYear(1998)">1998</button>
-    <button class="year active" data-year="2000" onclick="setYear(2000)">2000</button>
+    <button class="year" data-year="2000" onclick="setYear(2000)">2000</button>
     <button class="year" data-year="2002" onclick="setYear(2002)">2002</button>
     <button class="year" data-year="2004" onclick="setYear(2004)">2004</button>
     <button class="year" data-year="2006" onclick="setYear(2006)">2006</button>
@@ -513,7 +513,7 @@ background-size:cover!important;background-position:center top!important;overflo
     <button class="year" data-year="2020" onclick="setYear(2020)">2020</button>
     <button class="year" data-year="2022" onclick="setYear(2022)">2022</button>
     <button class="year" data-year="2024" onclick="setYear(2024)">2024</button>
-    <button class="year" data-year="2026" onclick="setYear(2026)">2026</button>
+    <button class="year active" data-year="2026" onclick="setYear(2026)">2026</button>
   </div>
   <input id="search" class="search" placeholder="Buscar município ou candidatura..." oninput="applySearch()">
 </div>
@@ -534,7 +534,7 @@ background-size:cover!important;background-position:center top!important;overflo
         <div class="cardhead"><div><h2>São Paulo</h2><small id="mapSubtitle">Municípios com votação registrada</small></div><button class="back" onclick="openMunicipios()">Lista</button></div>
         <div class="mapwrap">
           <div id="spRealMap" class="realmap" aria-label="Mapa municipal do estado de São Paulo"></div>
-          <div class="maplegend"><b id="legendTitle">Municípios • 2000</b><div><span class="sw red"></span><span id="legendActive">com dados (—)</span></div><div><span class="sw gray"></span><span id="legendInactive">sem dados (—)</span></div><div style="margin-top:5px">Total no mapa: <b style="display:inline">645</b></div></div>
+          <div class="maplegend"><b id="legendTitle">Municípios • 2026</b><div><span class="sw red"></span><span id="legendActive">com dados (—)</span></div><div><span class="sw gray"></span><span id="legendInactive">sem dados (—)</span></div><div style="margin-top:5px">Total no mapa: <b style="display:inline">645</b></div></div>
           <div class="maplabel" id="mapLabel">Carregando malha municipal…</div>
         </div>
       </div>
@@ -581,7 +581,7 @@ background-size:cover!important;background-position:center top!important;overflo
 <script>
 const SB_URL='https://cthntxgopxhbaemgnttn.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0aG50eGdvcHhoYmFlbWdudHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MjA5NTIsImV4cCI6MjEwNjM5Njk1Mn0.B0vk9yHpI4ln3jFlSfPhSPIAZvGMUo_Bu4K8_hGf5JI';
-let year=2000,candidates=[],municipios=[],resumo=null,resumoRows=[],mapaMunicipios=[],mapMode='geral',candidateMapRows=[],panelState={type:'municipios'},selectedCandidate=null,selectedMunicipio=null,selectedZona=null,dados2026=null;
+let year=2026,candidates=[],municipios=[],resumo=null,resumoRows=[],mapaMunicipios=[],mapMode='geral',candidateMapRows=[],panelState={type:'municipios'},selectedCandidate=null,selectedMunicipio=null,selectedZona=null,dados2026=null;
 const fmt=n=>Number(n||0).toLocaleString('pt-BR');
 let leafletMap=null, geoLayer=null, geoData=null;
 const GEO_URLS=[
@@ -1701,5 +1701,42 @@ function toggleEstados(){
  if(a)a.textContent=abrir?"▴":"▾";
 }
 </script>
+
+<!-- MOBILE STATES OFFICIAL 2026 -->
+<style id="mobile-states-official">
+#mobileStatesOfficialBtn,#mobileStatesOfficialPanel{display:none}
+@media(max-width:980px){
+  #mobileStatesOfficialBtn{display:flex;position:fixed;left:12px;right:12px;bottom:86px;z-index:9998;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 14px;background:#65070c;color:#fff;font:900 15px/1.1 Arial,sans-serif;box-shadow:0 4px 18px #0005}
+  #mobileStatesOfficialPanel{position:fixed;display:none;left:10px;right:10px;bottom:142px;z-index:9999;max-height:62vh;overflow:auto;background:#fffaf1;border:2px solid #65070c;border-radius:16px;padding:14px;box-shadow:0 10px 32px #0007}
+  #mobileStatesOfficialPanel.open{display:block}
+  #mobileStatesOfficialPanel .ms-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:#65070c;font:900 18px/1.1 Arial,sans-serif}
+  #mobileStatesOfficialPanel .ms-close{border:0;background:#65070c;color:#fff;border-radius:10px;padding:7px 11px;font-weight:900}
+  #mobileStatesOfficialPanel .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  #mobileStatesOfficialPanel a{display:flex;min-height:54px;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;background:#f0ebe2;border:1px solid #d5cec2;border-radius:11px;color:#1b1b1b;font:900 15px/1.05 Arial,sans-serif}
+  #mobileStatesOfficialPanel a small{font-size:11px;font-weight:700;color:#6a625a;margin-top:4px}
+}
+</style>
+<button id="mobileStatesOfficialBtn" type="button" aria-controls="mobileStatesOfficialPanel" aria-expanded="false">◆ OUTROS ESTADOS</button>
+<div id="mobileStatesOfficialPanel" aria-hidden="true">
+  <div class="ms-head"><span>OUTROS ESTADOS</span><button class="ms-close" type="button">FECHAR ×</button></div>
+  <div class="ms-grid">
+    <a href="/mapa/ac/">AC<small>2026</small></a>
+    <a href="/mapa/ba/">BA<small>2022</small></a>
+    <a href="/mapa/ce/">CE<small>2022</small></a>
+    <a href="/mapa/df/">DF<small>2022</small></a>
+    <a href="/mapa/go/">GO<small>2022</small></a>
+    <a href="/mapa/ma/">MA<small>2022 · 2026</small></a>
+    <a href="/mapa/mg/">MG<small>2022 · 2026</small></a>
+    <a href="/mapa/pe/">PE<small>2022</small></a>
+    <a href="/mapa/pi/">PI<small>2022</small></a>
+    <a href="/mapa/pr/">PR<small>2022</small></a>
+    <a href="/mapa/rj/">RJ<small>2022</small></a>
+    <a href="/mapa/rs/">RS<small>2022</small></a>
+  </div>
+</div>
+<script>
+(()=>{const b=document.getElementById('mobileStatesOfficialBtn'),p=document.getElementById('mobileStatesOfficialPanel'),c=p&&p.querySelector('.ms-close');if(!b||!p)return;const set=v=>{p.classList.toggle('open',v);p.setAttribute('aria-hidden',String(!v));b.setAttribute('aria-expanded',String(v))};b.addEventListener('click',()=>set(!p.classList.contains('open')));c&&c.addEventListener('click',()=>set(false));})();
+</script>
+
 </body>
 </html>
