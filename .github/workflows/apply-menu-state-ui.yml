@@ -1,0 +1,63 @@
+name: Patch menu icons and state UI
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          # Main menu: replace the old one/two-character glyph immediately before labels with white SVGs.
+          p=Path("mapa/index.html"); s=p.read_text(encoding="utf-8")
+          icons={
+          "Início":'<svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10h-6v-6H9v6H3z"/></svg>',
+          "Candidaturas":'<svg viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><path d="M2 20c0-5 2-8 6-8s6 3 6 8M16 7h6v9h-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "Mapa de São Paulo":'<svg viewBox="0 0 24 24"><path d="M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="15" cy="10" r="2"/></svg>',
+          "Municípios":'<svg viewBox="0 0 24 24"><path d="M3 21V9h6v12M9 21V3h7v18M16 21v-9h5v9" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "Território":'<svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "Comparar eleições":'<svg viewBox="0 0 24 24"><path d="M4 4h3v16H4zM17 4h3v16h-3zM9 12h6M11 9l-3 3 3 3M13 9l3 3-3 3" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "Linha do tempo":'<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 1-2-5M20 4v7h-7M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "História em HQs":'<svg viewBox="0 0 24 24"><path d="M3 5c4-2 7-1 9 1v15c-2-2-5-3-9-1zM21 5c-4-2-7-1-9 1v15c2-2 5-3 9-1z" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+          "OUTROS ESTADOS":'<svg viewBox="0 0 24 24"><path d="M8 2l5 2 2 3 5 2-2 4-3 2-1 5-3 2-2-5-4-2 2-4-3-3z"/></svg>'}
+          for label,svg in icons.items():
+              # existing icon is a span immediately before label
+              pat=r'<span[^>]*>[^<]{0,10}</span>\s*'+re.escape(label)
+              s,n=re.subn(pat,'<span class="navSvg">'+svg+'</span> '+label,s,count=1)
+          css='<style id="navSvgFix">.navSvg{width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 18px;color:#fff}.navSvg svg{width:18px;height:18px;display:block;fill:currentColor}</style>'
+          if 'id="navSvgFix"' not in s:s=s.replace('</head>',css+'</head>',1)
+          p.write_text(s,encoding="utf-8")
+          # State pages: navigation + orphan card width.
+          names={"AC":"ACRE","AL":"ALAGOAS","AP":"AMAPÁ","BA":"BAHIA","CE":"CEARÁ","DF":"DISTRITO FEDERAL","ES":"ESPÍRITO SANTO","GO":"GOIÁS","MA":"MARANHÃO","MG":"MINAS GERAIS","PA":"PARÁ","PE":"PERNAMBUCO","PI":"PIAUÍ","PR":"PARANÁ","RJ":"RIO DE JANEIRO","RR":"RORAIMA","RS":"RIO GRANDE DO SUL","SC":"SANTA CATARINA"}
+          for q in Path("mapa").glob("*/*/index.html"):
+              parts=q.parts
+              if len(parts)!=4 or len(parts[1])!=2 or not parts[2].isdigit():continue
+              uf,yr=parts[1].upper(),parts[2]
+              z=q.read_text(encoding="utf-8")
+              z=z.replace('/mapa/sp-modular/','/mapa/').replace('← SÃO PAULO','← VOLTAR')
+              for y in ('2018','2022','2026'):
+                  z=re.sub(r'>\s*'+y+r'\s*</(a|button)>','>'+uf+' · '+y+r'</\1>',z)
+              if uf in names:z=z.replace(names[uf]+' · '+yr,uf+' · '+yr)
+              card='<style id="orphanCardFix">.cands>.cand:last-child:nth-child(odd){grid-column:1/-1!important}</style>'
+              if 'id="orphanCardFix"' not in z:z=z.replace('</head>',card+'</head>',1)
+              q.write_text(z,encoding="utf-8")
+          PY
+      - name: Verify
+        run: |
+          grep -q 'id="navSvgFix"' mapa/index.html
+          ! grep -R '/mapa/sp-modular/' mapa/*/20*/index.html
+          ! grep -R '← SÃO PAULO' mapa/*/20*/index.html
+          grep -R -q 'id="orphanCardFix"' mapa/*/20*/index.html
+      - name: Commit
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add mapa
+          git diff --cached --check
+          git commit -m "fix: state navigation cards and menu icons"
+          git push
