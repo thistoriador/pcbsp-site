@@ -1696,13 +1696,26 @@ panelBack=function(){
 
 
 <script>
-function toggleEstados(){
+function closeEstados(){
+ const m=document.getElementById("estadosMenu"),a=document.getElementById("estadosSeta");
+ if(m)m.style.display="none";
+ if(a)a.textContent="▾";
+}
+function toggleEstados(ev){
+ if(ev)ev.stopPropagation();
  const m=document.getElementById("estadosMenu"),a=document.getElementById("estadosSeta");
  if(!m)return;
  const abrir=m.style.display==="none"||!m.style.display;
  m.style.display=abrir?"grid":"none";
  if(a)a.textContent=abrir?"▴":"▾";
 }
+document.addEventListener("click",function(ev){
+ const m=document.getElementById("estadosMenu");
+ if(!m||m.style.display==="none")return;
+ const trigger=ev.target.closest('[onclick^="toggleEstados"]');
+ if(!m.contains(ev.target)&&!trigger)closeEstados();
+});
+document.addEventListener("keydown",function(ev){if(ev.key==="Escape")closeEstados();});
 </script>
 <script>function openMobileStates(){const p=document.getElementById('mobileStatesPanel');p.style.display='block';p.setAttribute('aria-hidden','false')}function closeMobileStates(){const p=document.getElementById('mobileStatesPanel');p.style.display='none';p.setAttribute('aria-hidden','true')}</script></body>
 </html>
