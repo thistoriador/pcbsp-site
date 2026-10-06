@@ -11,7 +11,7 @@ jobs:
         shell: python
         run: |
           import urllib.request,json,re
-          UFS=['al','ap','ce','df','es','go','ma','mg','pa','pe','pi','rj','rr','rs','sc','sp']
+          UFS=['al','ap','ce','df','es','go','ma','mg','pa','pe','pi','rj','rr','rs','sc']
           ibge={'al':'27','ap':'16','ce':'23','es':'32','go':'52','ma':'21','mg':'31','pa':'15','pe':'26','pi':'22','rj':'33','rr':'14','rs':'43','sc':'42','sp':'35'}
           for uf in UFS:
             base=f'https://pcbsp.com.br/mapa/{uf}/2018/'
