@@ -1,0 +1,54 @@
+name: Testar TSE MG 2022
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/teste-tse-mg-2022.yml']
+permissions: {contents: write}
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar e testar bases oficiais
+        shell: python
+        run: |
+          import urllib.request,zipfile,io,csv,collections,json
+          NOM='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2022.zip'
+          PAR='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip'
+          def download(url):
+            print('baixando',url)
+            return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url,timeout=180).read()))
+          def rows_mg(z):
+            names=[n for n in z.namelist() if n.lower().endswith('.csv') and ('_MG.' in n.upper() or n.upper().endswith('_MG.CSV'))]
+            if not names: names=[n for n in z.namelist() if n.lower().endswith('.csv')]
+            for name in names:
+              with z.open(name) as raw:
+                text=io.TextIOWrapper(raw,encoding='latin-1',newline='')
+                for r in csv.DictReader(text,delimiter=';'):
+                  if r.get('SG_UF')=='MG' and r.get('NR_TURNO')=='1': yield r
+          z=download(NOM)
+          totals=collections.Counter(); mun=collections.defaultdict(collections.Counter); meta={}
+          for r in rows_mg(z):
+            if r.get('SG_PARTIDO')!='PCB': continue
+            nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO')
+            cargo=r.get('DS_CARGO','')
+            key=f'{cargo} | {nome} | {r.get("NR_CANDIDATO","")}'
+            v=int(r.get('QT_VOTOS_NOMINAIS') or 0)
+            totals[key]+=v; mun[r.get('NM_MUNICIPIO')][key]+=v
+          zp=download(PAR)
+          leg=collections.Counter(); legmun=collections.Counter()
+          for r in rows_mg(zp):
+            if r.get('SG_PARTIDO')!='PCB': continue
+            cargo=r.get('DS_CARGO','')
+            v=int(r.get('QT_VOTOS_LEGENDA_VALIDOS') or r.get('QT_VOTOS_LEGENDA') or 0)
+            leg[cargo]+=v; legmun[r.get('NM_MUNICIPIO')]+=v
+          out={'fonte':'TSE Dados Abertos 2022','uf':'MG','candidatos_PCB':dict(totals),'municipios_com_voto_por_candidato':{k:sum(1 for m in mun.values() if m[k]>0) for k in totals},'legenda_PCB_por_cargo':dict(leg),'municipios_lidos':len(mun)}
+          import pathlib
+          pathlib.Path('mapa/teste-mg-2022.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+      - name: Commit resultado do teste
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/teste-mg-2022.json
+          git diff --cached --quiet || (git commit -m "Teste oficial TSE MG 2022" && git push)
