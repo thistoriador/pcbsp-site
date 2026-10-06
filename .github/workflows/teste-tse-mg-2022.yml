@@ -1,54 +1,61 @@
-name: Testar TSE MG 2022
+name: Gerar prototipo MG 2022 OSM
 on:
   workflow_dispatch:
   push:
     paths: ['.github/workflows/teste-tse-mg-2022.yml']
 permissions: {contents: write}
 jobs:
-  teste:
+  gerar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Baixar e testar bases oficiais
+      - name: Gerar dados MG 2022
         shell: python
         run: |
-          import urllib.request,zipfile,io,csv,collections,json
+          import urllib.request,zipfile,io,csv,collections,json,pathlib
           NOM='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2022.zip'
           PAR='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip'
-          def download(url):
-            print('baixando',url)
-            return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url,timeout=180).read()))
-          def rows_mg(z):
-            names=[n for n in z.namelist() if n.lower().endswith('.csv') and ('_MG.' in n.upper() or n.upper().endswith('_MG.CSV'))]
-            if not names: names=[n for n in z.namelist() if n.lower().endswith('.csv')]
+          def zget(url): return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url,timeout=240).read()))
+          def csvrows(z,names):
             for name in names:
               with z.open(name) as raw:
-                text=io.TextIOWrapper(raw,encoding='latin-1',newline='')
-                for r in csv.DictReader(text,delimiter=';'):
-                  if r.get('SG_UF')=='MG' and r.get('NR_TURNO')=='1': yield r
-          z=download(NOM)
-          totals=collections.Counter(); mun=collections.defaultdict(collections.Counter); meta={}
-          for r in rows_mg(z):
-            if r.get('SG_PARTIDO')!='PCB': continue
+                for r in csv.DictReader(io.TextIOWrapper(raw,encoding='latin-1',newline=''),delimiter=';'): yield r
+          z=zget(NOM)
+          mg=[n for n in z.namelist() if n.upper().endswith('_MG.CSV')]
+          br=[n for n in z.namelist() if n.upper().endswith('_BR.CSV')]
+          totals=collections.Counter(); data=collections.defaultdict(collections.Counter); info={}
+          for r in csvrows(z,mg):
+            if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
             nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO')
+            cargo=r.get('DS_CARGO',''); num=r.get('NR_CANDIDATO','')
+            key=f'{cargo} | {nome} | {num}'
+            v=int(r.get('QT_VOTOS_NOMINAIS') or 0); totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v
+            info[key]={'nome':nome,'cargo':cargo,'numero':num}
+          # Presidência fica no arquivo BR; selecionar localidades de MG
+          for r in csvrows(z,br):
+            if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB' or r.get('DS_CARGO')!='Presidente': continue
+            if r.get('SG_UF')!='MG': continue
+            nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO'); num=r.get('NR_CANDIDATO','')
+            key=f'Presidente | {nome} | {num}'; v=int(r.get('QT_VOTOS_NOMINAIS') or 0)
+            totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]={'nome':nome,'cargo':'Presidente','numero':num}
+          zp=zget(PAR); pmg=[n for n in zp.namelist() if n.upper().endswith('_MG.CSV')]
+          for r in csvrows(zp,pmg):
+            if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
             cargo=r.get('DS_CARGO','')
-            key=f'{cargo} | {nome} | {r.get("NR_CANDIDATO","")}'
-            v=int(r.get('QT_VOTOS_NOMINAIS') or 0)
-            totals[key]+=v; mun[r.get('NM_MUNICIPIO')][key]+=v
-          zp=download(PAR)
-          leg=collections.Counter(); legmun=collections.Counter()
-          for r in rows_mg(zp):
-            if r.get('SG_PARTIDO')!='PCB': continue
-            cargo=r.get('DS_CARGO','')
+            if cargo not in ('Deputado Federal','Deputado Estadual'): continue
+            key='Legenda '+('Federal' if cargo=='Deputado Federal' else 'Estadual')+' | PCB | 21'
             v=int(r.get('QT_VOTOS_LEGENDA_VALIDOS') or r.get('QT_VOTOS_LEGENDA') or 0)
-            leg[cargo]+=v; legmun[r.get('NM_MUNICIPIO')]+=v
-          out={'fonte':'TSE Dados Abertos 2022','uf':'MG','candidatos_PCB':dict(totals),'municipios_com_voto_por_candidato':{k:sum(1 for m in mun.values() if m[k]>0) for k in totals},'legenda_PCB_por_cargo':dict(leg),'municipios_lidos':len(mun)}
-          import pathlib
-          pathlib.Path('mapa/teste-mg-2022.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
-          print(json.dumps(out,ensure_ascii=False,indent=2))
-      - name: Commit resultado do teste
+            totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]={'nome':'LEGENDA 21','cargo':cargo,'numero':'21'}
+          keys=list(info)
+          out={'uf':'MG','ano':2022,'fonte':'TSE Dados Abertos','candidatos':[dict(id=k,total=totals[k],**info[k]) for k in keys],
+               'municipios':[{'nome':m,'candidatos':dict(v)} for m,v in data.items()]}
+          pathlib.Path('mapa/teste-mg-2022-osm').mkdir(parents=True,exist_ok=True)
+          pathlib.Path('mapa/teste-mg-2022-osm/dados.json').write_text(json.dumps(out,ensure_ascii=False),encoding='utf-8')
+          print('municipios',len(data),'candidatos',len(keys))
+          for k in keys: print(k,totals[k])
+      - name: Commit dados
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add mapa/teste-mg-2022.json
-          git diff --cached --quiet || (git commit -m "Teste oficial TSE MG 2022" && git push)
+          git add mapa/teste-mg-2022-osm/dados.json
+          git diff --cached --quiet || (git commit -m "Gera dados MG 2022 para prototipo OSM" && git push)
