@@ -1,0 +1,54 @@
+name: Gerar PE 2022
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/tse-2022-pe.yml']
+permissions: {contents: write}
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extrair TSE e geometria
+        shell: python
+        run: |
+          import urllib.request,zipfile,io,csv,collections,json,pathlib
+          UF='PE'
+          NOM='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2022.zip'
+          PAR='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2022.zip'
+          def zget(u): return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(u,timeout=300).read()))
+          def rows(z,names):
+            for n in names:
+              with z.open(n) as raw:
+                yield from csv.DictReader(io.TextIOWrapper(raw,encoding='latin-1',newline=''),delimiter=';')
+          z=zget(NOM); uf=[n for n in z.namelist() if n.upper().endswith('_'+UF+'.CSV')]; br=[n for n in z.namelist() if n.upper().endswith('_BR.CSV')]
+          totals=collections.Counter(); data=collections.defaultdict(collections.Counter); info={}
+          def add(r,cargo=None):
+            nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO'); cg=cargo or r.get('DS_CARGO',''); num=r.get('NR_CANDIDATO','')
+            k=f'{cg} | {nome} | {num}'; v=int(r.get('QT_VOTOS_NOMINAIS') or 0); totals[k]+=v; data[r.get('NM_MUNICIPIO')][k]+=v; info[k]={'nome':nome,'cargo':cg,'numero':num}
+          for r in rows(z,uf):
+            if r.get('NR_TURNO')=='1' and r.get('SG_PARTIDO')=='PCB': add(r)
+          for r in rows(z,br):
+            if r.get('NR_TURNO')=='1' and r.get('SG_PARTIDO')=='PCB' and r.get('DS_CARGO')=='Presidente' and r.get('SG_UF')==UF: add(r,'Presidente')
+          zp=zget(PAR); puf=[n for n in zp.namelist() if n.upper().endswith('_'+UF+'.CSV')]
+          for r in rows(zp,puf):
+            if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB' or r.get('DS_CARGO') not in ('Deputado Federal','Deputado Estadual'): continue
+            cg=r['DS_CARGO']; k='Legenda '+('Federal' if cg=='Deputado Federal' else 'Estadual')+' | PCB | 21'; v=int(r.get('QT_VOTOS_LEGENDA_VALIDOS') or r.get('QT_VOTOS_LEGENDA') or 0)
+            totals[k]+=v; data[r.get('NM_MUNICIPIO')][k]+=v; info[k]={'nome':'LEGENDA 21','cargo':cg,'numero':'21'}
+          out={'uf':UF,'ano':2022,'fonte':'TSE Dados Abertos','candidatos':[dict(id=k,total=totals[k],**info[k]) for k in info],'municipios':[{'nome':m,'candidatos':dict(v)} for m,v in data.items()]}
+          p=pathlib.Path('mapa/pe'); p.mkdir(parents=True,exist_ok=True); (p/'dados.json').write_text(json.dumps(out,ensure_ascii=False),encoding='utf-8')
+          geo=urllib.request.urlopen('https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-26-mun.json',timeout=120).read()
+          (p/'municipios.geojson').write_bytes(geo)
+          assert len(data)==184, f'Esperados 184 municípios, obtidos {len(data)}'
+          assert any(c['cargo']=='Presidente' for c in out['candidatos'])
+          assert any(c['cargo']=='Governador' for c in out['candidatos'])
+          print('PE OK:',len(data),'municipios;',len(info),'camadas')
+          for c in out['candidatos']: print(c['cargo'],c['nome'],c['numero'],c['total'])
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/pe/dados.json mapa/pe/municipios.geojson
+          git diff --cached --quiet || (git commit -m "Gera dados oficiais TSE PE 2022" && git pull --rebase && git push)
+
+# trigger geração GO
