@@ -1,0 +1,52 @@
+name: Padronizar navegacao dos mapas estaduais
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/padronizar-navegacao-estados.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Padronizar Voltar e sigla-ano
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          for p in Path('mapa').glob('*/*/index.html'):
+            m=re.fullmatch(r'mapa/([a-z]{2})/(20\d\d)/index\.html',p.as_posix())
+            if not m: continue
+            uf,ano=m.group(1).upper(),m.group(2)
+            s=p.read_text(encoding='utf-8'); old=s
+            s=s.replace("location.href='/mapa/sp-modular/'\">← SÃO PAULO","location.href='/mapa/'\">← VOLTAR")
+            # links de anos do mesmo estado
+            s=re.sub(r'(location\.href=[\'\"]/mapa/'+uf.lower()+r'/(20\d\d)/[\'\"][^>]*>)(20\d\d)(</button>)',
+                     lambda x:x.group(1)+uf+' · '+x.group(2)+x.group(3),s)
+            # ano ativo sem link, dentro da barra superior
+            top=re.search(r'<div class="top">(.*?)</div>',s,re.S)
+            if top:
+              block=top.group(1)
+              block=re.sub(r'(<button class="pill red"[^>]*>)(20\d\d)(</button>)',
+                           lambda x:x.group(1)+uf+' · '+x.group(2)+x.group(3),block)
+              s=s[:top.start(1)]+block+s[top.end(1):]
+            if s!=old:
+              p.write_text(s,encoding='utf-8'); changed.append(str(p))
+          if not changed: raise SystemExit('ABORT: nenhuma pagina alterada')
+          print('\n'.join(changed))
+          PY
+      - name: Validar
+        run: |
+          ! grep -R "sp-modular.*SÃO PAULO" mapa/*/20*/index.html
+          ! grep -R ">← SÃO PAULO</button>" mapa/*/20*/index.html
+          grep -R "← VOLTAR" mapa/*/20*/index.html >/dev/null
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/*/20*/index.html
+          git diff --cached --check
+          git commit -m "fix: padronizar voltar e sigla nos anos estaduais"
+          git push
