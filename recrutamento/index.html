@@ -163,7 +163,7 @@
 <details id="bootstrapBox" style="margin-top:18px"><summary><b>Primeiro acesso do SUPERADMIN</b></summary><div style="padding-top:12px"><p>Use esta opção somente para ativar a primeira conta.</p><label>Chave de ativação</label><input id="activationKey" autocomplete="off"><label>Defina sua senha</label><div class="passwrap"><input id="bootstrapPass" type="password" autocomplete="new-password"><button type="button" class="eye" onclick="togglePass('bootstrapPass',this)" aria-label="Mostrar senha">👁️</button></div><button class="send secondary" style="margin-top:12px" type="button" onclick="bootstrapAdmin()">ATIVAR TITO</button></div></details>
 </div>
 <div id="adminPanel" style="display:none">
-<div class="adminbar"><div><b id="adminWho">Painel</b><small id="adminRole"></small><span class="securepill">🔒 SESSÃO SEGURA</span></div><div><button class="back" onclick="adminRefresh()">↻ Atualizar</button> <button class="back" onclick="adminLogout()">Sair</button></div></div>
+<div class="adminbar"><div><b id="adminWho">Painel</b><small id="adminRole"></small><span class="securepill">🔒 SESSÃO SEGURA</span></div><div><button id="adminRefreshBtn" class="back" onclick="adminRefresh(this)">↻ Atualizar</button> <button class="back" onclick="adminLogout()">Sair</button></div></div>
 <div class="admintabs"><button onclick="adminTab('overview')">Visão geral</button><button onclick="adminTab('recruits')">Recrutamentos</button><button onclick="adminTab('circulists')">Circulistas</button><button id="usersTabBtn" onclick="adminTab('users')">Usuários</button><button onclick="adminTab('password')">Minha senha</button></div>
 <div id="a_overview" class="atab panel"><div id="astats" class="statcards"></div><div id="astages"></div></div>
 <div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select></div><div id="recruitList" class="tablewrap"></div></div>
@@ -203,7 +203,8 @@ function adminPassword(v){v=String(v||'');if(v.length<6)throw Error('A senha dev
 async function adminLogin(){try{const x=await adminApi('login',{login_name:alogin.value,password:adminPassword(apass.value)},false);adminSession=x;localStorage.setItem('pcb_admin_session',JSON.stringify(x));apass.value='';await adminStart()}catch(e){msg('amsg',e.message,false)}}
 async function bootstrapAdmin(){try{await adminApi('bootstrap',{activation_key:activationKey.value,email:'thistoriador@yahoo.com.br',login_name:'Tito',password:adminPassword(bootstrapPass.value)},false);activationKey.value='';bootstrapPass.value='';msg('amsg','SUPERADMIN Tito ativado. Agora entre com usuário Tito e a senha que você acabou de definir.',true);bootstrapBox.style.display='none';alogin.value='Tito'}catch(e){msg('amsg',e.message,false)}}
 async function adminStart(){try{const x=await adminApi('me');adminProfile=x.profile;document.getElementById('adminLoginBox').style.display='none';adminPanel.style.display='block';adminWho.textContent=adminProfile.nome+' • '+(adminProfile.login_name||'');adminRole.textContent=adminProfile.role;usersTabBtn.style.display=adminProfile.role==='SUPERADMIN'?'':'none';await adminRefresh()}catch(e){adminLogout();msg('amsg',e.message,false)}}
-async function adminRefresh(){try{
+async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('adminRefreshBtn');const oldText=refreshBtn?.textContent;try{
+ if(refreshBtn){refreshBtn.disabled=true;refreshBtn.textContent='↻ Atualizando...'}
  const d=await adminApi('dashboard');
  const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];
  if(adminProfile.role!=='RESPONSAVEL'){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[]}
@@ -217,7 +218,8 @@ async function adminRefresh(){try{
  renderRecruits();
  if(adminProfile.role!=='RESPONSAVEL'){const c=await adminApi('list_circulistas');circulistsCache=c.rows||[];renderCirculists()}
  if(adminProfile.role==='SUPERADMIN')await loadUsers()
-}catch(e){alert(e.message)}}
+ if(refreshBtn)refreshBtn.textContent='✓ Atualizado'
+}catch(e){alert(e.message)}finally{if(refreshBtn){setTimeout(()=>{refreshBtn.disabled=false;refreshBtn.textContent=oldText||'↻ Atualizar'},700)}}}
 function adminTab(n){document.querySelectorAll('.atab').forEach(x=>x.style.display='none');document.getElementById('a_'+n).style.display='block';document.querySelectorAll('.admintabs button').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes("'"+n+"'")))}
 function adminLogout(){adminSession=null;adminProfile=null;localStorage.removeItem('pcb_admin_session');adminPanel.style.display='none';document.getElementById('adminLoginBox').style.display='block'}
 function adminHome(){go('home')}
