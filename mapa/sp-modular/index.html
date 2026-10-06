@@ -964,18 +964,20 @@ function tabsHTML(active='geral'){
  </div>`;
 }
 function totalsHTML(){
+ if(year===2026){
+   const pcb=candidates.filter(c=>c.partido==='PCB');
+   const apoiadas=candidates.filter(c=>c.partido!=='PCB');
+   const pcbTotal=pcb.reduce((n,c)=>n+Number(c.votos||0),0);
+   const apoiadasTotal=apoiadas.reduce((n,c)=>n+Number(c.votos||0),0);
+   return `<div class="election-totals">
+    <div class="totalbox primary"><b>${fmt(pcbTotal)}</b><span>PCB • nominais</span></div>
+    <div class="totalbox"><b>${fmt(apoiadasTotal)}</b><span>Apoiadas • nominais</span></div>
+    <div class="totalbox"><b>${fmt(candidates.length)}</b><span>Candidaturas</span></div>
+   </div><div class="context-note">2026 reúne candidaturas próprias do PCB e candidaturas apoiadas. Os totais acima não somam cargos diferentes em um único “total geral”.</div>`;
+ }
  const fallback=LAB_TOTALS[year]||{};
- const t={
-   total: resumo?.votos_total ?? fallback.total,
-   nominal: resumo?.votos_nominais ?? fallback.nominal,
-   legenda: resumo?.votos_legenda ?? fallback.legenda,
-   note: fallback.note
- };
- return `<div class="election-totals">
-   <div class="totalbox primary"><b>${t.total!=null?fmt(t.total):'—'}</b><span>Total geral</span></div>
-   <div class="totalbox"><b>${t.nominal!=null?fmt(t.nominal):'—'}</b><span>Nominais</span></div>
-   <div class="totalbox"><b>${t.legenda!=null?fmt(t.legenda):'—'}</b><span>Legenda</span></div>
- </div>${t.note?`<div class="context-note">${esc(t.note)}</div>`:''}`;
+ const t={total:resumo?.votos_total??fallback.total,nominal:resumo?.votos_nominais??fallback.nominal,legenda:resumo?.votos_legenda??fallback.legenda,note:fallback.note};
+ return `<div class="election-totals"><div class="totalbox primary"><b>${t.total!=null?fmt(t.total):'—'}</b><span>Total geral</span></div><div class="totalbox"><b>${t.nominal!=null?fmt(t.nominal):'—'}</b><span>Nominais</span></div><div class="totalbox"><b>${t.legenda!=null?fmt(t.legenda):'—'}</b><span>Legenda</span></div></div>${t.note?`<div class="context-note">${esc(t.note)}</div>`:''}`;
 }
 function renderTimeline(){
  const el=document.getElementById('timelineScroll'); if(!el)return;
@@ -1001,7 +1003,7 @@ renderCandidates=function(rows){
 renderMunicipios=function(rows){
  mapMode='geral'; candidateMapRows=[]; updateRealMap();
  panelState={type:'municipiosSummary'}; selectedCandidate=null; selectedMunicipio=null; selectedZona=null;
- title(`${electionKind(year)} • ${year}`,`${year===2000?rows.length:mapaMunicipios.filter(x=>Number(x.votos_total||0)>0).length} municípios com votação registrada`,false);
+ title(`${electionKind(year)} • ${year}`,year===2026?`${rows.length} municípios carregados`:`${year===2000?rows.length:mapaMunicipios.filter(x=>Number(x.votos_total||0)>0).length} municípios com votação registrada`,false);
  const chart = year===2000
    ? chartRows(candidates.map(c=>({municipio:c.nome,votos:c.votos})),'municipio','votos',8)
    : chartRows(mapaMunicipios,'municipio','votos_total',10);
