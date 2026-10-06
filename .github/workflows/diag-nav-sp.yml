@@ -1,0 +1,35 @@
+name: Diagnosticar navegacao SP
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/diag-nav-sp.yml']
+permissions: {contents: write}
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extrair somente trechos de navegacao
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path("mapa/index.html")
+          s=p.read_text(encoding="utf-8")
+          needles=["OUTROS ESTADOS","Outros Estados","/mapa/mg/","/mapa/ac/","HQ","hq"]
+          out=[]
+          for n in needles:
+            pos=0
+            while True:
+              i=s.find(n,pos)
+              if i<0: break
+              out.append("\n=== "+n+" @ "+str(i)+" ===\n"+s[max(0,i-1200):min(len(s),i+1800)])
+              pos=i+len(n)
+          Path("mapa/nav-sp-diagnostico.txt").write_text("\n".join(out),encoding="utf-8")
+          print("matches",len(out),"size",len(s))
+      - name: Commit diagnostico
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/nav-sp-diagnostico.txt
+          git diff --cached --quiet || (git commit -m "Diagnostico temporario navegacao SP" && git push)
