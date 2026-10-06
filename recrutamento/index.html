@@ -203,11 +203,7 @@ function adminPassword(v){v=String(v||'');if(v.length<6)throw Error('A senha dev
 async function adminLogin(){try{const x=await adminApi('login',{login_name:alogin.value,password:adminPassword(apass.value)},false);adminSession=x;localStorage.setItem('pcb_admin_session',JSON.stringify(x));apass.value='';await adminStart()}catch(e){msg('amsg',e.message,false)}}
 async function bootstrapAdmin(){try{await adminApi('bootstrap',{activation_key:activationKey.value,email:'thistoriador@yahoo.com.br',login_name:'Tito',password:adminPassword(bootstrapPass.value)},false);activationKey.value='';bootstrapPass.value='';msg('amsg','SUPERADMIN Tito ativado. Agora entre com usuário Tito e a senha que você acabou de definir.',true);bootstrapBox.style.display='none';alogin.value='Tito'}catch(e){msg('amsg',e.message,false)}}
 async function adminStart(){try{const x=await adminApi('me');adminProfile=x.profile;document.getElementById('adminLoginBox').style.display='none';adminPanel.style.display='block';adminWho.textContent=adminProfile.nome+' • '+(adminProfile.login_name||'');adminRole.textContent=adminProfile.role;usersTabBtn.style.display=adminProfile.role==='SUPERADMIN'?'':'none';await adminRefresh()}catch(e){adminLogout();msg('amsg',e.message,false)}}
-function restoreAdminView(){if(!adminSession?.access_token)return;go('admin');document.getElementById('adminLoginBox').style.display='none';adminPanel.style.display='block'}
 async function adminRefresh(){try{
- const activeTab=[...document.querySelectorAll('.admintabs button')].find(b=>b.classList.contains('active'));
- const activeMatch=(activeTab?.getAttribute('onclick')||'').match(/adminTab\('([^']+)'\)/);
- const keepTab=activeMatch?activeMatch[1]:'overview';
  const d=await adminApi('dashboard');
  const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];
  if(adminProfile.role!=='RESPONSAVEL'){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[]}
@@ -221,8 +217,7 @@ async function adminRefresh(){try{
  renderRecruits();
  if(adminProfile.role!=='RESPONSAVEL'){const c=await adminApi('list_circulistas');circulistsCache=c.rows||[];renderCirculists()}
  if(adminProfile.role==='SUPERADMIN')await loadUsers()
- adminTab(keepTab);
-}catch(e){if(/sessão|session|jwt|token/i.test(String(e.message||''))){adminLogout();msg('amsg','Sua sessão expirou. Entre novamente.',false)}else alert(e.message)}}
+}catch(e){alert(e.message)}}
 function adminTab(n){document.querySelectorAll('.atab').forEach(x=>x.style.display='none');document.getElementById('a_'+n).style.display='block';document.querySelectorAll('.admintabs button').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes("'"+n+"'")))}
 function adminLogout(){adminSession=null;adminProfile=null;localStorage.removeItem('pcb_admin_session');adminPanel.style.display='none';document.getElementById('adminLoginBox').style.display='block'}
 function adminHome(){go('home')}
@@ -244,7 +239,7 @@ async function deleteAdminUser(id){if(!confirm('Excluir definitivamente este usu
 async function createAdminUser(){try{const x=await adminApi('create_user',{nome:unome.value,login_name:ulogin.value,email:uemail.value,role:urole.value});umsg.innerHTML='<div class="msg ok"><b>Usuário criado.</b><br>Senha temporária (copie agora): <span class="codebox" style="font-size:18px">'+esc(x.temporary_password)+'</span><br>Peça ao usuário para entrar e trocar a senha.</div>';unome.value=ulogin.value=uemail.value='';await loadUsers()}catch(e){msg('umsg',e.message,false)}}
 async function toggleUser(id,ativo){try{await adminApi('set_user_active',{user_id:id,ativo});await loadUsers()}catch(e){alert(e.message)}}
 async function changeAdminPassword(){try{await adminApi('change_password',{password:adminPassword(newpass.value)});newpass.value='';msg('pmsg','Senha alterada com sucesso.',true)}catch(e){msg('pmsg',e.message,false)}}
-if(adminSession?.access_token){restoreAdminView();adminStart()}
+if(adminSession?.access_token){adminStart()}
 
 </script>
 </body></html>
