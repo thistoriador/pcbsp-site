@@ -1,0 +1,99 @@
+name: Patch official mobile states and default 2026
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-official-mobile-2026.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch mapa/index.html surgically
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("mapa/index.html")
+          s=p.read_text(encoding="utf-8")
+          old=s
+
+          pairs=[
+            ('<button class="year active" data-year="2000" onclick="setYear(2000)">2000</button>',
+             '<button class="year" data-year="2000" onclick="setYear(2000)">2000</button>'),
+            ('<button class="year" data-year="2026" onclick="setYear(2026)">2026</button>',
+             '<button class="year active" data-year="2026" onclick="setYear(2026)">2026</button>'),
+            ("let year=2000,candidates=[]", "let year=2026,candidates=[]"),
+            ('<b id="legendTitle">Municípios • 2000</b>', '<b id="legendTitle">Municípios • 2026</b>')
+          ]
+          for a,b in pairs:
+              n=s.count(a)
+              if n!=1:
+                  raise SystemExit(f"ABORT: expected exactly 1 occurrence, found {n}: {a[:80]}")
+              s=s.replace(a,b,1)
+
+          marker="<!-- MOBILE STATES OFFICIAL 2026 -->"
+          if marker in s:
+              raise SystemExit("ABORT: mobile states marker already present")
+
+          block=r'''
+          <!-- MOBILE STATES OFFICIAL 2026 -->
+          <style id="mobile-states-official">
+          #mobileStatesOfficialBtn,#mobileStatesOfficialPanel{display:none}
+          @media(max-width:980px){
+            #mobileStatesOfficialBtn{display:flex;position:fixed;left:12px;right:12px;bottom:86px;z-index:9998;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:12px 14px;background:#65070c;color:#fff;font:900 15px/1.1 Arial,sans-serif;box-shadow:0 4px 18px #0005}
+            #mobileStatesOfficialPanel{position:fixed;display:none;left:10px;right:10px;bottom:142px;z-index:9999;max-height:62vh;overflow:auto;background:#fffaf1;border:2px solid #65070c;border-radius:16px;padding:14px;box-shadow:0 10px 32px #0007}
+            #mobileStatesOfficialPanel.open{display:block}
+            #mobileStatesOfficialPanel .ms-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:#65070c;font:900 18px/1.1 Arial,sans-serif}
+            #mobileStatesOfficialPanel .ms-close{border:0;background:#65070c;color:#fff;border-radius:10px;padding:7px 11px;font-weight:900}
+            #mobileStatesOfficialPanel .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+            #mobileStatesOfficialPanel a{display:flex;min-height:54px;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;background:#f0ebe2;border:1px solid #d5cec2;border-radius:11px;color:#1b1b1b;font:900 15px/1.05 Arial,sans-serif}
+            #mobileStatesOfficialPanel a small{font-size:11px;font-weight:700;color:#6a625a;margin-top:4px}
+          }
+          </style>
+          <button id="mobileStatesOfficialBtn" type="button" aria-controls="mobileStatesOfficialPanel" aria-expanded="false">◆ OUTROS ESTADOS</button>
+          <div id="mobileStatesOfficialPanel" aria-hidden="true">
+            <div class="ms-head"><span>OUTROS ESTADOS</span><button class="ms-close" type="button">FECHAR ×</button></div>
+            <div class="ms-grid">
+              <a href="/mapa/ac/">AC<small>2026</small></a>
+              <a href="/mapa/ba/">BA<small>2022</small></a>
+              <a href="/mapa/ce/">CE<small>2022</small></a>
+              <a href="/mapa/df/">DF<small>2022</small></a>
+              <a href="/mapa/go/">GO<small>2022</small></a>
+              <a href="/mapa/ma/">MA<small>2022 · 2026</small></a>
+              <a href="/mapa/mg/">MG<small>2022 · 2026</small></a>
+              <a href="/mapa/pe/">PE<small>2022</small></a>
+              <a href="/mapa/pi/">PI<small>2022</small></a>
+              <a href="/mapa/pr/">PR<small>2022</small></a>
+              <a href="/mapa/rj/">RJ<small>2022</small></a>
+              <a href="/mapa/rs/">RS<small>2022</small></a>
+            </div>
+          </div>
+          <script>
+          (()=>{const b=document.getElementById('mobileStatesOfficialBtn'),p=document.getElementById('mobileStatesOfficialPanel'),c=p&&p.querySelector('.ms-close');if(!b||!p)return;const set=v=>{p.classList.toggle('open',v);p.setAttribute('aria-hidden',String(!v));b.setAttribute('aria-expanded',String(v))};b.addEventListener('click',()=>set(!p.classList.contains('open')));c&&c.addEventListener('click',()=>set(false));})();
+          </script>
+          '''
+          if s.count("</body>")!=1:
+              raise SystemExit("ABORT: expected one </body>")
+          s=s.replace("</body>",block+"\n</body>",1)
+          if s==old:
+              raise SystemExit("ABORT: no changes")
+          p.write_text(s,encoding="utf-8")
+          print("OK bytes",len(old.encode()),"->",len(s.encode()))
+          print("default2026", 'let year=2026,candidates=[]' in s)
+          print("mobileMarker", marker in s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/index.html
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m "fix: mobile state access and default SP to 2026"
+          git push
