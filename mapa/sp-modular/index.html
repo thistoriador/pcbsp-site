@@ -468,7 +468,7 @@ background-size:cover!important;background-position:center top!important;overflo
 </style>
 
 <!-- MAPA DO VOTO SP — INDEX FINAL CONSOLIDADO 1996–2026 — 2026-10-03 -->
-<style>.pcbsp-standard-brand{display:block!important;background:#9f0712;margin:-25px -18px 22px;padding:14px 12px 15px}.pcbsp-standard-brand strong{display:block;font-size:22px!important;line-height:.88!important;font-weight:900}.pcbsp-standard-brand em{display:block;color:#f0c52b;font-style:normal;font-size:24px;line-height:1}.pcbsp-standard-brand small{display:block;color:#fff!important;font-size:10px!important;line-height:1.05;letter-spacing:.7px;margin-top:7px!important;font-weight:800}</style></head>
+<style>.pcbsp-standard-brand{display:block!important;background:#9f0712;margin:-25px -18px 22px;padding:14px 12px 15px}.pcbsp-standard-brand strong{display:block;font-size:22px!important;line-height:.88!important;font-weight:900}.pcbsp-standard-brand em{display:block;color:#f0c52b;font-style:normal;font-size:24px;line-height:1}.pcbsp-standard-brand small{display:block;color:#fff!important;font-size:10px!important;line-height:1.05;letter-spacing:.7px;margin-top:7px!important;font-weight:800}</style><style id="mobile-states-nav">#mobileStatesBtn,#mobileStatesPanel{display:none}@media(max-width:980px){#mobileStatesBtn{display:block;position:fixed;right:12px;bottom:76px;z-index:9999;border:0;border-radius:24px;padding:11px 15px;background:#87080f;color:#fff;box-shadow:0 4px 16px #0005;font-size:12px}#mobileStatesPanel{position:fixed;left:10px;right:10px;bottom:72px;z-index:12000;background:#65070c;color:#fff;border-radius:14px;padding:12px;box-shadow:0 10px 32px #0008;max-height:68vh;overflow:auto}.msp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.msp-head button{border:0;background:#fff2;color:#fff;border-radius:20px;padding:7px 10px}.msp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.msp-grid a{display:flex;flex-direction:column;text-decoration:none;color:#fff;background:#87080f;border:1px solid #ffffff33;border-radius:9px;padding:10px;font-weight:900}.msp-grid small{color:#f0c52b;margin-top:3px;font-size:10px}}</style></head>
 <body>
 <div class="app">
 <aside class="sidebar">
@@ -570,7 +570,7 @@ background-size:cover!important;background-position:center top!important;overflo
 </main>
 </div>
 
-<div class="mobilebar">
+<button id="mobileStatesBtn" onclick="openMobileStates()" aria-label="Outros estados">◆ <b>OUTROS ESTADOS</b></button><div id="mobileStatesPanel" aria-hidden="true"><div class="msp-head"><b>OUTROS ESTADOS</b><button onclick="closeMobileStates()">✕</button></div><div class="msp-grid"><a href="/mapa/ac/">AC <small>2026</small></a><a href="/mapa/ba/">BA <small>2022</small></a><a href="/mapa/ce/">CE <small>2022</small></a><a href="/mapa/df/">DF <small>2022</small></a><a href="/mapa/go/">GO <small>2022</small></a><a href="/mapa/ma/">MA <small>2022 · 2026</small></a><a href="/mapa/mg/">MG <small>2022 · 2026</small></a><a href="/mapa/pe/">PE <small>2022</small></a><a href="/mapa/pi/">PI <small>2022</small></a><a href="/mapa/pr/">PR <small>2022</small></a><a href="/mapa/rj/">RJ <small>2022</small></a><a href="/mapa/rs/">RS <small>2022</small></a></div></div><div class="mobilebar">
 <button class="active" onclick="goHome()"><span><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg></span>Início</button>
 <button onclick="scrollCandidates()"><span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M3 20v-3c0-4 2.5-6 6-6s6 2 6 6v3z"/><path d="M14 20v-3c0-2-.6-3.5-1.6-4.6 1-.6 2.1-.9 3.6-.9 3 0 5 2 5 5.5v3z"/></svg></span>Candidaturas</button>
 <button onclick="openMunicipios()"><span><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.5 7 13 7 13s7-7.5 7-13a7 7 0 0 0-7-7zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg></span>Território</button>
@@ -1704,5 +1704,5 @@ function toggleEstados(){
  if(a)a.textContent=abrir?"▴":"▾";
 }
 </script>
-</body>
+<script>function openMobileStates(){const p=document.getElementById('mobileStatesPanel');p.style.display='block';p.setAttribute('aria-hidden','false')}function closeMobileStates(){const p=document.getElementById('mobileStatesPanel');p.style.display='none';p.setAttribute('aria-hidden','true')}</script></body>
 </html>
