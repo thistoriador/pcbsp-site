@@ -1,0 +1,32 @@
+name: Diagnose mapa mobile
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mapa-mobile-diagnose.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect relevant fragments without modifying files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('mapa/index.html')
+          s=p.read_text(encoding='utf-8')
+          print('SIZE',len(s),'LINES',s.count('\n')+1)
+          pats=[r'2000',r'2026',r'OUTROS ESTADOS',r'outros.?estados',r'Candidaturas',r'Panorama',r'localStorage',r'selectedYear',r'anoAtual',r'anoSelecionado',r'currentYear']
+          for pat in pats:
+              print('\n###',pat)
+              ms=list(re.finditer(pat,s,re.I))
+              print('COUNT',len(ms))
+              for m in ms[:20]:
+                  a=max(0,m.start()-220); b=min(len(s),m.end()+300)
+                  print(s[a:b].replace('\n','\\n'))
+                  print('---')
+          PY
