@@ -3,7 +3,8 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/fix-all-state-navigation.yml'\n      - 'scripts/fix_state_nav.py'
+      - '.github/workflows/fix-all-state-navigation.yml'
+      - 'scripts/fix_state_nav.py'
 permissions:
   contents: write
 jobs:
