@@ -48,8 +48,8 @@
 #adminPanel .adminbar{background:linear-gradient(100deg,var(--teal2),var(--teal));color:#fff;padding:13px 16px;border-radius:14px;box-shadow:0 5px 16px #00485222;margin-bottom:10px}
 #adminPanel .adminbar small{color:#d7f3f6}.securepill{background:#ffffff20;color:#fff;border:1px solid #ffffff42}
 #adminPanel .admintabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;background:#fff;padding:7px;border:1px solid #e4e6e7;border-radius:13px;margin-bottom:12px;position:static}
-#adminPanel .admintabs button{background:#f1f3f4;color:#202326;text-align:center;border-radius:9px;padding:11px 8px;font-size:14px}
-#adminPanel .admintabs button:hover,#adminPanel .admintabs button.active{background:var(--teal);color:#fff}
+#adminPanel .admintabs button{background:#f3f4f4;color:#202326;text-align:center;border:1px solid #e1e4e5;border-radius:9px;padding:12px 10px;font-size:14px;font-weight:850;letter-spacing:.1px;transition:.16s ease;box-shadow:0 1px 2px #00000008}
+#adminPanel .admintabs button:hover{background:#e4f0f1;color:var(--teal2);border-color:#bfdadd;transform:translateY(-1px)}#adminPanel .admintabs button.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 4px 10px #006b7828}
 #adminPanel .atab{min-width:0;margin:0}.adminfilters{grid-template-columns:2fr 1fr 1fr}
 #adminPanel .statcards{grid-template-columns:repeat(4,minmax(0,1fr))}
 #adminPanel .stat{background:#fff;border:1px solid #dde4e6;border-left:5px solid var(--teal);min-height:104px;box-shadow:0 3px 10px #00000008}
@@ -137,7 +137,7 @@
 </div>
 <div id="adminPanel" style="display:none">
 <div class="adminbar"><div><b id="adminWho">Painel</b><small id="adminRole"></small><span class="securepill">🔒 SESSÃO SEGURA</span></div><div><button class="back" onclick="adminRefresh()">↻ Atualizar</button> <button class="back" onclick="adminLogout()">Sair</button></div></div>
-<div class="admintabs"><button onclick="adminTab('overview')">⌂ Visão geral</button><button onclick="adminTab('recruits')">👥 Recrutamentos</button><button onclick="adminTab('circulists')">🤝 Circulistas</button><button id="usersTabBtn" onclick="adminTab('users')">⚙ Usuários</button><button onclick="adminTab('password')">🔑 Minha senha</button></div>
+<div class="admintabs"><button onclick="adminTab('overview')">Visão geral</button><button onclick="adminTab('recruits')">Recrutamentos</button><button onclick="adminTab('circulists')">Circulistas</button><button id="usersTabBtn" onclick="adminTab('users')">Usuários</button><button onclick="adminTab('password')">Minha senha</button></div>
 <div id="a_overview" class="atab panel"><div id="astats" class="statcards"></div><div id="astages"></div></div>
 <div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select></div><div id="recruitList" class="tablewrap"></div></div>
 <div id="a_circulists" class="atab panel" style="display:none"><div class="adminfilters"><input id="cq" placeholder="Buscar circulista" oninput="renderCirculists()"><select id="cs" onchange="renderCirculists()"><option value="ATIVOS">Ativos</option><option value="ARQUIVADOS">Arquivados</option><option value="">Todos</option></select></div><div id="circulistList" class="tablewrap"></div></div>
