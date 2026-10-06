@@ -50,3 +50,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mapa/go/dados.json mapa/go/municipios.geojson
           git diff --cached --quiet || (git commit -m "Gera dados oficiais TSE GO 2022" && git pull --rebase && git push)
+
+# trigger geração GO
