@@ -1,0 +1,24 @@
+name: Fix all state navigation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-all-state-navigation.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize state navigation
+        run: |
+          python3 scripts/fix_state_nav.py
+      - name: Commit
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add mapa
+          git diff --cached --check
+          git commit -m "fix: normalize navigation on every state map"
+          git push
