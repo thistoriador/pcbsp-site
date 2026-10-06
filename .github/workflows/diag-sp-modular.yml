@@ -17,7 +17,7 @@ jobs:
           p=pathlib.Path("mapa/index.html")
           s=p.read_text(encoding="utf-8")
           scripts=re.findall(r'<script([^>]*)>([\\s\\S]*?)</script>',s,re.I)
-          srcs=re.findall(r'<script[^>]+src=["\\']([^"\\']+)',s,re.I)
+          srcs=re.findall(r"<script[^>]+src=[\\\"']([^\\\"']+)",s,re.I)
           years={y:s.count(y) for y in ["2010","2014","2018","2020","2022","2024","2026"]}
           needles={}
           for n in ["JOÃO PAULO RILLO","FABIO JOSE RODRIGUES DE MELLO","FABIO JOSÉ RODRIGUES DE MELLO","50123","5013","const DATA","let DATA","var DATA","GeoJSON","FeatureCollection","HQ"]:
