@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teste MG 2022 • Mapa dos Votos PCB-SP</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4efe5;font-family:Arial,sans-serif;color:#1c1a18}
+header{background:#87080f;color:#fff;padding:18px 22px;border-bottom:5px solid #f0c52b}header b{font-size:26px}header em{color:#f0c52b;font-style:normal}
+.top{padding:10px 15px;background:#fff;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #ddd}
+.pill{border:1px solid #d8d0c5;border-radius:22px;padding:9px 13px;background:#fff;font-weight:800}.pill.red{background:#b80e19;color:#fff}
+.wrap{padding:12px 14px 45px}.status{padding:10px 12px;margin-bottom:10px;background:#fff3cf;border:1px solid #e4ca70;border-radius:10px}
+.cands{display:flex;gap:8px;overflow:auto;padding-bottom:10px}.cand{min-width:190px;background:#fff;border:1px solid #d8d0c5;border-radius:12px;padding:10px;cursor:pointer}.cand.active{border:3px solid #b80e19;padding:8px}.cand strong{display:block;font-size:16px}.cand small{color:#756f67}.cand .n{font-size:21px;font-weight:900;color:#b80e19;margin-top:5px}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.55fr);gap:10px}.card{background:#fff;border:1px solid #ddd4c7;border-radius:13px;overflow:hidden}
+.head{padding:11px 13px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}.head h2{margin:0;font-size:20px}.head small{color:#756f67}
+#map{height:610px}.panel{height:610px;overflow:auto}.search{padding:10px;position:sticky;top:0;background:#fff;z-index:2}.search input{width:100%;font-size:16px;padding:10px;border:1px solid #ccc;border-radius:8px}
+.row{padding:9px 11px;border-top:1px solid #eee;display:flex;justify-content:space-between;gap:8px;cursor:pointer}.row:hover{background:#fff4d9}.row b:last-child{color:#b80e19}
+.legend{background:#fff;padding:8px 10px;border-radius:8px;box-shadow:0 1px 5px #777;font-size:12px;line-height:1.65}.sw{display:inline-block;width:13px;height:13px;margin-right:5px;vertical-align:-2px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}#map{height:480px}.panel{height:450px}}@media(max-width:520px){header b{font-size:21px}#map{height:430px}.cand{min-width:165px}}
+</style></head><body>
+<header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>PROTÓTIPO • MINAS GERAIS • 2022</div></header>
+<div class="top"><button class="pill" onclick="location.href='/mapa/mg/'">← MG 2026</button><button class="pill red">MG • 2022 • TESTE OSM</button></div>
+<main class="wrap"><div id="status" class="status">Carregando dados oficiais do TSE…</div><div id="cands" class="cands"></div>
+<div class="grid"><section class="card"><div class="head"><div><h2>Minas Gerais</h2><small>OpenStreetMap + 853 municípios</small></div></div><div id="map"></div></section>
+<section class="card"><div class="head"><div><h2 id="title">Ranking municipal</h2><small id="sub">2022</small></div></div><div class="panel"><div class="search"><input id="q" placeholder="Buscar município…" oninput="renderList()"></div><div id="list"></div></div></section></div></main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
+let D,geo,map,selected,layerByName=new Map(),norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().trim();
+const fmt=n=>Number(n||0).toLocaleString("pt-BR");
+function color(v,max){if(!v)return "#d1cbc1";let x=v/max;if(x>.60)return "#65050c";if(x>.30)return "#930914";if(x>.15)return "#bd1520";if(x>.06)return "#df4650";return "#f28b91"}
+function rowMap(){let m=new Map();D.municipios.forEach(r=>m.set(norm(r.nome),r));return m}
+function votes(name){let r=rowMap().get(norm(name));return r?Number(r.candidatos[selected]||0):0}
+function update(){let vals=D.municipios.map(r=>Number(r.candidatos[selected]||0)),max=Math.max(1,...vals);geo.eachLayer(l=>{let n=l.feature.properties.name||l.feature.properties.nome||l.feature.properties.NM_MUN||l.feature.properties.description||"";let v=votes(n);l.setStyle({fillColor:color(v,max),fillOpacity:v?.72:.18,color:"#6f675f",weight:.8});l.bindTooltip("<b>"+n+"</b><br>"+fmt(v)+" votos")});renderList();cards();legend(max)}
+function cards(){document.getElementById("cands").innerHTML=D.candidatos.map(c=>'<div class="cand '+(c.id===selected?'active':'')+'" onclick="selected='+JSON.stringify(c.id).replace(/"/g,"&quot;")+';update()"><strong>'+c.nome+'</strong><small>'+c.cargo+' • PCB '+c.numero+'</small><div class="n">'+fmt(c.total)+' votos</div></div>').join("")}
+function renderList(){let q=norm(document.getElementById("q").value),arr=D.municipios.map(r=>({n:r.nome,v:Number(r.candidatos[selected]||0)})).filter(x=>!q||norm(x.n).includes(q)).sort((a,b)=>b.v-a.v||a.n.localeCompare(b.n));document.getElementById("list").innerHTML=arr.map((x,i)=>'<div class="row" onclick="focusMun('+JSON.stringify(norm(x.n)).replace(/"/g,"&quot;")+')"><span>'+(i+1)+'. <b>'+x.n+'</b></span><b>'+fmt(x.v)+'</b></div>').join("")}
+function focusMun(n){let l=layerByName.get(n);if(l){map.fitBounds(l.getBounds(),{maxZoom:11});l.openTooltip()}}
+function legend(max){let c=D.candidatos.find(x=>x.id===selected),ctl=document.querySelector(".legend");if(!ctl){ctl=L.control({position:"bottomright"});ctl.onAdd=()=>{let d=L.DomUtil.create("div","legend");return d};ctl.addTo(map);ctl=document.querySelector(".legend")}ctl.innerHTML="<b>"+c.nome+"</b><br><span class=sw style='background:#65050c'></span>maior concentração<br><span class=sw style='background:#df4650'></span>intermediária<br><span class=sw style='background:#f28b91'></span>menor votação<br><span class=sw style='background:#d1cbc1'></span>zero voto"}
+Promise.all([fetch("dados.json?v=2").then(r=>r.json()),fetch("/mapa/dados/2026/mg/municipios.geojson").then(r=>r.json())]).then(([d,g])=>{D=d;selected=(D.candidatos.find(c=>c.cargo==="Governador")||D.candidatos[0]).id;map=L.map("map",{zoomControl:true});L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);geo=L.geoJSON(g,{style:{color:"#6f675f",weight:.8,fillOpacity:.25},onEachFeature:(f,l)=>{let n=f.properties.name||f.properties.nome||f.properties.NM_MUN||f.properties.description||"";layerByName.set(norm(n),l);l.on("click",()=>{let v=votes(n);document.getElementById("title").textContent=n;document.getElementById("sub").textContent=fmt(v)+" votos • "+D.candidatos.find(c=>c.id===selected).nome})}}).addTo(map);map.fitBounds(geo.getBounds());document.getElementById("status").textContent="Dados oficiais TSE 2022 • "+D.municipios.length+" municípios carregados";update()}).catch(e=>{document.getElementById("status").textContent="Erro ao carregar: "+e.message})
+</script></body></html>
