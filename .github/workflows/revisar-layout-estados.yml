@@ -1,4 +1,4 @@
-name: Revisar layout de todos os mapas estaduais
+name: Revisar mapas estaduais
 on:
   push:
     branches: [main]
