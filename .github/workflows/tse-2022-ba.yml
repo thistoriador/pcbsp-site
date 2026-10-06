@@ -52,3 +52,5 @@ jobs:
           git diff --cached --quiet || (git commit -m "Gera dados oficiais TSE BA 2022" && git pull --rebase && git push)
 
 
+
+# executar agora
