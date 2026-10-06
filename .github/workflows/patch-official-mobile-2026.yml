@@ -1,4 +1,4 @@
-name: Corrigir Outros Estados sem menu lateral
+name: Corrigir menu Outros Estados
 
 on:
   push:
