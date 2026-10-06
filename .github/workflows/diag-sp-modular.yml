@@ -1,0 +1,34 @@
+name: Diagnosticar SP modular
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/diag-sp-modular.yml']
+permissions:
+  contents: write
+jobs:
+  diagnosticar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Analisar index SP
+        shell: python
+        run: |
+          import re,json,pathlib
+          p=pathlib.Path("mapa/index.html")
+          s=p.read_text(encoding="utf-8")
+          scripts=re.findall(r'<script([^>]*)>([\\s\\S]*?)</script>',s,re.I)
+          srcs=re.findall(r'<script[^>]+src=["\\']([^"\\']+)',s,re.I)
+          years={y:s.count(y) for y in ["2010","2014","2018","2020","2022","2024","2026"]}
+          needles={}
+          for n in ["JOÃO PAULO RILLO","FABIO JOSE RODRIGUES DE MELLO","FABIO JOSÉ RODRIGUES DE MELLO","50123","5013","const DATA","let DATA","var DATA","GeoJSON","FeatureCollection","HQ"]:
+            pos=[m.start() for m in re.finditer(re.escape(n),s,re.I)]
+            needles[n]=pos[:20]
+          inline=[{"attrs":a.strip(),"chars":len(b),"head":b[:180].replace("\n"," ")} for a,b in scripts]
+          out={"bytes":len(s.encode()),"chars":len(s),"script_srcs":srcs,"inline_scripts":inline,"years":years,"needles":needles}
+          pathlib.Path("mapa/diag-sp-modular.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+      - name: Commit diagnóstico
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add mapa/diag-sp-modular.json
+          git diff --cached --quiet || (git commit -m "Diagnostica modularização SP" && git push)
