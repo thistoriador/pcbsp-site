@@ -1,0 +1,114 @@
+name: Publicar e auditar mapas PCB 2018
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/publicar-auditar-2018.yml']
+permissions:
+  contents: write
+jobs:
+  publicar-auditar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ampliar acesso aos estados 2018 no mapa principal
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('mapa/index.html')
+          s=p.read_text(encoding='utf-8')
+          states=[
+            ('ac','AC','Acre','2026'),('al','AL','Alagoas','2018'),('ap','AP','Amapá','2018'),
+            ('ba','BA','Bahia','2022'),('ce','CE','Ceará','2018 · 2022'),('df','DF','Distrito Federal','2018 · 2022'),
+            ('es','ES','Espírito Santo','2018'),('go','GO','Goiás','2018 · 2022'),('ma','MA','Maranhão','2018 · 2022 · 2026'),
+            ('mg','MG','Minas Gerais','2018 · 2022 · 2026'),('pa','PA','Pará','2018'),('pe','PE','Pernambuco','2018 · 2022'),
+            ('pi','PI','Piauí','2018 · 2022'),('pr','PR','Paraná','2022'),('rj','RJ','Rio de Janeiro','2018 · 2022'),
+            ('rr','RR','Roraima','2018'),('rs','RS','Rio Grande do Sul','2018 · 2022'),('sc','SC','Santa Catarina','2018')
+          ]
+          mobile='\n'.join(f'    <a href="/mapa/{slug}/">{uf}<small>{years}</small></a>' for slug,uf,name,years in states)
+          pat=r'(<div class="ms-grid">).*?(</div>\s*</div>\s*<script>\s*\(\(\)=>)'
+          ns,n=re.subn(pat,lambda m:m.group(1)+'\n'+mobile+'\n  '+m.group(2),s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('Painel mobile OUTROS ESTADOS não localizado com segurança')
+          s=ns
+          desktop=''.join(f'<button onclick="location.href=\'/mapa/{slug}/\'" style="padding:8px 10px">{uf} · {name} <small>({years})</small></button>' for slug,uf,name,years in states)
+          pat2=r'(<div id="estadosMenu" style="display:none;padding:0 0 6px 32px">).*?(</div>)'
+          ns,n=re.subn(pat2,lambda m:m.group(1)+desktop+m.group(2),s,count=1,flags=re.S)
+          if n!=1: raise SystemExit('Menu desktop OUTROS ESTADOS não localizado com segurança')
+          p.write_text(ns,encoding='utf-8')
+          print('mapa/index.html preservado:',p.stat().st_size,'bytes')
+      - name: Auditar dados locais contra TSE 2018
+        shell: python
+        run: |
+          import urllib.request,zipfile,io,csv,collections,json,pathlib
+          UFS=['AL','AP','CE','DF','ES','GO','MA','MG','PA','PE','PI','RJ','RR','RS','SC']
+          NOM='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2018.zip'
+          PAR='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2018.zip'
+          def get(url):
+            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
+            return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(req,timeout=240).read()))
+          def rows(z,name):
+            with z.open(name) as raw:
+              yield from csv.DictReader(io.TextIOWrapper(raw,encoding='latin-1',newline=''),delimiter=';')
+          zn,zp=get(NOM),get(PAR)
+          for uf in UFS:
+            nf=next(n for n in zn.namelist() if n.upper().endswith('_'+uf+'.CSV'))
+            totals=collections.Counter(); data=collections.defaultdict(collections.Counter); info={}
+            for r in rows(zn,nf):
+              if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
+              nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO'); cargo=r.get('DS_CARGO',''); num=r.get('NR_CANDIDATO','')
+              key=f'{cargo} | {nome} | {num}'; v=int(r.get('QT_VOTOS_NOMINAIS') or 0)
+              totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]=(nome,cargo,num)
+            pf=next((n for n in zp.namelist() if n.upper().endswith('_'+uf+'.CSV')),None)
+            if pf:
+              for r in rows(zp,pf):
+                if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
+                cargo=r.get('DS_CARGO','')
+                if cargo not in ('Deputado Federal','Deputado Estadual','Deputado Distrital'): continue
+                label='Federal' if cargo=='Deputado Federal' else ('Distrital' if cargo=='Deputado Distrital' else 'Estadual')
+                key=f'Legenda {label} | PCB | 21'; v=int(r.get('QT_VOTOS_LEGENDA_VALIDOS') or r.get('QT_VOTOS_LEGENDA') or 0)
+                totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]=('LEGENDA 21',cargo,'21')
+            got=json.loads(pathlib.Path(f'mapa/{uf.lower()}/2018/dados.json').read_text(encoding='utf-8'))
+            gt={c['id']:int(c['total']) for c in got['candidatos']}
+            assert gt==dict(totals),(uf,'totais divergentes',set(gt)^set(totals))
+            gm={m['nome']:{k:int(v) for k,v in m['candidatos'].items()} for m in got['municipios']}
+            exp={m:dict(v) for m,v in data.items()}
+            assert gm==exp,(uf,'municipios divergentes')
+            print(uf,'OK',len(gt),'registros',len(gm),'municipios')
+          root=pathlib.Path('mapa/index.html').read_text(encoding='utf-8')
+          assert 'data-year="2018"' in root and 'let year=2026' in root
+          for uf in UFS:
+            assert f'/mapa/{uf.lower()}/' in root,('menu ausente',uf)
+      - name: Commit somente do menu principal se necessário
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "Integra estados PCB 2018 ao menu principal"
+            git push
+          fi
+      - name: Aguardar deploy e verificar site público
+        shell: python
+        run: |
+          import urllib.request,json,time
+          ufs=['al','ap','ce','df','es','go','ma','mg','pa','pe','pi','rj','rr','rs','sc']
+          def fetch(url):
+            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Cache-Control':'no-cache'})
+            return urllib.request.urlopen(req,timeout=40).read()
+          ok=False
+          for attempt in range(30):
+            try:
+              h=fetch('https://pcbsp.com.br/mapa/?audit2018=1').decode('utf-8','replace')
+              ok=all(f'/mapa/{uf}/' in h for uf in ufs) and 'let year=2026' in h
+              if ok: break
+            except Exception as e: print('aguardando deploy',attempt+1,e)
+            time.sleep(20)
+          assert ok,'deploy do menu principal não confirmado'
+          for uf in ufs:
+            h=fetch(f'https://pcbsp.com.br/mapa/{uf}/2018/?audit=1').decode('utf-8','replace')
+            assert '2018' in h and 'MAPA DOS VOTOS' in h,(uf,'html público')
+            d=json.loads(fetch(f'https://pcbsp.com.br/mapa/{uf}/2018/dados.json?audit=1'))
+            assert d['ano']==2018 and d['uf'].lower()==uf and len(d['candidatos'])>0,(uf,'json público')
+            print(uf.upper(),'PUBLICADO OK',len(d['candidatos']),len(d['municipios']))
+          print('DEPLOY 2018 VERIFICADO')
