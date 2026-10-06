@@ -50,13 +50,13 @@ document.addEventListener('click',e=>{
 .sidebar .brand,.sidebar .nav,.sidebar .sidefoot{visibility:hidden}
 .sidebar::after{content:"";position:absolute;inset:0;pointer-events:none}
 .main{background:#f6f3ed}
-.hero{
-  height:auto; min-height:0; aspect-ratio:1264/184;
+ .hero{
+  position:relative; height:auto; min-height:0; aspect-ratio:1264/184;
   padding:0; display:block; border-bottom:0;
   background-image:url("assets/embedded-2.jpg");
   background-size:100% 100%; background-position:center; background-repeat:no-repeat;
 }
-.hero>*{display:none!important}
+.hero>*{display:none!important}.hero:before{content:"1996–2026";position:absolute;left:47.6%;top:49%;z-index:5;color:#fff;font-weight:900;font-size:clamp(10px,1.35vw,18px);line-height:1;background:#7b0a0d;padding:2px 5px;border-radius:2px;letter-spacing:-.2px}
 .toolbar{position:relative;top:auto;padding:10px 24px;box-shadow:0 2px 8px #0000000d}
 .content{padding:18px 24px 70px}
 .grid{grid-template-columns:minmax(560px,1.7fr) minmax(330px,.85fr);gap:12px}
@@ -467,7 +467,7 @@ background-size:cover!important;background-position:center top!important;overflo
 .about-credit{border-top:1px solid #ded4ca;padding-top:16px;margin-top:20px!important}
 </style>
 
-<!-- MAPA DO VOTO SP — INDEX FINAL CONSOLIDADO 1996–2024 — 2026-10-03 -->
+<!-- MAPA DO VOTO SP — INDEX FINAL CONSOLIDADO 1996–2026 — 2026-10-03 -->
 <style>.pcbsp-standard-brand{display:block!important;background:#9f0712;margin:-25px -18px 22px;padding:14px 12px 15px}.pcbsp-standard-brand strong{display:block;font-size:22px!important;line-height:.88!important;font-weight:900}.pcbsp-standard-brand em{display:block;color:#f0c52b;font-style:normal;font-size:24px;line-height:1}.pcbsp-standard-brand small{display:block;color:#fff!important;font-size:10px!important;line-height:1.05;letter-spacing:.7px;margin-top:7px!important;font-weight:800}</style></head>
 <body>
 <div class="app">
@@ -481,7 +481,7 @@ background-size:cover!important;background-position:center top!important;overflo
     <button onclick="renderMunicipios(municipios);focusMap()"><span>≡</span> Território</button>
     <button onclick="alert('Comparação histórica entra na próxima etapa.')"><span>▥</span> Comparar eleições</button>
     <button onclick="alert('Linha do tempo entra com a ampliação dos demais anos.')"><span>◷</span> Linha do tempo</button>
-    <button onclick="openHQView()"><span>▤</span> História em HQs</button><button onclick="toggleEstados()"><span>◆</span> OUTROS ESTADOS <span id="estadosSeta">▾</span></button><div id="estadosMenu" style="display:none;padding:0 0 6px 32px"><button onclick="location.href='/mapa/ac/'" style="padding:8px 10px">AC · Acre</button><button onclick="location.href='/mapa/go/'" style="padding:8px 10px">GO · Goiás</button><button onclick="location.href='/mapa/ma/'" style="padding:8px 10px">MA · Maranhão</button><button onclick="location.href='/mapa/mg/'" style="padding:8px 10px">MG · Minas Gerais</button><button onclick="location.href='/mapa/pr/'" style="padding:8px 10px">PR · Paraná</button><button onclick="location.href='/mapa/pe/'" style="padding:8px 10px">PE · Pernambuco</button><button onclick="location.href='/mapa/rj/'" style="padding:8px 10px">RJ · Rio de Janeiro</button></div>
+    <button onclick="openHQView()"><span>▤</span> História em HQs</button><button onclick="toggleEstados()"><span>◆</span> OUTROS ESTADOS <span id="estadosSeta">▾</span></button><div id="estadosMenu" style="display:none;padding:0 0 6px 32px"><button onclick="location.href='/mapa/ac/'" style="padding:8px 10px">AC · Acre</button><button onclick="location.href='/mapa/go/'" style="padding:8px 10px">GO · Goiás</button><button onclick="location.href='/mapa/ma/'" style="padding:8px 10px">MA · Maranhão</button><button onclick="location.href='/mapa/mg/'" style="padding:8px 10px">MG · Minas Gerais</button><button onclick="location.href='/mapa/pr/'" style="padding:8px 10px">PR · Paraná</button><button onclick="location.href='/mapa/pe/'" style="padding:8px 10px">PE · Pernambuco</button><button onclick="location.href='/mapa/rj/'" style="padding:8px 10px">RJ · Rio de Janeiro</button><button onclick="location.href='/mapa/df/'" style="padding:8px 10px">DF · Distrito Federal</button><button onclick="location.href='/mapa/pi/'" style="padding:8px 10px">PI · Piauí</button></div>
     <button class="org-link" onclick="openOrganizeView()"><span>✊</span> Organize-se no PCB</button>
   </nav>
   <div class="sidefoot"><b>PCB</b><small>SÃO PAULO<br>Dados eleitorais: TSE<br>Mapa municipal: IBGE</small></div>
