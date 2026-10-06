@@ -1,0 +1,94 @@
+name: Revisar layout de todos os mapas estaduais
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/revisar-layout-estados.yml']
+permissions:
+  contents: write
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Padronizar navegacao e cards
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          for p in Path('mapa').glob('*/*/index.html'):
+            m=re.fullmatch(r'mapa/([a-z]{2})/(20\d\d)/index\.html',p.as_posix())
+            if not m: continue
+            uf,ano=m.group(1).upper(),m.group(2)
+            s=p.read_text(encoding='utf-8'); old=s
+
+            # Navegacao: nunca voltar ao modular; sempre VOLTAR ao mapa oficial.
+            s=s.replace('/mapa/sp-modular/','/mapa/')
+            s=re.sub(r'(location\.href=[\'\"]/mapa/[\'\"][^>]*>)←\s*SÃO PAULO(</button>)',r'\1← VOLTAR\2',s)
+            s=re.sub(r'(<button[^>]*>)←\s*SÃO PAULO(</button>)',r'\1← VOLTAR\2',s)
+
+            # Corrige labels de ano inclusive duplicacoes como 20222022.
+            top=re.search(r'<div class="top">(.*?)</div>',s,re.S)
+            if top:
+              b=top.group(1)
+              def fixbtn(mm):
+                pre,body,post=mm.group(1),mm.group(2),mm.group(3)
+                href=re.search(r'/mapa/([a-z]{2})/(20\d\d)/',pre,re.I)
+                if href: return pre+href.group(1).upper()+' · '+href.group(2)+post
+                yr=re.search(r'20(?:18|22|26)',body)
+                if yr: return pre+uf+' · '+yr.group(0)+post
+                return mm.group(0)
+              b=re.sub(r'(<button\b[^>]*>)(.*?)(</button>)',fixbtn,b,flags=re.S)
+              s=s[:top.start(1)]+b+s[top.end(1):]
+
+            # CSS global por pagina: cards legiveis, compactos e sem colunas espremidas.
+            css='''<style id="pcb-state-layout-fix">
+.top{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;overflow:visible!important}
+.top .pill{white-space:nowrap!important;min-width:max-content!important}
+.groups{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:8px!important}
+.group{flex:1 1 300px!important;min-width:280px!important;padding:7px 9px!important}
+.cands{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:6px!important}
+.cand{min-width:0!important;width:100%!important;padding:7px 9px!important}
+.cand strong{font-size:14px!important;line-height:1.12!important;overflow-wrap:normal!important;word-break:normal!important}
+.cand small{font-size:11px!important;line-height:1.15!important}
+.cand .n{font-size:17px!important;line-height:1.05!important;margin-top:4px!important}
+@media(max-width:700px){.group{flex-basis:100%!important;min-width:0!important}.cands{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important}.cand strong{font-size:13px!important}}
+@media(max-width:380px){.cands{grid-template-columns:1fr!important}}
+</style>'''
+            if 'id="pcb-state-layout-fix"' not in s:
+              s=s.replace('</head>',css+'</head>',1)
+
+            if s!=old:
+              p.write_text(s,encoding='utf-8'); changed.append(str(p))
+          print('ALTERADOS',len(changed))
+          for x in changed: print(x)
+          PY
+      - name: Auditoria global
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,sys
+          fs=list(Path('mapa').glob('*/*/index.html'))
+          errs=[]
+          for p in fs:
+            m=re.fullmatch(r'mapa/([a-z]{2})/(20\d\d)/index\.html',p.as_posix())
+            if not m: continue
+            uf=m.group(1).upper(); s=p.read_text(encoding='utf-8')
+            if '/mapa/sp-modular/' in s: errs.append(f'{p}: sp-modular')
+            if '← SÃO PAULO' in s: errs.append(f'{p}: Sao Paulo')
+            if '20222022' in s or '20182018' in s or '20262026' in s: errs.append(f'{p}: ano duplicado')
+            if '← VOLTAR' not in s: errs.append(f'{p}: sem VOLTAR')
+            if 'id="pcb-state-layout-fix"' not in s: errs.append(f'{p}: sem css padrao')
+          print('PAGINAS AUDITADAS',len(fs))
+          if errs:
+            print('\n'.join(errs)); sys.exit(1)
+          print('AUDITORIA OK')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/*/20*/index.html
+          git diff --cached --check
+          git commit -m "fix: padronizar navegacao e cards dos mapas estaduais"
+          git push
