@@ -1,0 +1,40 @@
+{
+  "fonte": "TSE Dados Abertos 2022",
+  "uf": "MG",
+  "candidatos_PCB": {
+    "Deputado Federal | THOMÁS CARRIERI | 2188": 278,
+    "Deputado Federal | ESPAGUETE | 2117": 1957,
+    "Deputado Federal | AMAURY ALONSO | 2113": 205,
+    "Deputado Federal | IAGO CHAVES | 2122": 391,
+    "Deputado Federal | JÚLIA ROCHA | 2100": 20629,
+    "Deputado Federal | FLAVIANO DUELI | 2199": 1275,
+    "Deputado Federal | LÍVIA FLOR | 2135": 856,
+    "Deputado Federal | ZULU | 2111": 267,
+    "Deputado Federal | DANIEL CRISTIANO | 2121": 2298,
+    "Governador | RENATA REGINA | 21": 12514,
+    "Deputado Estadual | DUDA DAS CADEIRAS | 21210": 2746,
+    "Deputado Estadual | DIEGO ARTHUR | 21021": 480,
+    "Deputado Estadual | BRUNO MAROTA | 21212": 1979
+  },
+  "municipios_com_voto_por_candidato": {
+    "Deputado Federal | THOMÁS CARRIERI | 2188": 76,
+    "Deputado Federal | ESPAGUETE | 2117": 272,
+    "Deputado Federal | AMAURY ALONSO | 2113": 65,
+    "Deputado Federal | IAGO CHAVES | 2122": 139,
+    "Deputado Federal | JÚLIA ROCHA | 2100": 573,
+    "Deputado Federal | FLAVIANO DUELI | 2199": 84,
+    "Deputado Federal | LÍVIA FLOR | 2135": 185,
+    "Deputado Federal | ZULU | 2111": 72,
+    "Deputado Federal | DANIEL CRISTIANO | 2121": 160,
+    "Governador | RENATA REGINA | 21": 756,
+    "Deputado Estadual | DUDA DAS CADEIRAS | 21210": 252,
+    "Deputado Estadual | DIEGO ARTHUR | 21021": 118,
+    "Deputado Estadual | BRUNO MAROTA | 21212": 255
+  },
+  "legenda_PCB_por_cargo": {
+    "Deputado Estadual": 4470,
+    "Deputado Federal": 3358,
+    "Governador": 0
+  },
+  "municipios_lidos": 853
+}
