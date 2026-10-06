@@ -481,7 +481,7 @@ background-size:cover!important;background-position:center top!important;overflo
     <button onclick="renderMunicipios(municipios);focusMap()"><span>≡</span> Território</button>
     <button onclick="alert('Comparação histórica entra na próxima etapa.')"><span>▥</span> Comparar eleições</button>
     <button onclick="alert('Linha do tempo entra com a ampliação dos demais anos.')"><span>◷</span> Linha do tempo</button>
-    <button onclick="openHQView()"><span>▤</span> História em HQs</button><button onclick="toggleEstados()"><span>◆</span> OUTROS ESTADOS <span id="estadosSeta">▾</span></button><div id="estadosMenu" style="display:none;padding:0 0 6px 32px"><button onclick="location.href='/mapa/mg/'" style="padding:8px 10px">MG · Minas Gerais</button><button onclick="location.href='/mapa/ac/'" style="padding:8px 10px">AC · Acre</button><button onclick="location.href='/mapa/ma/'" style="padding:8px 10px">MA · Maranhão</button></div>
+    <button onclick="openHQView()"><span>▤</span> História em HQs</button><button onclick="toggleEstados()"><span>◆</span> OUTROS ESTADOS <span id="estadosSeta">▾</span></button><div id="estadosMenu" style="display:none;padding:0 0 6px 32px"><button onclick="location.href='/mapa/ac/'" style="padding:8px 10px">AC · Acre <small>(2026)</small></button><button onclick="location.href='/mapa/al/'" style="padding:8px 10px">AL · Alagoas <small>(2018)</small></button><button onclick="location.href='/mapa/ap/'" style="padding:8px 10px">AP · Amapá <small>(2018)</small></button><button onclick="location.href='/mapa/ba/'" style="padding:8px 10px">BA · Bahia <small>(2022)</small></button><button onclick="location.href='/mapa/ce/'" style="padding:8px 10px">CE · Ceará <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/df/'" style="padding:8px 10px">DF · Distrito Federal <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/es/'" style="padding:8px 10px">ES · Espírito Santo <small>(2018)</small></button><button onclick="location.href='/mapa/go/'" style="padding:8px 10px">GO · Goiás <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/ma/'" style="padding:8px 10px">MA · Maranhão <small>(2018 · 2022 · 2026)</small></button><button onclick="location.href='/mapa/mg/'" style="padding:8px 10px">MG · Minas Gerais <small>(2018 · 2022 · 2026)</small></button><button onclick="location.href='/mapa/pa/'" style="padding:8px 10px">PA · Pará <small>(2018)</small></button><button onclick="location.href='/mapa/pe/'" style="padding:8px 10px">PE · Pernambuco <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/pi/'" style="padding:8px 10px">PI · Piauí <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/pr/'" style="padding:8px 10px">PR · Paraná <small>(2022)</small></button><button onclick="location.href='/mapa/rj/'" style="padding:8px 10px">RJ · Rio de Janeiro <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/rr/'" style="padding:8px 10px">RR · Roraima <small>(2018)</small></button><button onclick="location.href='/mapa/rs/'" style="padding:8px 10px">RS · Rio Grande do Sul <small>(2018 · 2022)</small></button><button onclick="location.href='/mapa/sc/'" style="padding:8px 10px">SC · Santa Catarina <small>(2018)</small></button></div>
     <button class="org-link" onclick="openOrganizeView()"><span>✊</span> Organize-se no PCB</button>
   </nav>
   <div class="sidefoot"><b>PCB</b><small>SÃO PAULO<br>Dados eleitorais: TSE<br>Mapa municipal: IBGE</small></div>
@@ -1721,17 +1721,23 @@ function toggleEstados(){
   <div class="ms-head"><span>OUTROS ESTADOS</span><button class="ms-close" type="button">FECHAR ×</button></div>
   <div class="ms-grid">
     <a href="/mapa/ac/">AC<small>2026</small></a>
+    <a href="/mapa/al/">AL<small>2018</small></a>
+    <a href="/mapa/ap/">AP<small>2018</small></a>
     <a href="/mapa/ba/">BA<small>2022</small></a>
-    <a href="/mapa/ce/">CE<small>2022</small></a>
-    <a href="/mapa/df/">DF<small>2022</small></a>
-    <a href="/mapa/go/">GO<small>2022</small></a>
-    <a href="/mapa/ma/">MA<small>2022 · 2026</small></a>
-    <a href="/mapa/mg/">MG<small>2022 · 2026</small></a>
-    <a href="/mapa/pe/">PE<small>2022</small></a>
-    <a href="/mapa/pi/">PI<small>2022</small></a>
+    <a href="/mapa/ce/">CE<small>2018 · 2022</small></a>
+    <a href="/mapa/df/">DF<small>2018 · 2022</small></a>
+    <a href="/mapa/es/">ES<small>2018</small></a>
+    <a href="/mapa/go/">GO<small>2018 · 2022</small></a>
+    <a href="/mapa/ma/">MA<small>2018 · 2022 · 2026</small></a>
+    <a href="/mapa/mg/">MG<small>2018 · 2022 · 2026</small></a>
+    <a href="/mapa/pa/">PA<small>2018</small></a>
+    <a href="/mapa/pe/">PE<small>2018 · 2022</small></a>
+    <a href="/mapa/pi/">PI<small>2018 · 2022</small></a>
     <a href="/mapa/pr/">PR<small>2022</small></a>
-    <a href="/mapa/rj/">RJ<small>2022</small></a>
-    <a href="/mapa/rs/">RS<small>2022</small></a>
+    <a href="/mapa/rj/">RJ<small>2018 · 2022</small></a>
+    <a href="/mapa/rr/">RR<small>2018</small></a>
+    <a href="/mapa/rs/">RS<small>2018 · 2022</small></a>
+    <a href="/mapa/sc/">SC<small>2018</small></a>
   </div>
 </div>
 <script>
