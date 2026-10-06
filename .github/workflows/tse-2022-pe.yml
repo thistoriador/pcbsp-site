@@ -39,7 +39,7 @@ jobs:
           p=pathlib.Path('mapa/pe'); p.mkdir(parents=True,exist_ok=True); (p/'dados.json').write_text(json.dumps(out,ensure_ascii=False),encoding='utf-8')
           geo=urllib.request.urlopen('https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-26-mun.json',timeout=120).read()
           (p/'municipios.geojson').write_bytes(geo)
-          assert len(data)==184, f'Esperados 184 municípios, obtidos {len(data)}'
+          assert len(data)==185, f'Esperadas 185 unidades eleitorais, obtidas {len(data)}'
           assert any(c['cargo']=='Presidente' for c in out['candidatos'])
           assert any(c['cargo']=='Governador' for c in out['candidatos'])
           print('PE OK:',len(data),'municipios;',len(info),'camadas')
