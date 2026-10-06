@@ -37,7 +37,7 @@ jobs:
             totals[k]+=v; data[r.get('NM_MUNICIPIO')][k]+=v; info[k]={'nome':'LEGENDA 21','cargo':cg,'numero':'21'}
           out={'uf':UF,'ano':2022,'fonte':'TSE Dados Abertos','candidatos':[dict(id=k,total=totals[k],**info[k]) for k in info],'municipios':[{'nome':m,'candidatos':dict(v)} for m,v in data.items()]}
           p=pathlib.Path('mapa/go'); p.mkdir(parents=True,exist_ok=True); (p/'dados.json').write_text(json.dumps(out,ensure_ascii=False),encoding='utf-8')
-          geo=urllib.request.urlopen('https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-33-mun.json',timeout=120).read()
+          geo=urllib.request.urlopen('https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-52-mun.json',timeout=120).read()
           (p/'municipios.geojson').write_bytes(geo)
           assert len(data)==246, f'Esperados 246 municípios, obtidos {len(data)}'
           assert any(c['cargo']=='Presidente' for c in out['candidatos'])
