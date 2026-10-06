@@ -1,0 +1,72 @@
+name: Gerar mapas PCB 2018
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/gerar-2018-estados.yml']
+permissions: {contents: write}
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar dados e paginas 2018
+        shell: python
+        run: |
+          import urllib.request,zipfile,io,csv,collections,json,pathlib,re
+          UFS={'AL':('Alagoas',102),'AP':('Amapá',16),'CE':('Ceará',184),'DF':('Distrito Federal',1),'ES':('Espírito Santo',78),'GO':('Goiás',246),'MA':('Maranhão',217),'MG':('Minas Gerais',853),'PA':('Pará',144),'PE':('Pernambuco',185),'PI':('Piauí',224),'RJ':('Rio de Janeiro',92),'RR':('Roraima',15),'RS':('Rio Grande do Sul',497),'SC':('Santa Catarina',295),'SP':('São Paulo',645)}
+          IBGE={'AL':'27','AP':'16','CE':'23','ES':'32','GO':'52','MA':'21','MG':'31','PA':'15','PE':'26','PI':'22','RJ':'33','RR':'14','RS':'43','SC':'42','SP':'35'}
+          NOM='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_candidato_munzona/votacao_candidato_munzona_2018.zip'
+          PAR='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_partido_munzona/votacao_partido_munzona_2018.zip'
+          def zget(url): return zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url,timeout=240).read()))
+          def rows(z,name):
+            with z.open(name) as raw:
+              yield from csv.DictReader(io.TextIOWrapper(raw,encoding='latin-1',newline=''),delimiter=';')
+          z=zget(NOM); zp=zget(PAR)
+          template=pathlib.Path('mapa/mg/2022/index.html').read_text(encoding='utf-8')
+          for uf,(estado,nmun) in UFS.items():
+            files=[n for n in z.namelist() if n.upper().endswith('_'+uf+'.CSV')]
+            if not files: print('SEM ARQUIVO',uf); continue
+            totals=collections.Counter(); data=collections.defaultdict(collections.Counter); info={}
+            for r in rows(z,files[0]):
+              if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
+              nome=r.get('NM_URNA_CANDIDATO') or r.get('NM_CANDIDATO'); cargo=r.get('DS_CARGO',''); num=r.get('NR_CANDIDATO','')
+              key=f'{cargo} | {nome} | {num}'; v=int(r.get('QT_VOTOS_NOMINAIS') or 0)
+              totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]={'nome':nome,'cargo':cargo,'numero':num}
+            pfiles=[n for n in zp.namelist() if n.upper().endswith('_'+uf+'.CSV')]
+            if pfiles:
+              for r in rows(zp,pfiles[0]):
+                if r.get('NR_TURNO')!='1' or r.get('SG_PARTIDO')!='PCB': continue
+                cargo=r.get('DS_CARGO','')
+                if cargo not in ('Deputado Federal','Deputado Estadual','Deputado Distrital'): continue
+                label='Federal' if cargo=='Deputado Federal' else ('Distrital' if cargo=='Deputado Distrital' else 'Estadual')
+                key=f'Legenda {label} | PCB | 21'; v=int(r.get('QT_VOTOS_LEGENDA_VALIDOS') or r.get('QT_VOTOS_LEGENDA') or 0)
+                totals[key]+=v; data[r.get('NM_MUNICIPIO')][key]+=v; info[key]={'nome':'LEGENDA 21','cargo':cargo,'numero':'21'}
+            out={'uf':uf,'ano':2018,'fonte':'TSE Dados Abertos','candidatos':[dict(id=k,total=totals[k],**info[k]) for k in info],
+                 'municipios':[{'nome':m,'candidatos':dict(v)} for m,v in data.items()]}
+            dest=pathlib.Path('mapa')/uf.lower()/'2018'; dest.mkdir(parents=True,exist_ok=True)
+            (dest/'dados.json').write_text(json.dumps(out,ensure_ascii=False),encoding='utf-8')
+            if uf=='DF':
+              cards=''.join(f"<div class='cand'><strong>{c['nome']}</strong><small>{c['cargo']} • PCB {c['numero']}</small><div class='n'>{c['total']:,}".replace(',','.')+" votos</div></div>" for c in out['candidatos'])
+              html=f"""<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Distrito Federal 2018 • Mapa dos Votos PCB-SP</title><style>*{{box-sizing:border-box}}body{{margin:0;background:#f4efe5;font-family:Arial;color:#1c1a18}}header{{background:#87080f;color:#fff;padding:18px 22px;border-bottom:5px solid #f0c52b}}header b{{font-size:26px}}header em{{color:#f0c52b;font-style:normal}}.top{{padding:10px 15px;background:#fff;display:flex;gap:8px;flex-wrap:wrap}}.pill{{border:1px solid #d8d0c5;border-radius:22px;padding:9px 13px;background:#fff;font-weight:800}}.red{{background:#b80e19;color:#fff}}main{{padding:18px}}.note,.cand{{background:#fff;border:1px solid #ddd4c7;border-radius:12px;padding:14px;margin-bottom:10px}}.cands{{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}}.cand strong{{display:block;font-size:18px}}.cand small{{display:block;color:#756f67;margin-top:4px}}.n{{font-size:22px;font-weight:900;color:#b80e19;margin-top:8px}}</style></head><body><header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>DISTRITO FEDERAL • 2018</div></header><div class='top'><button class='pill' onclick="location.href='/mapa/sp-modular/'">← SÃO PAULO</button><button class='pill red'>DF • 2018</button><button class='pill' onclick="location.href='/mapa/df/'">2022</button></div><main><div class='note'><b>Distrito Federal</b><p>O DF não possui municípios. Os totais abaixo são os resultados oficiais do TSE para 2018; não foram artificialmente distribuídos entre Regiões Administrativas.</p></div><div class='cands'>{cards}</div></main></body></html>"""
+            else:
+              html=template
+              html=html.replace('Minas Gerais 2022',f'{estado} 2018').replace('MINAS GERAIS • 2022',f'{estado.upper()} • 2018')
+              html=html.replace('MG • 2022',f'{uf} • 2018').replace('<small>2022</small>', '<small>2018</small>')
+              html=html.replace('<h2>Minas Gerais</h2>',f'<h2>{estado}</h2>').replace('OpenStreetMap + 853 municípios',f'OpenStreetMap + {nmun} municípios')
+              html=html.replace('Dados oficiais TSE 2022', 'Dados oficiais TSE 2018')
+              html=html.replace('fetch("dados.json?v=2")','fetch("dados.json?v=1")')
+              html=re.sub(r'fetch\("/mapa/dados/2026/mg/municipios\.geojson"\)',f'fetch("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-{IBGE[uf]}-mun.json")',html)
+              # top navigation: preserve SP + 2018, add existing years when known
+              nav=f'<button class="pill" onclick="location.href=\'/mapa/sp-modular/\'">← SÃO PAULO</button><button class="pill red">{uf} • 2018</button>'
+              existing={'CE':['2022'],'GO':['2022'],'MA':['2022','2026'],'MG':['2022','2026'],'PE':['2022'],'PI':['2022'],'RJ':['2022'],'RS':['2022'],'SP':[]}
+              for yr in existing.get(uf,[]): nav+=f'<button class="pill" onclick="location.href=\'/mapa/{uf.lower()}/'+('' if (yr=='2022' and uf not in ['MA','MG']) or yr=='2026' else yr+'/')+f'\'">{yr}</button>'
+              html=re.sub(r'<div class="top">.*?</div>',f'<div class="top">{nav}</div>',html,count=1,flags=re.S)
+            (dest/'index.html').write_text(html,encoding='utf-8')
+            print(uf,len(out['candidatos']),sum(c['total'] for c in out['candidatos']))
+      - name: Commit mapas
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/*/2018
+          git diff --cached --quiet || (git commit -m "Gera mapas estaduais PCB 2018 com dados TSE" && git push)
