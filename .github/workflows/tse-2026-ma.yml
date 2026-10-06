@@ -57,7 +57,22 @@ jobs:
           expected={"EDMILSON COSTA","REGINALDO LIMA","RAIMUNDO MOREIRA","CAETANO COSTA","ROMILDA"}
           missing=expected-set(cands)
           if missing: raise Exception("Candidatos PCB não encontrados no TSE: "+", ".join(sorted(missing)))
-          ordem=["EDMILSON COSTA","REGINALDO LIMA","RAIMUNDO MOREIRA","CAETANO COSTA","ROMILDA"]
+          def legenda21(x):
+            if isinstance(x,dict):
+              if str(x.get("n") or "")=="21" and str(x.get("sg") or "").upper()=="PCB" and "tvtl" in x:
+                return int(x.get("tvtl") or 0)
+              for v in x.values():
+                z=legenda21(v)
+                if z is not None:return z
+            elif isinstance(x,list):
+              for v in x:
+                z=legenda21(v)
+                if z is not None:return z
+            return None
+          d7estado=get("https://resultados.tse.jus.br/oficial/ele2026/6259/dados/ma/ma-c0007-e006259-u.json")
+          total_legenda=int(legenda21(d7estado) or 0)
+          cands["LEGENDA 21"]={"nome":"LEGENDA 21","cargo":"Deputado Estadual","numero":"21","total":total_legenda,"cargo_codigo":"0007","ele":"6259"}
+          ordem=["EDMILSON COSTA","REGINALDO LIMA","RAIMUNDO MOREIRA","CAETANO COSTA","ROMILDA","LEGENDA 21"]
           json.dump([cands[k] for k in ordem],open(out/"candidatos.json","w"),ensure_ascii=False,separators=(",",":"))
           groups={}
           for k,c in cands.items():groups.setdefault((c["cargo_codigo"],c["ele"]),[]).append((k,c["nome"]))
@@ -74,6 +89,8 @@ jobs:
                 elif isinstance(x,list):
                   for v in x:walk(v)
               walk(d)
+            d7=get("https://resultados.tse.jus.br/oficial/ele2026/6259/dados/ma/ma"+m["cd"]+"-c0007-e006259-u.json")
+            row["candidatos"]["LEGENDA 21"]=int(legenda21(d7) or 0)
             for c in cands.values():row["candidatos"].setdefault(c["nome"],0)
             return row
           with ThreadPoolExecutor(max_workers=8) as ex: rows=list(ex.map(municipio,ma["mu"]))
