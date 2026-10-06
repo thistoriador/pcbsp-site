@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Teste GO 2022 • Mapa dos Votos PCB-SP</title>
+<title>GOIÁS 2022 • Mapa dos Votos PCB-SP</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4efe5;font-family:Arial,sans-serif;color:#1c1a18}
@@ -16,8 +16,8 @@ header{background:#87080f;color:#fff;padding:18px 22px;border-bottom:5px solid #
 .legend{background:#fff;padding:8px 10px;border-radius:8px;box-shadow:0 1px 5px #777;font-size:12px;line-height:1.65}.sw{display:inline-block;width:13px;height:13px;margin-right:5px;vertical-align:-2px}
 @media(max-width:1150px){.cands{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:950px){.cands{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:850px){.grid{grid-template-columns:1fr}.cands{grid-template-columns:repeat(3,minmax(0,1fr))}#map{height:480px}.panel{height:450px}}@media(max-width:560px){header b{font-size:21px}.cands{grid-template-columns:repeat(2,minmax(0,1fr))}#map{height:430px}.cand strong{font-size:13px}.cand .n{font-size:16px}}
 </style></head><body>
-<header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>PROTÓTIPO • GOIÁS • 2022</div></header>
-<div class="top"><button class="pill" onclick="location.href='/mapa/sp-modular/'">← SÃO PAULO</button><button class="pill red">GO • 2022 • TESTE OSM</button></div>
+<header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>GOIÁS • 2022</div></header>
+<div class="top"><button class="pill" onclick="location.href='/mapa/sp-modular/'">← SÃO PAULO</button><button class="pill red">GO • 2022</button></div>
 <main class="wrap"><div id="status" class="status">Carregando dados oficiais do TSE…</div><div id="groups" class="groups"></div>
 <div class="grid"><section class="card"><div class="head"><div><h2>Goiás</h2><small>OpenStreetMap + 246 municípios</small></div></div><div id="map"></div></section>
 <section class="card"><div class="head"><div><h2 id="title">Ranking municipal</h2><small id="sub">2022</small></div></div><div class="panel"><div class="search"><input id="q" placeholder="Buscar município…" oninput="renderList()"></div><div id="list"></div></div></section></div></main>
