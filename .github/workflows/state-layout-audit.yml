@@ -1,0 +1,67 @@
+name: State layout audit
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/state-layout-audit.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          changed=[]
+          for p in Path("mapa").glob("*/*/index.html"):
+              m=re.fullmatch(r"mapa/([a-z]{2})/(20\d\d)/index\.html",p.as_posix())
+              if not m: continue
+              uf=m.group(1).upper()
+              s=p.read_text(encoding="utf-8"); old=s
+              s=s.replace("/mapa/sp-modular/","/mapa/").replace("← SÃO PAULO","← VOLTAR")
+              top=re.search(r'<div class="top">(.*?)</div>',s,re.S)
+              if top:
+                  b=top.group(1)
+                  def fb(x):
+                      pre,body,post=x.groups()
+                      h=re.search(r"/mapa/([a-z]{2})/(20\d\d)/",pre,re.I)
+                      if h: return pre+h.group(1).upper()+" · "+h.group(2)+post
+                      y=re.search(r"20(?:18|22|26)",body)
+                      if y and "VOLTAR" not in body: return pre+uf+" · "+y.group(0)+post
+                      return x.group(0)
+                  b=re.sub(r"(<button\b[^>]*>)(.*?)(</button>)",fb,b,flags=re.S)
+                  s=s[:top.start(1)]+b+s[top.end(1):]
+              css="""<style id="pcb-state-layout-fix">
+          .top{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;overflow:visible!important}.top .pill{white-space:nowrap!important;min-width:max-content!important}
+          .groups{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:8px!important}.group{flex:1 1 300px!important;min-width:280px!important;padding:7px 9px!important}
+          .cands{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:6px!important}.cand{min-width:0!important;width:100%!important;padding:7px 9px!important}.cand strong{font-size:14px!important;line-height:1.12!important;word-break:normal!important}.cand small{font-size:11px!important;line-height:1.15!important}.cand .n{font-size:17px!important;line-height:1.05!important;margin-top:4px!important}
+          @media(max-width:700px){.group{flex-basis:100%!important;min-width:0!important}.cands{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important}.cand strong{font-size:13px!important}}@media(max-width:380px){.cands{grid-template-columns:1fr!important}}
+          </style>"""
+              if 'id="pcb-state-layout-fix"' not in s: s=s.replace("</head>",css+"</head>",1)
+              if s!=old: p.write_text(s,encoding="utf-8"); changed.append(str(p))
+          print("changed",len(changed))
+          PY
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,sys
+          errs=[]; n=0
+          for p in Path("mapa").glob("*/*/index.html"):
+              if not re.fullmatch(r"mapa/[a-z]{2}/20\d\d/index\.html",p.as_posix()): continue
+              n+=1; s=p.read_text(encoding="utf-8")
+              for bad in ["/mapa/sp-modular/","← SÃO PAULO","20222022","20182018","20262026"]:
+                  if bad in s: errs.append(str(p)+" "+bad)
+              if "← VOLTAR" not in s: errs.append(str(p)+" sem VOLTAR")
+          print("audited",n)
+          if errs: print("\n".join(errs)); sys.exit(1)
+          PY
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/*/20*/index.html
+          git diff --cached --check
+          git commit -m "fix: normalize state navigation and candidate cards"
+          git push
