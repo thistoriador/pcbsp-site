@@ -1,0 +1,81 @@
+name: Recuperar votos anulados Joaquina Lino 2018
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ap-2018-joaquina.yml']
+permissions:
+  contents: write
+jobs:
+  ap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar e agregar dados oficiais TSE por municipio
+        run: |
+          python3 - <<'PY'
+          import urllib.request,zipfile,io,csv,json
+          from collections import defaultdict
+          url='https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2018_AP.zip'
+          raw=urllib.request.urlopen(url,timeout=120).read()
+          z=zipfile.ZipFile(io.BytesIO(raw))
+          fn=next(n for n in z.namelist() if n.lower().endswith('.csv'))
+          text=z.read(fn).decode('latin1')
+          rd=csv.DictReader(io.StringIO(text),delimiter=';')
+          by=defaultdict(int)
+          for r in rd:
+            cargo=(r.get('DS_CARGO_PERGUNTA') or r.get('DS_CARGO') or '').upper()
+            num=str(r.get('NR_VOTAVEL','')).strip()
+            if 'SENADOR' in cargo and num=='212':
+              by[r['NM_MUNICIPIO'].strip()]+=int(r['QT_VOTOS'])
+          total=sum(by.values())
+          print('JOAQUINA 212 votos na urna:',total,'municipios:',len(by))
+          if total!=6102: raise SystemExit(f'ABORT: total esperado 6102, obtido {total}')
+          p='mapa/ap/2018/dados.json'
+          d=json.load(open(p,encoding='utf-8'))
+          cid='Senador | JOAQUINA LINO | 212'
+          c=next(x for x in d['candidatos'] if x['id']==cid)
+          c['total']=0
+          c['votos_na_urna_anulados']=total
+          c['situacao_votos']='ANULADOS'
+          d['municipios']=[{'nome':n,'candidatos':{cid:0},'anulados':{cid:v}} for n,v in sorted(by.items())]
+          d['nota']='Joaquina Lino recebeu 6.102 votos na urna. Como a candidatura foi indeferida com recurso, o TSE não os computou como votos válidos. Os 6.102 são mantidos separadamente como votos anulados.'
+          json.dump(d,open(p,'w',encoding='utf-8'),ensure_ascii=False,separators=(',',':'))
+          PY
+      - name: Ajustar interface AP sem misturar validos e anulados
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('mapa/ap/2018/index.html'); s=p.read_text(encoding='utf-8')
+          s=s.replace('function votes(name){let r=rowMap().get(norm(name));return r?Number(r.candidatos[selected]||0):0}',
+          'function votes(name){let r=rowMap().get(norm(name));return r?Number((r.anulados&&r.anulados[selected])||r.candidatos[selected]||0):0}')
+          s=s.replace('let vals=D.municipios.map(r=>Number(r.candidatos[selected]||0)),max=Math.max(1,...vals);',
+          'let vals=D.municipios.map(r=>Number((r.anulados&&r.anulados[selected])||r.candidatos[selected]||0)),max=Math.max(1,...vals);')
+          s=s.replace("let leg=c.nome===\"LEGENDA 21\";return '<div class=\"cand '",
+          "let leg=c.nome===\"LEGENDA 21\",vv=c.votos_na_urna_anulados!=null?fmt(c.votos_na_urna_anulados)+' votos na urna · '+fmt(c.total)+' válidos':fmt(c.total)+' votos';return '<div class=\"cand '")
+          s=s.replace("+'<div class=\"n\">'+fmt(c.total)+' votos</div></div>'}","+'<div class=\"n\">'+vv+'</div></div>'}")
+          s=s.replace("Number(r.candidatos[selected]||0)})).filter", "Number((r.anulados&&r.anulados[selected])||r.candidatos[selected]||0)})).filter")
+          s=s.replace('Candidatura de Joaquina Lino indeferida com recurso; votos não computados como válidos pelo TSE.',
+          'Joaquina Lino recebeu 6.102 votos na urna. A candidatura foi indeferida com recurso: 0 votos válidos. Os 6.102 votos anulados são exibidos separadamente no mapa.')
+          s=s.replace('<small id="sub">2022</small>','<small id="sub">AP · 2018</small>')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Validar separacao
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open('mapa/ap/2018/dados.json',encoding='utf-8'))
+          c=d['candidatos'][0]
+          assert c['total']==0
+          assert c['votos_na_urna_anulados']==6102
+          assert sum(r['anulados'][c['id']] for r in d['municipios'])==6102
+          assert len(d['municipios'])>0
+          print('OK: 0 validos; 6102 anulados separados;',len(d['municipios']),'municipios')
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/ap/2018/index.html mapa/ap/2018/dados.json
+          git diff --cached --check
+          git commit -m "data: recuperar votos anulados de Joaquina Lino em 2018"
+          git push
