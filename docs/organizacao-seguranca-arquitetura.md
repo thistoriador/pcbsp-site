@@ -81,21 +81,20 @@ Já existem tabelas APP2:
 
 Todas essas tabelas estão com RLS habilitado.
 
-### Atenção antes de criar usuários reais
+### Checkpoint de segurança aplicado — 07/10/2026
 
-As políticas atuais de várias tabelas APP2 permitem leitura a qualquer usuário ativo (`org_is_active_user()`), inclusive:
-- org_militants;
-- org_cot_local;
-- org_cot_cr;
-- org_cot_plans;
-- org_cot_submissions;
-- org_organisms;
-- org_history;
-- org_census_snapshots.
+Migration Supabase: `organizacao_direcao_security_boundary`.
 
-Portanto, **não criar perfis locais/organismos com acesso real usando as políticas atuais**.
+Implementado:
+- leitura estadual das tabelas APP2 restrita a perfis do domínio Direção;
+- `ADMIN_LOCAL` não é mais administrador estadual;
+- helper `org_is_direction_user()`;
+- administração geral restrita a `SUPERADMIN` e `ADMIN_CR`;
+- papel `FINANCAS_CR` com escrita somente nas tabelas financeiras;
+- papel `LEITURA_CR` para futura leitura estadual sem poder de escrita;
+- usuário sem perfil válido retorna falso para acesso Direção, administração e finanças.
 
-Enquanto o APP2 for exclusivo da Direção, revisar os papéis e restringir os usuários ao universo CR.
+Papéis locais/organismos permanecem reservados para a futura Área dos Organismos e **não devem receber acesso às tabelas estaduais**.
 
 ## 5. Autenticação
 
@@ -114,12 +113,13 @@ Antes de dados reais:
 
 Separar função de sistema de acesso ao conteúdo.
 
-Papéis a definir antes da migração:
-- SUPERADMIN técnico;
-- CR — administração organizativa;
-- CR — finanças;
-- CR — leitura/consulta;
-- outros somente se houver necessidade real.
+Papéis da primeira fronteira implementada:
+- `SUPERADMIN` — administração técnica e administrativa;
+- `ADMIN_CR` — administração organizativa estadual;
+- `FINANCAS_CR` — leitura estadual + escrita nas tabelas financeiras;
+- `LEITURA_CR` — leitura estadual sem escrita.
+
+Papéis legados `ADMIN_REGIONAL`, `ADMIN_LOCAL` e `LEITURA` continuam aceitos no cadastro por compatibilidade, mas não pertencem à fronteira de leitura estadual definida por `org_is_direction_user()`.
 
 SUPERADMIN não deve significar automaticamente acesso irrestrito a todo conteúdo por conveniência.
 
