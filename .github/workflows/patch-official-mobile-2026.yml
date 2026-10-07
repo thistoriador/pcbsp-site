@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'mapa/index.html'
       - '.github/workflows/patch-official-mobile-2026.yml'
   workflow_dispatch:
 
