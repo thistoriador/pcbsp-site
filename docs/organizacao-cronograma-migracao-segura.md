@@ -37,6 +37,16 @@ Critérios de saída:
 - testes de negação aprovados;
 - advisors revisados.
 
+## CP2 — Auditoria imutável de ações sensíveis — CONCLUÍDO
+Supabase: `organizacao_cp2_audit_log`
+Testes:
+- `org_audit_log` com RLS;
+- anon sem SELECT;
+- authenticated tem apenas SELECT nominal e ainda depende de policy SUPERADMIN;
+- authenticated sem INSERT/UPDATE/DELETE;
+- índices de data, ator e ação criados;
+- log vazio: nenhum dado fictício/pessoal introduzido.
+
 ## CP2 — Auditoria imutável de ações sensíveis
 Objetivo:
 - tabela de eventos de segurança/auditoria;
