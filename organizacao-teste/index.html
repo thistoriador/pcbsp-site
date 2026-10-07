@@ -155,7 +155,7 @@ function renderPeriodBars(x){
 }
 censoPeriod.onchange=renderCensoPeriod;
 setTimeout(renderCensoPeriod,0);
-setTimeout(initHomeMap,0);
+/* mapa inicializado após definição das cores territoriais */
 setTimeout(initHomeCitySelect,0);
 
 const HIST=[
@@ -307,7 +307,7 @@ function initHomeMap(){
  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-label="Mapa territorial do PCB em São Paulo">'+paths+'</svg><div style="position:absolute;right:10px;bottom:8px;background:#fffE;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:700">ABRIR MAPA COMPLETO →</div>';
  box.style.position='relative';
 }
-setTimeout(()=>{try{initHomeMap()}catch(e){console.error('Mapa inicial:',e)}},50);
+setTimeout(()=>{try{initHomeMap();initHomeCitySelect(true);renderCensoPeriod()}catch(e){console.error('Inicialização do painel:',e)}},50);
 function initOrgMap(){if(orgMap||!window.L)return;orgMap=L.map('orgMap',{scrollWheelZoom:true}).setView([-22.4,-48.5],6);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(orgMap);macroLayer=L.geoJSON(MUNICIPIOS_GEO,{style:f=>{let c=MACRO_COLORS[f.properties.macro]||{fill:'#888',line:'#555'};return{color:c.line,weight:.55,opacity:.75,fillColor:c.fill,fillOpacity:.42}},onEachFeature:(f,l)=>{l.bindTooltip('<b>'+f.properties.nome+'</b><br>'+f.properties.macro,{sticky:true});l.on('click',()=>showMacro(f.properties.macro));l.on('mouseover',()=>l.setStyle({weight:2,fillOpacity:.55}));l.on('mouseout',()=>macroLayer.resetStyle(l))}}).addTo(orgMap);markerLayer=L.layerGroup().addTo(orgMap);ORG_POINTS.forEach(p=>{let mac=macroFor(p[1],p[2]),c=MACRO_COLORS[mac]||{fill:'#b20d18'};let mk=L.circleMarker([p[2],p[1]],{radius:6,color:'#fff',weight:2,fillColor:c.fill,fillOpacity:1}).addTo(markerLayer);mk.bindPopup('<b>'+p[0]+'</b><br>'+mac);mk.on('click',()=>showMacro(mac))});orgMap.fitBounds(macroLayer.getBounds(),{padding:[10,10]});let names=['Macro Nordeste','Macro Oeste','Macro Sudeste','Macro Centro-Oeste','Macro Centro-Leste','Macro Litoral','Macro Metropolitana','Macro Noroeste'];macroList.innerHTML=names.map(name=>{let c=MACRO_COLORS[name];let n=MUNICIPIOS_GEO.features.filter(f=>f.properties.macro===name).length;return '<button class="macroitem" style="border-left:12px solid '+c.fill+'" onclick="showMacro(\''+name+'\')"><b>'+name+'</b><br><span class="hint">'+n+' municípios</span></button>'}).join('');maprows.innerHTML='<p class="hint">Selecione uma Macrorregião. As fronteiras seguem os limites municipais.</p>'}
 
 const COT_KEY='pcb_org_cot_teste_v2';
