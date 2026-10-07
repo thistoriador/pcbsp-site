@@ -198,9 +198,36 @@ async function renderUsers(){
  box.innerHTML='<tr><td colspan="5" class="hint">Carregando usuários…</td></tr>';
  const {data,error}=await sb.from('org_profiles').select('user_id,display_name,role,scope,organism_id,active,created_at,updated_at').order('display_name');
  if(error){console.error('org_profiles:',error);box.innerHTML='<tr><td colspan="5"><b>Não foi possível carregar os perfis.</b><br><span class="hint">'+escapeHtml(error.message||'Erro de leitura no Supabase')+'</span><br><button class="linkbtn" onclick="renderUsers()">TENTAR NOVAMENTE</button></td></tr>';return}
- box.innerHTML=(data||[]).map(p=>'<tr><td><b>'+escapeHtml(p.display_name||'Usuário')+'</b></td><td>'+escapeHtml(roleLabel(p.role))+'</td><td>'+escapeHtml(p.scope||'—')+'</td><td><span class="pill '+(!p.active?'warn':'')+'">'+(p.active?'Ativo':'Inativo')+'</span></td><td>'+(p.role==='SUPERADMIN'?'<span class="hint">Protegido</span>':'<button class="linkbtn" onclick="toggleUserActive(\''+p.user_id+'\','+(!p.active)+')">'+(p.active?'DESATIVAR':'REATIVAR')+'</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum perfil.</td></tr>';
+ box.innerHTML=(data||[]).map(p=>'<tr><td><b>'+escapeHtml(p.display_name||'Usuário')+'</b></td><td>'+escapeHtml(roleLabel(p.role))+'</td><td>'+escapeHtml(p.scope||'—')+'</td><td><span class="pill '+(!p.active?'warn':'')+'">'+(p.active?'Ativo':'Inativo')+'</span></td><td>'+(p.role==='SUPERADMIN'?'<span class="hint">Protegido</span>':'<button class="linkbtn" onclick="openEditUser(\''+p.user_id+'\')">EDITAR ACESSO</button> &nbsp; <button class="linkbtn" onclick="toggleUserActive(\''+p.user_id+'\','+(!p.active)+')">'+(p.active?'DESATIVAR':'REATIVAR')+'</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum perfil.</td></tr>';
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function openEditUser(userId){
+ if(ACCESS_CURRENT?.role!=='SUPERADMIN'){showToast('Apenas SUPERADMIN pode editar acessos.');return}
+ const {data:p,error}=await sb.from('org_profiles').select('user_id,display_name,role,organism_id').eq('user_id',userId).single();
+ if(error||!p){showToast('Não foi possível carregar o perfil.');return}
+ if(p.role==='SUPERADMIN'){showToast('SUPERADMIN é protegido.');return}
+ const {data:orgs,error:oe}=await sb.from('org_organisms').select('id,name,status').eq('status','Ativa').order('name');
+ if(oe){showToast('Não foi possível carregar os organismos.');return}
+ const roles=['ADMIN_CR','FINANCAS_CR','LEITURA_CR','ASSISTENTE'];
+ const roleOpts=roles.map(r=>'<option value="'+r+'" '+(r===p.role?'selected':'')+'>'+escapeHtml(roleLabel(r))+'</option>').join('');
+ const orgOpts=(orgs||[]).map(o=>'<option value="'+escapeHtml(o.id)+'" '+(o.id===p.organism_id?'selected':'')+'>'+escapeHtml(o.name)+'</option>').join('');
+ userView.innerHTML='<h2>Editar acesso</h2><p><b>'+escapeHtml(p.display_name||'Usuário')+'</b></p><div class="formgrid"><div class="field"><label>Papel</label><select id="editRole" onchange="syncEditScope()">'+roleOpts+'</select></div><div class="field" id="editStateScope"><label>Escopo</label><input value="Estado" disabled></div><div class="field wide" id="editOrgScope" style="display:none"><label>Organismo assistido</label><select id="editOrganism"><option value="">Selecione o organismo</option>'+orgOpts+'</select><span class="hint">O Assistente terá acesso restrito ao organismo selecionado.</span></div></div><div class="actions"><button class="btn alt" onclick="closeUserModal()">Cancelar</button><button class="btn" id="editSave" onclick="saveUserAccess(\''+p.user_id+'\')">SALVAR ACESSO</button></div>';
+ userModal.classList.add('on');syncEditScope();
+}
+function syncEditScope(){const a=editRole.value==='ASSISTENTE';editStateScope.style.display=a?'none':'';editOrgScope.style.display=a?'':'none'}
+async function saveUserAccess(userId){
+ const role=editRole.value,organism_id=role==='ASSISTENTE'?editOrganism.value:null;
+ if(role==='ASSISTENTE'&&!organism_id){showToast('Selecione o organismo assistido.');return}
+ const btn=editSave;btn.disabled=true;btn.textContent='SALVANDO…';
+ try{
+  const {data:{session}}=await sb.auth.getSession();if(!session)throw new Error('Sessão expirada.');
+  const c=window.PCB_ORG_SUPABASE;
+  const res=await fetch(c.url+'/functions/v1/org-admin-update-access',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':c.publishableKey},body:JSON.stringify({user_id:userId,role,organism_id})});
+  const out=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(out.error||'Falha ao atualizar acesso.');
+  closeUserModal();await renderUsers();showToast('Acesso atualizado.');
+ }catch(e){showToast(e.message||'Não foi possível atualizar o acesso.');btn.disabled=false;btn.textContent='SALVAR ACESSO'}
+}
 async function openInviteUser(){
  if(ACCESS_CURRENT?.role!=='SUPERADMIN'){showToast('Apenas SUPERADMIN pode convidar usuários.');return}
  const {data:orgs,error}=await sb.from('org_organisms').select('id,name,status').eq('status','Ativa').order('name');
