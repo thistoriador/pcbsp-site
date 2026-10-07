@@ -20,7 +20,16 @@ header{background:#87080f;color:#fff;padding:18px 22px;border-bottom:5px solid #
 .groups{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:8px!important}.group{flex:1 1 300px!important;min-width:280px!important;padding:7px 9px!important}
 .cands{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:6px!important}.cand{min-width:0!important;width:100%!important;padding:7px 9px!important}.cand strong{font-size:14px!important;line-height:1.12!important;word-break:normal!important}.cand small{font-size:11px!important;line-height:1.15!important}.cand .n{font-size:17px!important;line-height:1.05!important;margin-top:4px!important}
 @media(max-width:700px){.group{flex-basis:100%!important;min-width:0!important}.cands{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))!important}.cand strong{font-size:13px!important}}@media(max-width:380px){.cands{grid-template-columns:1fr!important}}
-</style><style id="orphanCardFix">.cands>.cand:last-child:nth-child(odd){grid-column:1/-1!important}</style></head><body>
+</style><style id="orphanCardFix">.cands>.cand:last-child:nth-child(odd){grid-column:1/-1!important}</style><style id="compactCandidateRows">
+.groups{display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:7px!important}
+.group{flex:1 1 280px!important;min-width:0!important}
+.group:has(.cand:nth-child(3)):not(:has(.cand:nth-child(5))){flex-grow:2!important}
+.group:has(.cand:nth-child(5)){flex-basis:100%!important;flex-grow:1!important}
+.cands{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+.cand{flex:1 1 185px!important;min-width:160px!important;max-width:none!important}
+@media(max-width:700px){.group{flex-basis:100%!important}.cand{flex-basis:145px!important;min-width:135px!important}}
+@media(max-width:380px){.cand{flex-basis:100%!important}}
+</style></head><body>
 <header><b>MAPA DOS VOTOS <em>PCB-SP</em></b><div>MINAS GERAIS • 2022</div></header>
 <div class="top"><button class="pill" onclick="location.href='/mapa/'">← VOLTAR</button><button class="pill" onclick="location.href='/mapa/mg/2018/'">MG · 2018</button><button class="pill" onclick="location.href='/mapa/mg/'">MG · 2026</button></div>
 <main class="wrap"><div id="status" class="status">Carregando dados oficiais do TSE…</div><div id="groups" class="groups"></div>
