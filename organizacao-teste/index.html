@@ -192,15 +192,33 @@ function persistTestData(){localStorage.setItem(TEST_DATA_KEY,JSON.stringify(D))
 function resetTestData(){if(!confirm('Restaurar os dados de teste deste navegador para o checkpoint publicado?'))return;D=cloneData(BASE_D);persistTestData();renderCells();renderMil();initHomeCitySelect(true);showToast('Dados locais de teste restaurados.')}
 const money=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const CIRC_KEY='pcb_org_circulares_teste';
+const CIRCULARES_OFICIAIS=[{
+ numero:'014/2026',
+ data:'',
+ titulo:'CPN - MOBILIZAÇÃO DA MILITÂNCIA NO SEGUNDO TURNO',
+ orgao:'Comissão Política Nacional (CPN)',
+ categoria:'Política',
+ destinatarios:'AO CONJUNTO DA MILITÂNCIA DO PCB E DOS COLETIVOS PARTIDÁRIOS',
+ status:'Vigente',
+ ref:'',
+ corpo:"AO CONJUNTO DA MILITÂNCIA DO PCB E DOS COLETIVOS PARTIDÁRIOS\n\nDERROTAR A EXTREMA-DIREITA NAS URNAS E NAS RUAS!\n\n\nCamaradas,\n\n\nA Comissão Política Nacional do PCB, ao examinar a conjuntura adversa e complexa que atravessamos, afirma que neste momento devemos de forma organizada somar forças militantes para barrar o avanço da extrema-direita e do seu projeto de destruição social.\n\nManteremos nossas bandeiras de luta e seguiremos divulgando nossas propostas e nosso Programa Anticapitalista e Anti-imperialista, pela construção do Poder Popular e do Socialismo. Não escondemos nossas divergências; no entanto, agora é necessário que, de forma militante, com firmeza e convicção, participemos ativamente da campanha para eleger Lula e derrotar Flávio Bolsonaro.\n\nNo Brasil, o PCB historicamente sempre foi uma primeira barreira no combate ao fascismo e a todas as manifestações das forças reacionárias. Vamos nos incorporar aos movimentos sociais, sindicatos, organizações populares, estudantis e culturais onde sejam constituídos ou já existirem comitês de campanha para derrotar a extrema-direita e eleger Lula.\n\nDevemos fazer desse processo também uma ação pedagógica de formação junto à população sobre o significado do avanço da extrema-direita em nosso país e principalmente sobre os riscos ainda mais ameaçadores de ataques aos direitos da classe trabalhadora e às liberdades democráticas. Devemos atuar no sentido de conscientizar acerca da necessidade de auto-organização do povo e da classe trabalhadora brasileira.\n\nSendo assim, orientamos toda a militância do Partido, dos nossos coletivos partidários, amigos, amigas e simpatizantes do PCB a se integrarem no esforço para, no segundo turno, derrotarmos a candidatura de Flávio Bolsonaro. Precisamos desde já nos preparar para as batalhas que virão, nesse cenário de maior hegemonia da extrema direita, tanto na institucionalidade como na sociedade.\n\nAvante, camaradas!\n\n\nPartido Comunista Brasileiro (PCB)\nComissão Política Nacional\n\nEnviado com um e-mail seguro do Proton Mail.",
+ notes:'Primeira circular real inserida no arquivo interno. Data de emissão não informada na fonte recebida; mantida sem data para não inventar informação.',
+ pdfName:''
+}];
 let CIRCULARES=[];
 try{CIRCULARES=JSON.parse(localStorage.getItem(CIRC_KEY)||'[]')}catch(e){CIRCULARES=[]}
+CIRCULARES_OFICIAIS.forEach(seed=>{
+ const i=CIRCULARES.findIndex(x=>String(x.numero||'').trim().toUpperCase()===seed.numero.toUpperCase());
+ if(i<0)CIRCULARES.push({...seed});
+});
+localStorage.setItem(CIRC_KEY,JSON.stringify(CIRCULARES));
 let CIRC_EDIT=-1,CIRC_PENDING_PDF=null;
 function saveCirculares(){localStorage.setItem(CIRC_KEY,JSON.stringify(CIRCULARES))}
 function renderCirculares(){
- const years=[...new Set(CIRCULARES.map(x=>(x.data||'').slice(0,4)).filter(Boolean))].sort().reverse(),sel=circYear.value;
+ const years=[...new Set(CIRCULARES.map(x=>(x.data||'').slice(0,4)||((x.numero||'').match(/\/(\d{4})$/)||[])[1]).filter(Boolean))].sort().reverse(),sel=circYear.value;
  circYear.innerHTML='<option value="">Todos os anos</option>'+years.map(y=>'<option '+(y===sel?'selected':'')+'>'+y+'</option>').join('');
  const q=(circQ.value||'').toLowerCase(),cat=circCat.value,st=circStatus.value,yr=circYear.value;
- const rows=CIRCULARES.filter(x=>(!q||[x.numero,x.titulo,x.orgao,x.destinatarios,x.corpo].join(' ').toLowerCase().includes(q))&&(!cat||x.categoria===cat)&&(!st||x.status===st)&&(!yr||(x.data||'').startsWith(yr))).sort((a,b)=>(b.data||'').localeCompare(a.data||'')||(a.numero||'').localeCompare(b.numero||''));
+ const rows=CIRCULARES.filter(x=>(!q||[x.numero,x.titulo,x.orgao,x.destinatarios,x.corpo].join(' ').toLowerCase().includes(q))&&(!cat||x.categoria===cat)&&(!st||x.status===st)&&(!yr||(x.data||'').startsWith(yr)||(x.numero||'').endsWith('/'+yr))).sort((a,b)=>(b.data||'').localeCompare(a.data||'')||(a.numero||'').localeCompare(b.numero||''));
  circRows.innerHTML=rows.map(x=>{let i=CIRCULARES.indexOf(x),file=x.pdfName?'PDF':'—';return '<tr><td><b>'+esc(x.numero||'—')+'</b></td><td>'+fmtDate(x.data)+'</td><td><b>'+esc(x.titulo)+'</b><div class="hint">'+esc(x.destinatarios||'')+'</div></td><td>'+esc(x.orgao)+'</td><td>'+esc(x.categoria)+'</td><td><span class="pill '+(x.status==='Vigente'?'':'warn')+'">'+esc(x.status)+'</span></td><td>'+file+'</td><td><button class="linkbtn" onclick="viewCircular('+i+')">Abrir</button></td></tr>'}).join('');
  circEmpty.style.display=rows.length?'none':'block';circTotal.textContent=CIRCULARES.length;circActive.textContent=CIRCULARES.filter(x=>x.status==='Vigente').length;circDrafts.textContent=CIRCULARES.filter(x=>x.status==='Rascunho').length;circYears.textContent=years.length;
 }
