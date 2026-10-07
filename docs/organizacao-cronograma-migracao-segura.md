@@ -85,6 +85,19 @@ Critérios:
 - usuário não autenticado não lê `org_*`;
 - perfil inativo não lê `org_*`.
 
+## CP4 — Login real em modo paralelo — PREPARADO / AGUARDANDO USUÁRIO AUTH
+GitHub:
+- `26984da0` — laboratório isolado `auth-lab.html`.
+Auditoria estrutural:
+- carrega Supabase JS + config + adaptador;
+- usa `signInWithPassword`;
+- exige perfil ativo da Direção;
+- perfil inválido/inativo força signOut;
+- `index.html` principal continua no login local e não carrega o adaptador.
+Gate:
+- não avançar para ativação no APP principal sem ao menos 1 usuário Supabase Auth real + perfil SUPERADMIN correspondente;
+- não criar `auth.users` manualmente por SQL.
+
 ## CP4 — Login real em modo paralelo
 Objetivo:
 - implementar Supabase Auth no APP2 de teste;
