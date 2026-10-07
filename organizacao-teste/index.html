@@ -94,7 +94,8 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <div id="cotConferencia" class="panel" style="display:none"><div class="hint">Envios feitos pelo formulário só entram como recebidos após conferência.</div><table><thead><tr><th>Cotizante</th><th>Competência</th><th>Valor informado</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead><tbody id="cotCheckRows"></tbody></table></div>
 <div class="modal" id="cotModal" onclick="if(event.target===this)closeCotModal()"><div class="modalbox"><button class="x" type="button" onclick="closeCotModal()">×</button><div id="cotView"></div></div></div>
 </section>
-<section id="usuarios" class="view"><h1>Usuários e Permissões</h1><p class="lead">Perfis administrativos de teste • autenticação local temporária</p><div class="notice"><b>IMPORTANTE:</b> estes acessos servem apenas para testar a interface. A segurança real, escopo territorial e RLS serão ativados no Supabase antes da entrada de dados pessoais reais.</div><div class="panel"><table><thead><tr><th>Login</th><th>Função</th><th>Escopo</th><th>Módulos</th></tr></thead><tbody><tr><td><b>tito</b></td><td>SUPERADMIN</td><td>Estado</td><td>Todos</td></tr><tr><td><b>teste.admin</b></td><td>ADMIN TESTE</td><td>Estado</td><td>Painel, mapa, militantes, organismos, histórico e cotizações</td></tr><tr><td><b>admin.cr</b></td><td>ADMIN CR</td><td>Estado</td><td>Painel, histórico, relatórios e cotizações</td></tr><tr><td><b>admin.macro</b></td><td>ADMIN MACRO</td><td>Macro atribuída</td><td>Censo, mapa, militantes, organismos e relatórios</td></tr><tr><td><b>admin.local</b></td><td>ADMIN LOCAL</td><td>Organismo atribuído</td><td>Painel, mapa, militantes e organismo</td></tr></tbody></table></div><div class="panel" style="margin-top:12px"><b>Teste de permissões:</b> use “Trocar acesso” no cabeçalho para entrar com outro perfil.<p class="hint">Nesta etapa, alterações de cadastro ficam salvas somente neste navegador. Isso permite testar inclusão e edição sem alterar a base publicada nem compartilhar dados pessoais.</p><button class="btn alt" onclick="resetTestData()">RESTAURAR DADOS DE TESTE</button></div></section>
+<section id="usuarios" class="view"><div class="headrow"><div><h1>Usuários e Permissões</h1><p class="lead">Acessos reais da Direção • Supabase Auth + RLS</p></div><button class="btn" onclick="openInviteUser()">+ CONVIDAR USUÁRIO</button></div><div class="notice"><b>SEGURANÇA:</b> somente SUPERADMIN administra acessos. Convites comuns não criam outro SUPERADMIN. Desativar um perfil bloqueia novos acessos ao domínio Direção.</div><div class="panel"><table><thead><tr><th>Usuário</th><th>Papel</th><th>Escopo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="userRows"><tr><td colspan="5" class="hint">Carregando usuários…</td></tr></tbody></table></div></section>
+<div class="modal" id="userModal" onclick="if(event.target===this)closeUserModal()"><div class="modalbox"><button class="x" type="button" onclick="closeUserModal()">×</button><div id="userView"></div></div></div>
 <section id="config" class="view"><h1>Configurações</h1><p class="lead">Base histórica integrada • backend Supabase em implantação</p><div class="panel"><b>Fonte organizativa:</b> My Maps/KMZ 2018–2025 consolidado. <b>Snapshot principal:</b> julho/2025 — 229 militantes, 32 células, 43 cidades e 2 CMs.<br><br><b>Dados pessoais e financeiros:</b> continuam fictícios até a implantação do Supabase + RLS.</div></section>
 <div id="orgModal" class="modal"><div class="dialog"><div id="orgView"></div></div></div><div id="toast" class="toast"></div></main></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth-supabase.js"></script>
@@ -190,6 +191,42 @@ switchAccess.onclick=()=>expireAccess('');
    else {loginGate.style.display='grid';loginErr.textContent='';}
  }catch(e){loginGate.style.display='grid';loginErr.textContent='Falha ao iniciar autenticação segura.'}
 })();
+async function renderUsers(){
+ if(!sb||ACCESS_CURRENT?.role!=='SUPERADMIN')return;
+ const box=document.getElementById('userRows');if(!box)return;
+ box.innerHTML='<tr><td colspan="5" class="hint">Carregando usuários…</td></tr>';
+ const {data,error}=await sb.from('org_profiles').select('user_id,display_name,role,scope,active,created_at,updated_at').order('display_name');
+ if(error){box.innerHTML='<tr><td colspan="5">Não foi possível carregar os perfis.</td></tr>';return}
+ box.innerHTML=(data||[]).map(p=>'<tr><td><b>'+escapeHtml(p.display_name||'Usuário')+'</b></td><td>'+escapeHtml(roleLabel(p.role))+'</td><td>'+escapeHtml(p.scope||'—')+'</td><td><span class="pill '+(!p.active?'warn':'')+'">'+(p.active?'Ativo':'Inativo')+'</span></td><td>'+(p.role==='SUPERADMIN'?'<span class="hint">Protegido</span>':'<button class="linkbtn" onclick="toggleUserActive(\''+p.user_id+'\','+(!p.active)+')">'+(p.active?'DESATIVAR':'REATIVAR')+'</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum perfil.</td></tr>';
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openInviteUser(){
+ if(ACCESS_CURRENT?.role!=='SUPERADMIN'){showToast('Apenas SUPERADMIN pode convidar usuários.');return}
+ userView.innerHTML='<h2>Convidar usuário</h2><div class="formgrid"><div class="field wide"><label>E-mail</label><input id="inviteEmail" type="email" autocomplete="off" placeholder="usuario@exemplo.com"></div><div class="field wide"><label>Nome de exibição</label><input id="inviteName" placeholder="Nome"></div><div class="field"><label>Papel</label><select id="inviteRole"><option value="ADMIN_CR">ADMIN CR</option><option value="FINANCAS_CR">FINANÇAS CR</option><option value="LEITURA_CR">LEITURA CR</option></select></div><div class="field"><label>Escopo</label><input id="inviteScope" value="Estado"></div></div><div class="actions"><button class="btn alt" onclick="closeUserModal()">Cancelar</button><button class="btn" id="inviteSend" onclick="inviteUser()">ENVIAR CONVITE</button></div>';
+ userModal.classList.add('on');
+}
+function closeUserModal(){userModal.classList.remove('on')}
+async function inviteUser(){
+ const email=inviteEmail.value.trim().toLowerCase(),display_name=inviteName.value.trim(),role=inviteRole.value,scope=inviteScope.value.trim()||'Estado';
+ if(!email||!display_name){showToast('Informe e-mail e nome.');return}
+ inviteSend.disabled=true;inviteSend.textContent='ENVIANDO…';
+ try{
+   const {data:{session}}=await sb.auth.getSession();if(!session)throw new Error('Sessão ausente');
+   const c=window.PCB_ORG_SUPABASE;
+   const r=await fetch(c.url+'/functions/v1/org-admin-invite',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':c.publishableKey},body:JSON.stringify({email,display_name,role,scope})});
+   const out=await r.json().catch(()=>({}));
+   if(!r.ok)throw new Error(out.error||'Falha no convite');
+   closeUserModal();showToast('Convite enviado.');await renderUsers();
+ }catch(e){showToast('Não foi possível enviar o convite.')}
+ finally{inviteSend.disabled=false;inviteSend.textContent='ENVIAR CONVITE'}
+}
+async function toggleUserActive(userId,active){
+ if(ACCESS_CURRENT?.role!=='SUPERADMIN')return;
+ const {error}=await sb.from('org_profiles').update({active,updated_at:new Date().toISOString()}).eq('user_id',userId).neq('role','SUPERADMIN');
+ if(error){showToast('Não foi possível alterar o acesso.');return}
+ showToast(active?'Usuário reativado.':'Usuário desativado.');await renderUsers();
+}
+
 // garante atualização do painel mesmo com cache/sessão restaurada
 setTimeout(()=>{if(window.censoPeriod&&CENSO_SNAPSHOTS['2026-08']){CENSO_SNAPSHOTS['2026-08'].cities=36;renderCensoPeriod()}},50);
 
