@@ -119,6 +119,7 @@ function applyAccess(profile,email){
  const active=document.querySelector('.view.on')?.id;
  if(active&&!views.includes(active))go(views.includes('censo')?'censo':views[0]);
  armAccessTimer();
+ setTimeout(()=>{if(profile.role==='SUPERADMIN'&&document.getElementById('userRows'))renderUsers()},0);
 }
 async function expireAccess(msg='Sessão encerrada. Entre novamente.'){
  ACCESS_CURRENT=null;clearTimeout(accessTimer);
@@ -196,7 +197,7 @@ async function renderUsers(){
  const box=document.getElementById('userRows');if(!box)return;
  box.innerHTML='<tr><td colspan="5" class="hint">Carregando usuários…</td></tr>';
  const {data,error}=await sb.from('org_profiles').select('user_id,display_name,role,scope,active,created_at,updated_at').order('display_name');
- if(error){box.innerHTML='<tr><td colspan="5">Não foi possível carregar os perfis.</td></tr>';return}
+ if(error){console.error('org_profiles:',error);box.innerHTML='<tr><td colspan="5"><b>Não foi possível carregar os perfis.</b><br><span class="hint">'+escapeHtml(error.message||'Erro de leitura no Supabase')+'</span><br><button class="linkbtn" onclick="renderUsers()">TENTAR NOVAMENTE</button></td></tr>';return}
  box.innerHTML=(data||[]).map(p=>'<tr><td><b>'+escapeHtml(p.display_name||'Usuário')+'</b></td><td>'+escapeHtml(roleLabel(p.role))+'</td><td>'+escapeHtml(p.scope||'—')+'</td><td><span class="pill '+(!p.active?'warn':'')+'">'+(p.active?'Ativo':'Inativo')+'</span></td><td>'+(p.role==='SUPERADMIN'?'<span class="hint">Protegido</span>':'<button class="linkbtn" onclick="toggleUserActive(\''+p.user_id+'\','+(!p.active)+')">'+(p.active?'DESATIVAR':'REATIVAR')+'</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum perfil.</td></tr>';
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
