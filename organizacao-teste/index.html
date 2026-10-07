@@ -49,7 +49,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 
 
 .modal{display:none;position:fixed;inset:0;background:#0009;z-index:50;align-items:center;justify-content:center;padding:18px}.modal.on{display:flex}.modalbox{position:relative;background:#fff;color:#17212a;border-radius:12px;width:min(820px,100%);max-height:calc(100vh - 48px);overflow-y:auto;padding:24px;box-shadow:0 20px 70px #0007;border:1px solid #d9dde1}.modalbox h2{margin:0 52px 18px 0;color:#17212a;font-size:26px}.modalbox .field label{color:#3e4954;font-size:12px}.modalbox .field input,.modalbox .field select,.modalbox .field textarea{background:#fff;color:#17212a;border:1px solid #aeb6bd}.modalbox .field input:focus,.modalbox .field select:focus,.modalbox .field textarea:focus{outline:3px solid #f3d75a66;border-color:#a7000a}.modalbox .formgrid{clear:both}.modalbox .actions{clear:both;position:sticky;bottom:0;background:#fff;padding:12px 0 2px;z-index:5}.modalbox #payMethod{display:block;min-height:44px;background:#fff;color:#17212a}.modalbox .x{position:absolute;top:12px;right:12px;float:none}.dialog{background:#fff;border-radius:12px;width:min(820px,100%);max-height:92vh;overflow:auto;padding:20px;box-shadow:0 20px 70px #0005}.dialog h2{margin-top:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:11px;font-weight:900;color:var(--mut);margin-bottom:5px;text-transform:uppercase}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cfd4d8;border-radius:7px;font:inherit}.field textarea{min-height:80px;resize:vertical}.wide{grid-column:1/-1}.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.linkbtn{border:0;background:none;color:var(--r);font-weight:900;cursor:pointer;padding:5px}.toast{position:fixed;right:18px;bottom:18px;background:#17212a;color:#fff;padding:12px 16px;border-radius:8px;display:none;z-index:80}.toast.on{display:block}@media(max-width:760px){.formgrid{grid-template-columns:1fr}.wide{grid-column:auto}.dialog{padding:14px}}
-</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>#orgMap{height:560px;border-radius:14px;overflow:hidden}.leaflet-container{font:inherit}.macrobox{display:grid;gap:8px}.macroitem{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;cursor:pointer}.macroitem:hover{border-color:var(--red)}.mapinfo{font-size:13px;line-height:1.45}.orgdot{font-weight:900}.toolbar .btn{white-space:nowrap}</style><style>#loginGate{position:fixed;inset:0;background:#101820ee;z-index:99999;display:grid;place-items:center;padding:20px}.loginCard{width:min(430px,96vw);background:#fff;border-radius:14px;padding:24px;box-shadow:0 20px 70px #0008}.loginCard h2{margin:0 0 5px;font-size:25px}.loginCard p{color:#5f6a75}.loginCard input{width:100%;padding:13px;border:1px solid #cfd5da;border-radius:8px;margin:6px 0;font-size:16px}.loginCard button{width:100%;padding:12px;margin-top:8px;border:0;border-radius:8px;background:#c80b18;color:#fff;font-weight:900;cursor:pointer}.loginErr{color:#b00020;font-size:13px;min-height:18px;margin-top:6px}.hiddenByRole{display:none!important}.sortth{cursor:pointer;user-select:none}.sortth:hover{background:#f1f3f5}.sortth span{font-size:11px;color:#c80b18;margin-left:4px}</style></head><body><div id="loginGate"><div class="loginCard"><h2>PCB SP | Organização Interna</h2><p>Acesso administrativo de teste</p><input id="loginUser" autocomplete="username" placeholder="Usuário"><input id="loginPin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN de 6 dígitos"><button id="loginBtn">Entrar</button><div id="loginErr" class="loginErr"></div><p style="font-size:11px">Ambiente de teste. Autenticação local temporária; não utilizar para dados pessoais reais.</p></div></div>
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>#orgMap{height:560px;border-radius:14px;overflow:hidden}.leaflet-container{font:inherit}.macrobox{display:grid;gap:8px}.macroitem{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;cursor:pointer}.macroitem:hover{border-color:var(--red)}.mapinfo{font-size:13px;line-height:1.45}.orgdot{font-weight:900}.toolbar .btn{white-space:nowrap}</style><style>#loginGate{position:fixed;inset:0;background:#101820ee;z-index:99999;display:grid;place-items:center;padding:20px}.loginCard{width:min(430px,96vw);background:#fff;border-radius:14px;padding:24px;box-shadow:0 20px 70px #0008}.loginCard h2{margin:0 0 5px;font-size:25px}.loginCard p{color:#5f6a75}.loginCard input{width:100%;padding:13px;border:1px solid #cfd5da;border-radius:8px;margin:6px 0;font-size:16px}.loginCard button{width:100%;padding:12px;margin-top:8px;border:0;border-radius:8px;background:#c80b18;color:#fff;font-weight:900;cursor:pointer}.loginErr{color:#b00020;font-size:13px;min-height:18px;margin-top:6px}.hiddenByRole{display:none!important}.sortth{cursor:pointer;user-select:none}.sortth:hover{background:#f1f3f5}.sortth span{font-size:11px;color:#c80b18;margin-left:4px}</style></head><body><div id="loginGate"><div class="loginCard"><h2>PCB SP | Organização Interna</h2><p>Acesso seguro da Direção • Supabase Auth</p><input id="loginUser" type="email" autocomplete="username" placeholder="E-mail"><input id="loginPin" type="password" autocomplete="current-password" placeholder="Senha"><button id="loginBtn">Entrar</button><div id="loginErr" class="loginErr"></div><p style="font-size:11px">Autenticação real. O acesso depende de usuário ativo e perfil autorizado da Direção.</p></div></div>
 <header><div class="logo"><b>PCB<small>SÃO PAULO</small></b></div><div class="headtitle"><b>ORGANIZAÇÃO INTERNA</b><small>CENSO • ORGANIZAÇÃO • COTIZAÇÕES</small></div><div class="user"><span id="currentUser">Acesso não iniciado</span><small id="currentRole">TESTE</small><button id="switchAccess" style="margin-top:5px;border:1px solid #ffffff70;background:#ffffff18;color:#fff;border-radius:6px;padding:4px 8px;cursor:pointer">Trocar acesso</button></div></header>
 <div class="shell"><aside>
 <button class="nav on" data-v="censo"><svg class="navico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Painel</span></button>
@@ -61,7 +61,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <button class="nav" data-v="historico"><svg class="navico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2M5.5 5.5 3 3"/></svg><span>Linha Histórica</span></button>
 <button class="nav" data-v="usuarios"><svg class="navico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="3"/><path d="M4 20v-3c0-3 2.2-5 6-5 2 0 3.5.6 4.5 1.6"/><circle cx="18" cy="17" r="3"/><path d="M18 12.5v1.5M18 20v1.5M13.5 17H15M21 17h1.5"/></svg><span>Usuários e Permissões</span></button>
 <button class="nav" data-v="config"><svg class="navico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg><span>Configurações</span></button>
-</aside><main><div class="notice">AMBIENTE DE TESTE • TESTE FUNCIONAL • PERSISTÊNCIA LOCAL • 05/10/2026 • base histórica My Maps/KMZ integrada • snapshots históricos 2018–2026 • agosto/2026: 185 militantes em 27 registros • dados pessoais/financeiros fictícios • backend Supabase em implantação.</div>
+</aside><main><div class="notice">AMBIENTE DE TESTE • autenticação real ativa • dados pessoais/financeiros continuam fictícios • migração dos módulos ao Supabase em andamento.</div>
 <section id="censo" class="view on"><div class="panel" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><b>PERÍODO DO CENSO</b><select id="censoPeriod" style="padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:16px"><option value="2026-08" selected>Agosto/2026</option><option value="2025-07">Julho/2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2018">2018</option></select><span id="censoSource" class="hint" style="margin:0">Levantamento consolidado informado em agosto/2026</span></div><div class="headrow"><div><h1>Painel Organizativo</h1><p class="lead">Uma única visão dos dados atuais e históricos do PCB em São Paulo</p></div></div>
 <div class="metrics" id="censoMetrics"></div>
 <div class="grid3"><div class="panel"><h2>Mapa da organização</h2><div class="hint">Mapa territorial real • clique para abrir o mapa completo</div><div id="homeMapSvg" class="map" style="cursor:pointer;overflow:hidden" onclick="go('mapa')" title="Abrir Mapa de Organização"></div></div>
@@ -97,26 +97,71 @@ table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;borde
 <section id="usuarios" class="view"><h1>Usuários e Permissões</h1><p class="lead">Perfis administrativos de teste • autenticação local temporária</p><div class="notice"><b>IMPORTANTE:</b> estes acessos servem apenas para testar a interface. A segurança real, escopo territorial e RLS serão ativados no Supabase antes da entrada de dados pessoais reais.</div><div class="panel"><table><thead><tr><th>Login</th><th>Função</th><th>Escopo</th><th>Módulos</th></tr></thead><tbody><tr><td><b>tito</b></td><td>SUPERADMIN</td><td>Estado</td><td>Todos</td></tr><tr><td><b>teste.admin</b></td><td>ADMIN TESTE</td><td>Estado</td><td>Painel, mapa, militantes, organismos, histórico e cotizações</td></tr><tr><td><b>admin.cr</b></td><td>ADMIN CR</td><td>Estado</td><td>Painel, histórico, relatórios e cotizações</td></tr><tr><td><b>admin.macro</b></td><td>ADMIN MACRO</td><td>Macro atribuída</td><td>Censo, mapa, militantes, organismos e relatórios</td></tr><tr><td><b>admin.local</b></td><td>ADMIN LOCAL</td><td>Organismo atribuído</td><td>Painel, mapa, militantes e organismo</td></tr></tbody></table></div><div class="panel" style="margin-top:12px"><b>Teste de permissões:</b> use “Trocar acesso” no cabeçalho para entrar com outro perfil.<p class="hint">Nesta etapa, alterações de cadastro ficam salvas somente neste navegador. Isso permite testar inclusão e edição sem alterar a base publicada nem compartilhar dados pessoais.</p><button class="btn alt" onclick="resetTestData()">RESTAURAR DADOS DE TESTE</button></div></section>
 <section id="config" class="view"><h1>Configurações</h1><p class="lead">Base histórica integrada • backend Supabase em implantação</p><div class="panel"><b>Fonte organizativa:</b> My Maps/KMZ 2018–2025 consolidado. <b>Snapshot principal:</b> julho/2025 — 229 militantes, 32 células, 43 cidades e 2 CMs.<br><br><b>Dados pessoais e financeiros:</b> continuam fictícios até a implantação do Supabase + RLS.</div></section>
 <div id="orgModal" class="modal"><div class="dialog"><div id="orgView"></div></div></div><div id="toast" class="toast"></div></main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth-supabase.js"></script>
 <script>
-const ACCESS_USERS={
- 'tito':{hash:'4b8ecf55d15165babdfa8752cd6cd13d7f74ba6c7f6132ed259c48905c331c3b',role:'SUPERADMIN',scope:'Estado',views:['censo','mapa','militantes','celulas','historico','circulares','cot','usuarios','config']},
- 'teste.admin':{hash:'080bf176a72d105681656ff5e16783e6a60c1fe531a4f3b2e1e7010781534424',role:'ADMIN TESTE',scope:'Estado',views:['censo','mapa','militantes','celulas','historico','circulares','cot']},
- 'admin.cr':{hash:'f301068321c59d40cc74693a977228f241e898a62f7b0553425be858f2a25fe5',role:'ADMIN CR',scope:'Estado',views:['censo','historico','circulares','cot']},
- 'admin.macro':{hash:'0f97267579156b1c6ef618ce7c7d76b92e69d34cbf0c37eda72909919a034af3',role:'ADMIN MACRO',scope:'Macro atribuída',views:['censo','mapa','militantes','celulas','historico']},
- 'admin.local':{hash:'c4dcf2965ff26ff9f7518842515b6cd17de55aea59a1d0fa5b8d31044d16f85e',role:'ADMIN LOCAL',scope:'Organismo atribuído',views:['censo','mapa','militantes','celulas']}
+const ROLE_VIEWS={
+ SUPERADMIN:['censo','mapa','militantes','celulas','historico','circulares','cot','usuarios','config'],
+ ADMIN_CR:['censo','mapa','militantes','celulas','historico','circulares','cot'],
+ FINANCAS_CR:['censo','cot'],
+ LEITURA_CR:['censo','mapa','militantes','celulas','historico','circulares','cot']
 };
-const ACCESS_TTL=60*60*1000, ACCESS_IDLE=10*60*1000;
-let ACCESS_CURRENT=null,accessTimer=null;
-async function sha256(v){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function saveAccess(user,p,started=Date.now()){localStorage.setItem('pcb_org_access',JSON.stringify({user,hash:p.hash,started,last:Date.now()}))}
-function applyAccess(user,p,started=Date.now()){ACCESS_CURRENT={user,...p};currentUser.textContent=user+' • '+p.scope;currentRole.textContent=p.role;document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('hiddenByRole',!p.views.includes(el.dataset.v)));saveAccess(user,p,started);loginGate.style.display='none';const active=document.querySelector('.view.on')?.id;if(active&&!p.views.includes(active))go(p.views.includes('censo')?'censo':p.views[0]);armAccessTimer()}
-function expireAccess(msg='Sessão encerrada. Entre novamente.'){ACCESS_CURRENT=null;localStorage.removeItem('pcb_org_access');clearTimeout(accessTimer);loginGate.style.display='grid';loginErr.textContent=msg;loginPin.value='';currentUser.textContent='Acesso não iniciado';currentRole.textContent='TESTE';loginUser.focus()}
-function armAccessTimer(){clearTimeout(accessTimer);accessTimer=setTimeout(()=>expireAccess('Sessão encerrada após 10 minutos sem atividade.'),ACCESS_IDLE)}
-function touchAccess(){if(!ACCESS_CURRENT)return;let a;try{a=JSON.parse(localStorage.getItem('pcb_org_access')||'null')}catch(e){};if(!a)return;const now=Date.now();if(now-a.started>=ACCESS_TTL){expireAccess('Sessão de 1 hora encerrada. Entre novamente.');return}a.last=now;localStorage.setItem('pcb_org_access',JSON.stringify(a));armAccessTimer()}
-async function doLogin(){const u=loginUser.value.trim().toLowerCase(),p=ACCESS_USERS[u];if(!p){loginErr.textContent='Usuário ou PIN inválido.';return}const h=await sha256(loginPin.value.trim());if(h!==p.hash){loginErr.textContent='Usuário ou PIN inválido.';return}loginErr.textContent='';applyAccess(u,p)}
-loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>expireAccess('');
+let ACCESS_CURRENT=null,accessTimer=null,sb=null,sessionStarted=Date.now();
+
+function roleLabel(r){return ({SUPERADMIN:'SUPERADMIN',ADMIN_CR:'ADMIN CR',FINANCAS_CR:'FINANÇAS CR',LEITURA_CR:'LEITURA CR'})[r]||r}
+function applyAccess(profile,email){
+ const views=ROLE_VIEWS[profile.role]||[];
+ ACCESS_CURRENT={email,display_name:profile.display_name,role:profile.role,scope:profile.scope,views};
+ currentUser.textContent=(profile.display_name||email)+' • '+profile.scope;
+ currentRole.textContent=roleLabel(profile.role);
+ document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('hiddenByRole',!views.includes(el.dataset.v)));
+ loginGate.style.display='none';
+ const active=document.querySelector('.view.on')?.id;
+ if(active&&!views.includes(active))go(views.includes('censo')?'censo':views[0]);
+ armAccessTimer();
+}
+async function expireAccess(msg='Sessão encerrada. Entre novamente.'){
+ ACCESS_CURRENT=null;clearTimeout(accessTimer);
+ try{if(sb)await sb.auth.signOut()}catch(e){}
+ loginGate.style.display='grid';loginErr.textContent=msg;loginPin.value='';
+ currentUser.textContent='Acesso não iniciado';currentRole.textContent='—';loginUser.focus();
+}
+function armAccessTimer(){clearTimeout(accessTimer);accessTimer=setTimeout(()=>expireAccess('Sessão encerrada após 10 minutos sem atividade.'),PCBOrgAuth.IDLE_MAX_MS)}
+function touchAccess(){
+ if(!ACCESS_CURRENT)return;
+ if(Date.now()-sessionStarted>=PCBOrgAuth.SESSION_MAX_MS){expireAccess('Sessão de 1 hora encerrada. Entre novamente.');return}
+ armAccessTimer();
+}
+async function openAuthenticatedSession(session){
+ if(!session?.user)throw new Error('Sessão inválida.');
+ const profile=await PCBOrgAuth.loadProfile(sb,session.user.id);
+ sessionStarted=Date.now();applyAccess(profile,session.user.email||'');
+}
+async function doLogin(){
+ const email=loginUser.value.trim().toLowerCase(),password=loginPin.value;
+ if(!email||!password){loginErr.textContent='Informe e-mail e senha.';return}
+ loginBtn.disabled=true;loginErr.textContent='Autenticando…';
+ try{
+   const {data,error}=await sb.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   await openAuthenticatedSession(data.session);
+   loginErr.textContent='';
+ }catch(e){
+   try{await sb.auth.signOut()}catch(_){}
+   loginErr.textContent='Não foi possível entrar. Verifique e-mail, senha e permissão.';
+ }finally{loginBtn.disabled=false}
+}
+loginBtn.onclick=doLogin;
+loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+switchAccess.onclick=()=>expireAccess('');
 ['click','keydown','touchstart','scroll'].forEach(ev=>document.addEventListener(ev,touchAccess,{passive:true}));
-setTimeout(()=>{try{const a=JSON.parse(localStorage.getItem('pcb_org_access')||'null'),now=Date.now();if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash&&now-a.started<ACCESS_TTL&&now-a.last<ACCESS_IDLE)applyAccess(a.user,ACCESS_USERS[a.user],a.started);else expireAccess(a?'Sessão anterior expirada. Entre novamente.':'')}catch(e){expireAccess('')}},0);
+(async()=>{
+ try{
+   sb=PCBOrgAuth.client();
+   const {data}=await sb.auth.getSession();
+   if(data.session)await openAuthenticatedSession(data.session);
+   else {loginGate.style.display='grid';loginErr.textContent='';}
+ }catch(e){loginGate.style.display='grid';loginErr.textContent='Falha ao iniciar autenticação segura.'}
+})();
 // garante atualização do painel mesmo com cache/sessão restaurada
 setTimeout(()=>{if(window.censoPeriod&&CENSO_SNAPSHOTS['2026-08']){CENSO_SNAPSHOTS['2026-08'].cities=36;renderCensoPeriod()}},50);
 
