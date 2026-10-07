@@ -196,25 +196,30 @@ async function renderUsers(){
  if(!sb||ACCESS_CURRENT?.role!=='SUPERADMIN')return;
  const box=document.getElementById('userRows');if(!box)return;
  box.innerHTML='<tr><td colspan="5" class="hint">Carregando usuários…</td></tr>';
- const {data,error}=await sb.from('org_profiles').select('user_id,display_name,role,scope,active,created_at,updated_at').order('display_name');
+ const {data,error}=await sb.from('org_profiles').select('user_id,display_name,role,scope,organism_id,active,created_at,updated_at').order('display_name');
  if(error){console.error('org_profiles:',error);box.innerHTML='<tr><td colspan="5"><b>Não foi possível carregar os perfis.</b><br><span class="hint">'+escapeHtml(error.message||'Erro de leitura no Supabase')+'</span><br><button class="linkbtn" onclick="renderUsers()">TENTAR NOVAMENTE</button></td></tr>';return}
  box.innerHTML=(data||[]).map(p=>'<tr><td><b>'+escapeHtml(p.display_name||'Usuário')+'</b></td><td>'+escapeHtml(roleLabel(p.role))+'</td><td>'+escapeHtml(p.scope||'—')+'</td><td><span class="pill '+(!p.active?'warn':'')+'">'+(p.active?'Ativo':'Inativo')+'</span></td><td>'+(p.role==='SUPERADMIN'?'<span class="hint">Protegido</span>':'<button class="linkbtn" onclick="toggleUserActive(\''+p.user_id+'\','+(!p.active)+')">'+(p.active?'DESATIVAR':'REATIVAR')+'</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Nenhum perfil.</td></tr>';
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function openInviteUser(){
+async function openInviteUser(){
  if(ACCESS_CURRENT?.role!=='SUPERADMIN'){showToast('Apenas SUPERADMIN pode convidar usuários.');return}
- userView.innerHTML='<h2>Convidar usuário</h2><div class="formgrid"><div class="field wide"><label>E-mail</label><input id="inviteEmail" type="email" autocomplete="off" placeholder="usuario@exemplo.com"></div><div class="field wide"><label>Nome de exibição</label><input id="inviteName" placeholder="Nome"></div><div class="field"><label>Papel</label><select id="inviteRole"><option value="ADMIN_CR">ADMIN CR</option><option value="FINANCAS_CR">FINANÇAS CR</option><option value="LEITURA_CR">LEITURA CR</option></select></div><div class="field"><label>Escopo</label><input id="inviteScope" value="Estado"></div></div><div class="actions"><button class="btn alt" onclick="closeUserModal()">Cancelar</button><button class="btn" id="inviteSend" onclick="inviteUser()">ENVIAR CONVITE</button></div>';
+ const {data:orgs,error}=await sb.from('org_organisms').select('id,name,status').eq('status','Ativa').order('name');
+ if(error){showToast('Não foi possível carregar os organismos.');return}
+ const opts=(orgs||[]).map(o=>'<option value="'+escapeHtml(o.id)+'">'+escapeHtml(o.name)+'</option>').join('');
+ userView.innerHTML='<h2>Convidar usuário</h2><div class="formgrid"><div class="field wide"><label>E-mail</label><input id="inviteEmail" type="email" autocomplete="off" placeholder="usuario@exemplo.com"></div><div class="field wide"><label>Nome de exibição</label><input id="inviteName" placeholder="Nome"></div><div class="field"><label>Papel</label><select id="inviteRole" onchange="syncInviteScope()"><option value="ADMIN_CR">ADMIN CR</option><option value="FINANCAS_CR">FINANÇAS CR</option><option value="LEITURA_CR">LEITURA CR</option><option value="ASSISTENTE">ASSISTENTE</option></select></div><div class="field" id="stateScope"><label>Escopo</label><input value="Estado" disabled></div><div class="field wide" id="orgScope" style="display:none"><label>Organismo assistido</label><select id="inviteOrganism"><option value="">Selecione o organismo</option>'+opts+'</select><span class="hint">O acesso do Assistente fica restrito a este organismo.</span></div></div><div class="actions"><button class="btn alt" onclick="closeUserModal()">Cancelar</button><button class="btn" id="inviteSend" onclick="inviteUser()">ENVIAR CONVITE</button></div>';
  userModal.classList.add('on');
 }
+function syncInviteScope(){const a=inviteRole.value==='ASSISTENTE';stateScope.style.display=a?'none':'';orgScope.style.display=a?'':'none'}
 function closeUserModal(){userModal.classList.remove('on')}
 async function inviteUser(){
- const email=inviteEmail.value.trim().toLowerCase(),display_name=inviteName.value.trim(),role=inviteRole.value,scope=inviteScope.value.trim()||'Estado';
+ const email=inviteEmail.value.trim().toLowerCase(),display_name=inviteName.value.trim(),role=inviteRole.value,scope=role==='ASSISTENTE'?'Organismo':'Estado',organism_id=role==='ASSISTENTE'?inviteOrganism.value:null;
  if(!email||!display_name){showToast('Informe e-mail e nome.');return}
+ if(role==='ASSISTENTE'&&!organism_id){showToast('Selecione o organismo assistido.');return}
  inviteSend.disabled=true;inviteSend.textContent='ENVIANDO…';
  try{
    const {data:{session}}=await sb.auth.getSession();if(!session)throw new Error('Sessão ausente');
    const c=window.PCB_ORG_SUPABASE;
-   const r=await fetch(c.url+'/functions/v1/org-admin-invite',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':c.publishableKey},body:JSON.stringify({email,display_name,role,scope})});
+   const r=await fetch(c.url+'/functions/v1/org-admin-invite',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':c.publishableKey},body:JSON.stringify({email,display_name,role,scope,organism_id})});
    const out=await r.json().catch(()=>({}));
    if(!r.ok)throw new Error(out.error||'Falha no convite');
    closeUserModal();showToast('Convite enviado.');await renderUsers();
