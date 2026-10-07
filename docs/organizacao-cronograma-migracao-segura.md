@@ -11,6 +11,17 @@ Regra: ALTERAR → AUDITAR → TESTAR POSITIVO → TESTAR NEGAÇÃO → COMMIT/C
 - Supabase migration: `organizacao_direcao_security_boundary`
 - Rollback lógico: retornar UI ao checkpoint funcional e reverter apenas a migration específica necessária.
 
+## CP1 — Auditoria e endurecimento do backend — CONCLUÍDO
+Supabase:
+- `organizacao_cp1_hardening_indexes`
+- `organizacao_cp1_revoke_public_helpers`
+Testes:
+- todas as tabelas APP2 com RLS;
+- sem sessão: Direção/Admin/Finanças = false;
+- helpers APP2 sem EXECUTE para anon/PUBLIC;
+- 9 FKs APP2 deixaram de aparecer como sem índice no advisor;
+- achados APP1 separados e intocados.
+
 ## CP1 — Auditoria e endurecimento do backend
 Objetivo:
 - auditar RLS/policies/helpers;
