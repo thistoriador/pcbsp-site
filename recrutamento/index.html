@@ -21,10 +21,12 @@
 
 <section id="track" class="view"><div class="head"><h2>Acompanhar cadastro</h2><button class="btn back" onclick="go('home')">← INÍCIO</button></div><div class="panel"><div class="grid"><div><label>Tipo</label><select id="tt"><option value="consultar_recrutamento">Recrutamento</option><option value="consultar_circulista">Circulismo</option></select></div><div><label>Código</label><input id="tc"></div><div class="full"><label>Chave de acompanhamento</label><input id="tk"></div><div class="full"><button class="btn" onclick="track()">CONSULTAR</button></div></div><div id="tmsg" class="msg"></div></div></section>
 
-<section id="admin" class="view"><div class="head"><h2>Acesso administrativo</h2><button class="btn back" onclick="go('home')">← INÍCIO</button></div><div class="panel"><h3>Área restrita</h3><p>O acesso administrativo exige autenticação e permissões próprias. Os cadastros não são disponibilizados publicamente.</p><p class="fine">O painel administrativo será acessado separadamente.</p></div></section>
+<section id="admin" class="view"><div class="head"><h2>Acesso administrativo</h2><button class="btn back" onclick="adminLogout()">← INÍCIO</button></div>
+<div class="panel" id="adminLoginBox"><h3>Área restrita</h3><form id="af" autocomplete="on"><label>Usuário<input id="alogin" name="username" autocomplete="username" required></label><label>Senha<input id="apass" name="password" type="password" autocomplete="current-password" required></label><button class="btn" type="submit">ENTRAR</button></form><div id="amsg" class="msg"></div><p class="fine">A sessão administrativa é autenticada no servidor. A senha não é armazenada nesta página.</p></div>
+<div class="panel" id="adminPanel" hidden><div class="head"><h3 id="adminWho">Painel administrativo</h3><button class="btn back" type="button" onclick="adminLogout()">SAIR</button></div><div id="adminStats"></div><div id="adminRows"></div></div></section>
 </main>
 <script>
-const API='https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/public-api';
+const API='https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/public-api';\nconst ADMIN_API='https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/admin-api';\nlet adminToken=sessionStorage.getItem('pcbsp_admin_token')||'';
 function go(id){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');scrollTo(0,0)}
 function vals(f){return Object.fromEntries(new FormData(f).entries())}
 function show(id,t,ok=true){const e=document.getElementById(id);e.className='msg '+(ok?'ok':'err');e.textContent=t}
@@ -32,4 +34,21 @@ async function api(action,data){const r=await fetch(API,{method:'POST',headers:{
 rf.onsubmit=async e=>{e.preventDefault();try{const d=vals(rf);d.consentimento_dados=rcons.checked;d.autoriza_comunicacoes=rcom.checked;d.consentimento_versao='1.0';const x=await api('cadastrar_recrutamento',d);show('rmsg','Cadastro recebido.\nCódigo: '+x.codigo+'\nChave: '+x.token+'\n\nGuarde os dois para acompanhar.');rf.reset()}catch(x){show('rmsg',x.message,false)}};
 cf.onsubmit=async e=>{e.preventDefault();try{const d=vals(cf);d.consentimento_dados=ccons.checked;d.autoriza_comunicacoes=ccom.checked;d.consentimento_versao='1.0';const x=await api('cadastrar_circulista',d);show('cmsg','Cadastro recebido.\nCódigo: '+x.codigo+'\nChave: '+x.token+'\n\nGuarde os dois para acompanhar.');cf.reset()}catch(x){show('cmsg',x.message,false)}};
 async function track(){try{const x=await api(tt.value,{codigo:tc.value,token:tk.value});show('tmsg',JSON.stringify(x,null,2))}catch(x){show('tmsg',x.message,false)}}
+async function adminApi(action,data={},token=adminToken){
+ const h={'Content-Type':'application/json'}; if(token)h.Authorization='Bearer '+token;
+ const r=await fetch(ADMIN_API,{method:'POST',headers:h,body:JSON.stringify({action,data}),cache:'no-store'});
+ const j=await r.json().catch(()=>({})); if(!r.ok||j.erro)throw new Error(j.erro||'Não foi possível concluir.'); return j;
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function adminLoad(){
+ try{
+  const [me,dash,rows]=await Promise.all([adminApi('me'),adminApi('dashboard'),adminApi('list_recrutamentos')]);
+  adminLoginBox.hidden=true; adminPanel.hidden=false; adminWho.textContent='Painel — '+(me.profile.nome||me.profile.login_name||'');
+  adminStats.innerHTML='<p><b>Recrutamentos:</b> '+esc(dash.total_recrutamentos)+' &nbsp; <b>Circulistas:</b> '+esc(dash.total_circulistas)+'</p>';
+  adminRows.innerHTML='<h3>Recrutamentos</h3><div style="overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th>Nome</th><th>Cidade</th><th>Etapa</th><th>Status</th></tr></thead><tbody>'+rows.rows.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+esc(x.cidade)+'</td><td>'+esc(x.etapa)+'</td><td>'+esc(x.status)+'</td></tr>').join('')+'</tbody></table></div>';
+ }catch(e){adminLogout(false);show('amsg',e.message,false)}
+}
+af.onsubmit=async e=>{e.preventDefault();show('amsg','Autenticando…');try{const x=await adminApi('login',{login_name:alogin.value,password:apass.value},'');adminToken=x.access_token;sessionStorage.setItem('pcbsp_admin_token',adminToken);apass.value='';await adminLoad()}catch(x){apass.value='';show('amsg',x.message,false)}};
+function adminLogout(home=true){adminToken='';sessionStorage.removeItem('pcbsp_admin_token');adminPanel.hidden=true;adminLoginBox.hidden=false;if(home)go('home')}
+if(adminToken)adminLoad();
 </script></body></html>
