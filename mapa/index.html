@@ -614,7 +614,7 @@ function currentMapMax(){
 }
 function geoStyle(f){
  const row=mapDataByName(geoName(f)),v=mapValue(row);
- return {color:'#fff',weight:.65,fillColor:colorScale(v,currentMapMax()),fillOpacity:1};
+ return {color:'#6f675f',weight:.8,fillColor:colorScale(v,currentMapMax()),fillOpacity:v>0?.72:.18};
 }
 async function initRealMap(){
  const el=document.getElementById('spRealMap');
@@ -633,7 +633,8 @@ async function initRealMap(){
     }
     if(!geoData) throw lastErr||new Error('malha municipal não carregou');
   }
-  leafletMap=L.map(el,{zoomControl:true,attributionControl:false,scrollWheelZoom:true,minZoom:5,maxZoom:12,zoomSnap:.25,zoomDelta:.25});
+  leafletMap=L.map(el,{zoomControl:true,attributionControl:true,scrollWheelZoom:true,minZoom:5,maxZoom:19,zoomSnap:.25,zoomDelta:.25});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(leafletMap);
   geoLayer=L.geoJSON(geoData,{style:geoStyle,onEachFeature:(f,l)=>{
     const nm=geoName(f);
     l.bindTooltip(nm,{sticky:true});
