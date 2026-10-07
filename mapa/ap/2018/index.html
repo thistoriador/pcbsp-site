@@ -38,7 +38,7 @@ function cards(){
  let major=D.candidatos.filter(c=>["Presidente","Governador","Senador"].includes(c.cargo)).sort((a,b)=>["Presidente","Governador","Senador"].indexOf(a.cargo)-["Presidente","Governador","Senador"].indexOf(b.cargo));
  let est=[...rank(D.candidatos.filter(c=>c.cargo==="Deputado Estadual"&&c.nome!=="LEGENDA 21")),...D.candidatos.filter(c=>c.cargo==="Deputado Estadual"&&c.nome==="LEGENDA 21")];
  let fed=[...rank(D.candidatos.filter(c=>c.cargo==="Deputado Federal"&&c.nome!=="LEGENDA 21")),...D.candidatos.filter(c=>c.cargo==="Deputado Federal"&&c.nome==="LEGENDA 21")];
- function card(c){let leg=c.nome==="LEGENDA 21";return '<div class="cand '+(c.id===selected?'active':'')+'" onclick="selected='+JSON.stringify(c.id).replace(/"/g,"&quot;")+';update()"><strong>'+c.nome+'</strong><small>'+(leg?'LEGENDA • ':c.cargo+' • ')+'PCB '+c.numero+'</small><div class="n">'+fmt(c.total)+' votos</div></div>'}
+ function card(c){let leg=c.nome==="LEGENDA 21";return '<div class="cand '+(c.id===selected?'active':'')+'" onclick="selected='+JSON.stringify(c.id).replace(/"/g,"&quot;")+';update()"><strong>'+c.nome+'</strong><small>'+(leg?'LEGENDA • ':c.cargo+' • ')+'PCB '+c.numero+'</small><div class="n">'+(c.votos_na_urna_anulados?fmt(c.votos_na_urna_anulados)+' votos na urna · '+fmt(c.total)+' válidos':fmt(c.total)+' votos')+'</div></div>'}
  function group(t,a){return a.length?'<section class="group"><div class="group-title">'+t+'</div><div class="cands">'+a.map(card).join("")+'</div></section>':''}
  document.getElementById("groups").innerHTML=group("MAJORITÁRIOS",major)+group("DEPUTADOS ESTADUAIS",est)+group("DEPUTADOS FEDERAIS",fed)
 }
