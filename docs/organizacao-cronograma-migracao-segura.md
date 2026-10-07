@@ -60,6 +60,17 @@ Critérios:
 - índices por usuário/data/ação;
 - sem dados políticos desnecessários no log.
 
+## CP3 — Preparação do Supabase Auth — CONCLUÍDO
+GitHub:
+- `9c6df993` — configuração pública com publishable key;
+- `51ed33f8` — adaptador Auth isolado, ainda não carregado pelo index.
+Testes:
+- nenhum service_role inserido;
+- arquivos presentes em main;
+- anon sem SELECT em org_organisms;
+- anon sem EXECUTE nos helpers APP2;
+- index.html ainda não referencia os novos arquivos: zero regressão funcional neste checkpoint.
+
 ## CP3 — Preparação do Supabase Auth
 Objetivo:
 - manter login local funcionando enquanto a nova autenticação é preparada;
