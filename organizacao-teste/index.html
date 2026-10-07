@@ -60,8 +60,8 @@ const ACCESS_USERS={
 let ACCESS_CURRENT=null;
 async function sha256(v){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 function applyAccess(user,p){ACCESS_CURRENT={user,...p};currentUser.textContent=user+' • '+p.scope;currentRole.textContent=p.role;document.querySelectorAll('[data-v]').forEach(el=>el.classList.toggle('hiddenByRole',!p.views.includes(el.dataset.v)));sessionStorage.setItem('pcb_org_access',JSON.stringify({user,hash:p.hash}));loginGate.style.display='none';const active=document.querySelector('.view.on')?.id;if(active&&!p.views.includes(active))go(p.views.includes('censo')?'censo':p.views[0])}
-function doLogin(){const u=loginUser.value.trim().toLowerCase(),p=ACCESS_USERS[u],pin=loginPin.value.trim();if(!p||!(u==='tito'&&pin==='260814')){loginErr.textContent='Usuário ou PIN inválido.';return}loginErr.textContent='';applyAccess(u,p)}
-loginBtn.onclick=doLogin;loginPin.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>{sessionStorage.removeItem('pcb_org_access');loginPin.value='';loginGate.style.display='grid';loginUser.focus()};
+function doLogin(){const userEl=document.getElementById('loginUser'),pinEl=document.getElementById('loginPin'),errEl=document.getElementById('loginErr');const u=(userEl?.value||'').trim().toLowerCase(),pin=(pinEl?.value||'').trim(),p=ACCESS_USERS[u];if(!p||u!=='tito'||pin!=='260814'){if(errEl)errEl.textContent='Usuário ou PIN inválido.';return}if(errEl)errEl.textContent='';applyAccess(u,p)}
+document.getElementById('loginBtn').addEventListener('click',doLogin);document.getElementById('loginPin').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});switchAccess.onclick=()=>{sessionStorage.removeItem('pcb_org_access');loginPin.value='';loginGate.style.display='grid';loginUser.focus()};
 setTimeout(()=>{try{const a=JSON.parse(sessionStorage.getItem('pcb_org_access')||'null');if(a&&ACCESS_USERS[a.user]&&ACCESS_USERS[a.user].hash===a.hash)applyAccess(a.user,ACCESS_USERS[a.user]);else loginUser.focus()}catch(e){loginUser.focus()}},0);
 
 
