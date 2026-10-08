@@ -650,7 +650,19 @@ if(adminSession?.access_token){adminStart()}
   if(!territory){territory=document.createElement('section');territory.id='pilotTerritory';overview.append(territory)}
   if(admin){
     const grouped=new Map();
-    const normalizeCity=v=>String(v||'').trim().replace(/\s*\((?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\)\s*$/i,'').replace(/\s*[-–,]\s*(?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\s*$/i,'').trim()||'Município não informado';
+    const normalizeCity=v=>{
+      let city=String(v||'').trim().replace(/\s+/g,' ').replace(/[.]$/,'').trim();
+      if(!city)return 'Município não informado';
+      city=city.replace(/\s*\((?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO|São Paulo)\)\s*$/i,'')
+        .replace(/\s*[,\/-]\s*(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO|São Paulo)\s*$/i,'')
+        .replace(/\s+(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF)\s*$/i,'').trim();
+      if(/^s[aã]o paulo(?:\s*[-–]\s*.+)?$/i.test(city))return 'São Paulo';
+      if(/^santos\s*[-–]\s*litoral de sp$/i.test(city))return 'Santos';
+      if(/^santos\s*\/\s*cubat[aã]o$/i.test(city))return 'Santos / Cubatão (conferir)';
+      const canonical={'americana':'Americana','guaruja':'Guarujá','paulinia':'Paulínia','santa fe do sul':'Santa Fé do Sul','santa rita do passa quatro':'Santa Rita do Passa Quatro','sao joao de iracema':'São João de Iracema','tres fronteiras':'Três Fronteiras','severinia':'Severínia','mogi guacu':'Mogi Guaçu'};
+      const key=city.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
+      return canonical[key]||city.replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase('pt-BR'));
+    };
     (Array.isArray(recruitsCache)?recruitsCache:[]).forEach(x=>{const city=normalizeCity(x.cidade);const key=city.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');const old=grouped.get(key);grouped.set(key,{city:old?.city||city,n:(old?.n||0)+1})});
     const cities=[...grouped.values()].map(x=>[x.city,x.n]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR'));
     const max=cities.length?cities[0][1]:1;
