@@ -176,6 +176,14 @@ body:has(#home.view.on) .footer .footerin{flex-direction:column;gap:12px;text-al
 body:has(#home.view.on) .footer .footer-brand{flex-wrap:wrap;justify-content:center;gap:12px}
 body:has(#home.view.on) .footer .footer-copy{justify-content:center}
 }
+
+/* Correção final: banner na largura original e logo oficial sem deformação */
+body:has(#home.view.on) .hero{width:100%;max-width:1180px!important;margin:0 auto!important;background:#a50e14}
+body:has(#home.view.on) .hero img{display:block;width:100%;height:auto!important;max-height:none!important;min-height:0!important;object-fit:contain!important}
+body:has(#home.view.on) .footer .footer-brand img{width:73px!important;height:85px!important;object-fit:contain!important;flex-shrink:0}
+body:has(#home.view.on) .footer .footer-brand{gap:22px}
+body:has(#home.view.on) .footer .footer-divider{height:48px}
+@media(max-width:760px){body:has(#home.view.on) .hero{max-width:100%!important}body:has(#home.view.on) .footer .footer-brand img{width:61px!important;height:72px!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
