@@ -56,6 +56,23 @@
 #adminPanel .attentionitem b{font-size:24px;color:var(--teal)}
 #adminPanel .attentionitem span{font-size:12px;font-weight:900;color:#56626c;text-align:right}
 @media(max-width:900px){#adminPanel .overviewgrid{grid-template-columns:1fr}#adminPanel .stageflow{grid-template-columns:repeat(2,1fr)}#adminPanel .stageitem:last-child{grid-column:1/-1}}
+
+/* APP1 · identidade visual 2026 — painel administrativo */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+:root{--red:#a71920;--red2:#860f17;--paper:#f3f4f6;--ink:#111111;--muted:#667085;--line:#e5e7eb}
+body{font-family:Poppins,Arial,sans-serif;background:var(--paper)}
+.panel,.adminbox,.stat,.detailitem,.history{border-radius:16px}
+.panel{box-shadow:0 8px 28px #1111110b;border:1px solid #e9ebef}
+.adminbar{padding:18px 20px;border-radius:16px;background:#fff;box-shadow:0 4px 18px #1111110a}
+.admintabs{gap:8px;padding:8px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+.admintabs button{border-radius:10px;transition:background .15s,color .15s}
+.admintabs button.active{background:var(--red);color:#fff}
+.stats,.statgrid{gap:12px}.stat{background:#fff;border:1px solid var(--line);box-shadow:0 3px 12px #1111110a}
+.atable{border-collapse:separate;border-spacing:0 8px}.atable th{font-size:12px;letter-spacing:.03em;color:var(--muted)}.atable tbody tr{background:#fff;box-shadow:0 2px 12px #1111110b;cursor:pointer}.atable tbody td:first-child{border-radius:12px 0 0 12px}.atable tbody td:last-child{border-radius:0 12px 12px 0}
+input,select,textarea{border-color:#d8dce3;border-radius:11px}input:focus,select:focus,textarea:focus{outline:3px solid #a7192026;border-color:var(--red)}
+.send{border-radius:11px;box-shadow:none}.send.danger{background:#bd101a}.dangerbox{border-radius:14px;background:#fff2f3;border:1px solid #f5c7cb;padding:14px;margin-top:12px}
+.detailitem{background:#f8f9fb;border:1px solid #eceef1;padding:12px}.history{border-left:3px solid var(--red);padding:12px;background:#fafafa}
+@media(max-width:760px){.adminbar{padding:14px}.admintabs{overflow-x:auto;flex-wrap:nowrap}.admintabs button{white-space:nowrap}.atable{min-width:680px}.panel{padding:16px}.detailgrid{grid-template-columns:1fr 1fr}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
