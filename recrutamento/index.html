@@ -350,7 +350,7 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 
 
 <section id="admin" class="view">
-<div class="top admin-top"><div class="admin-top-actions"><button class="back" type="button" onclick="adminTab('overview')">← Voltar</button><button class="back" type="button" onclick="adminHome()">⌂ Início</button></div><h2>Acesso administrativo</h2></div>
+<div class="top admin-top"><div class="admin-top-actions"><button class="back" type="button" onclick="adminHome()">← Voltar</button></div><h2>Acesso administrativo</h2></div>
 <div id="adminLoginBox" class="panel adminbox">
 <h3>🔒 Área restrita</h3><p>Entre com seu nome de usuário e senha.</p>
 <div class="grid"><div class="full"><label>Usuário</label><input id="alogin" autocomplete="username" placeholder="Ex.: Tito"></div><div class="full"><label>Senha</label><div class="passwrap"><input id="apass" type="password" autocomplete="current-password"><button type="button" class="eye" onclick="togglePass('apass',this)" aria-label="Mostrar senha">👁️</button></div></div><div class="full"><button class="send" type="button" onclick="adminLogin()">ENTRAR</button></div></div><div id="amsg"></div>
