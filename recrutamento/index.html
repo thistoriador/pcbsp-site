@@ -129,6 +129,20 @@ body:has(#home.view.on) .navin{max-width:1240px}
 .footerin .footer-brand img{width:82px;height:100px;object-fit:contain}
 .footerin .footer-brand b{color:#ffce12}
 @media(max-width:760px){body:has(#home.view.on) .hero img{max-height:none}.footerin .footer-brand img{width:65px;height:80px}#home .home-card .home-action{min-height:52px}}
+
+/* Rodapé fiel à composição aprovada: marca amarela, divisor e texto bicolor */
+.footer{margin-top:0!important;background:linear-gradient(115deg,#111 0%,#1c1c1c 48%,#111 100%);color:#fff}
+.footer .footerin{max-width:1300px;margin:auto;padding:17px 22px;min-height:105px;display:flex;justify-content:space-between;align-items:center;gap:25px}
+.footer .footer-brand{display:flex;align-items:center;gap:22px;min-width:0}
+.footer .footer-brand img{width:150px;height:80px;object-fit:contain;flex:none}
+.footer .footer-divider{height:49px;width:2px;background:#ffcf00;flex:none}
+.footer .footer-copy{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;white-space:normal}
+.footer .footer-copy b{color:#ffcf00;font-size:13px}
+.footer .footer-copy .footer-dot{color:#fff;font-weight:900}
+.footer .footer-privacy{font-size:12px;white-space:nowrap}
+body:has(#home.view.on) .footer{margin-top:0!important}
+@media(max-width:920px){.footer .footerin{flex-wrap:wrap;justify-content:center;text-align:center;gap:10px}.footer .footer-brand{justify-content:center}.footer .footer-privacy{white-space:normal}}
+@media(max-width:620px){.footer .footer-brand{gap:10px;flex-wrap:wrap}.footer .footer-brand img{width:105px;height:65px}.footer .footer-divider{height:38px}.footer .footer-copy{justify-content:center;gap:7px;font-size:11px}.footer .footer-copy b{font-size:11px}.footer .footerin{padding:18px 12px}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -237,7 +251,7 @@ body:has(#home.view.on) .navin{max-width:1240px}
 <div id="recruitModal" class="modal" onclick="if(event.target===this)closeRecruit()"><div class="modalbox"><button class="modalclose" onclick="closeRecruit()">×</button><div id="recruitDetail"></div></div></div><div id="circulistModal" class="modal" onclick="if(event.target===this)closeCirculist()"><div class="modalbox"><button class="modalclose" onclick="closeCirculist()">×</button><div id="circulistDetail"></div></div></div>
 </section>
 </main>
-<footer class="footer"><div class="footerin"><div class="footer-brand"><img src="/recrutamento/logo-pcb-sp.svg" alt="PCB São Paulo" width="94" height="116"><div><b>RECRUTAMENTO E CIRCULISMO</b><br><small>ORGANIZAR • FORMAR • MULTIPLICAR</small></div></div><div><small>Privacidade e proteção de dados: pcbcomunic@gmail.com</small></div></div></footer>
+<footer class="footer"><div class="footerin"><div class="footer-brand"><img src="/recrutamento/logo-pcb-sp.svg" alt="PCB São Paulo" width="115" height="98"><span class="footer-divider" aria-hidden="true"></span><div class="footer-copy"><b>RECRUTAMENTO E CIRCULISMO</b><span class="footer-dot">•</span><span>ORGANIZAR</span><span class="footer-dot">•</span><span>FORMAR</span><span class="footer-dot">•</span><span>MULTIPLICAR</span></div></div><div class="footer-privacy">Privacidade e proteção de dados: pcbcomunic@gmail.com</div></div></footer>
 <script>
 const API="https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/public-api";
 function go(x){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));document.getElementById(x).classList.add('on');window.scrollTo({top:0,behavior:'smooth'})}
