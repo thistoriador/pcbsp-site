@@ -404,12 +404,24 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
 let territoryMap=null,territoryMarkers=null,territoryLocations=new Map(),territoryGeocoding=false,territoryResolved=false;
 function territoryNormalize(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase()}
 function territoryCity(v){
- let x=String(v||'').trim().replace(/\s+/g,' ');
- x=x.replace(/\s*\([^)]*\b(?:SP|SAO PAULO)\b[^)]*\)\s*$/i,'');
- x=x.replace(/\s*[-–,/]\s*(?:SP|S\.?P\.?|SÃO PAULO|SAO PAULO|ESTADO DE SÃO PAULO|ESTADO DE SAO PAULO)\s*$/i,'');
- x=x.replace(/\s+\b(?:SP|S\.?P\.?)\s*$/i,'').replace(/\s+/g,' ').trim();
- const aliases={'ITANHAEM':'Itanhaém','SAO PAULO':'São Paulo','SAO SEBASTIAO':'São Sebastião','GUARUJA':'Guarujá','MONGAGUA':'Mongaguá','IGARAPA':'Igarapá','RIBEIRAO PRETO':'Ribeirão Preto'};
- return aliases[territoryNormalize(x)]||x||'Cidade não informada';
+ let x=String(v||'').trim().replace(/\s+/g,' ').replace(/[.\s]+$/g,'').trim();
+ if(!x)return 'Cidade não informada';
+ x=x.replace(/\s*\(\s*(?:SP|SÃO PAULO|SAO PAULO|RJ|RIO DE JANEIRO|MG|MINAS GERAIS)\s*\)\s*$/i,'');
+ x=x.replace(/\s*[-–,/]\s*(?:SP|SÃO PAULO|SAO PAULO|ESTADO DE SÃO PAULO|ESTADO DE SAO PAULO|RJ|RIO DE JANEIRO|MG|MINAS GERAIS)\s*$/i,'');
+ x=x.replace(/\s+(?:SP|RJ|MG)\s*$/i,'').replace(/[.\s]+$/g,'').trim();
+ const n=territoryNormalize(x);
+ if(/^SAO PAULO(?:\s*[-–,/]\s*.+)?$/.test(n)||/^SAO PAULO\s*\(.+\)$/.test(n))return 'São Paulo';
+ if(/^SANTOS\s*[-–]\s*LITORAL\b/.test(n))return 'Santos';
+ if(/^SANTOS\s*[/]\s*CUBATAO\b/.test(n))return 'Revisar: Santos / Cubatão';
+ const aliases={
+ 'AMERICANA':'Americana','BOTUCATU':'Botucatu','ITANHAEM':'Itanhaém',
+ 'SAO PAULO':'São Paulo','SAO SEBASTIAO':'São Sebastião','SAO JOAO DE IRACEMA':'São João de Iracema',
+ 'SANTOS':'Santos','CUBATAO':'Cubatão','GUARUJA':'Guarujá','MONGAGUA':'Mongaguá',
+ 'PAULINIA':'Paulínia','MOGI GUACU':'Mogi Guaçu','MACAE':'Macaé',
+ 'RIBEIRAO PRETO':'Ribeirão Preto','SAO JOSE DOS CAMPOS':'São José dos Campos',
+ 'SAO JOSE DO RIO PRETO':'São José do Rio Preto','FRANCA':'Franca'
+ };
+ return aliases[n]||x.toLocaleLowerCase('pt-BR').replace(/(^|[\s-])([a-zà-ÿ])/g,(_,sep,c)=>sep+c.toLocaleUpperCase('pt-BR')).replace(/\b(De|Da|Do|Dos|Das|E)\b/g,m=>m.toLowerCase());
 }
 function territoryRows(){
  const counts=new Map();
@@ -438,20 +450,20 @@ async function territoryResolveCities(cities){
  const status=document.getElementById('territoryMapStatus'),cacheKey='pcb_recruits_citycoords_v2';let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(e){}
  let failed=0;
  for(const city of cities){
-  const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA')continue;
+  const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA'||key.startsWith('REVISAR:'))continue;
   if(cache[key]?.lat){territoryLocations.set(key,cache[key]);continue}
   status.textContent='Localizando '+city+'...';
   try{
    const res=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=20&language=pt&countryCode=BR');
    if(!res.ok)throw Error('Geocoding');
-   const j=await res.json();const match=(j.results||[]).find(x=>territoryNormalize(x.admin1)==='SAO PAULO'&&territoryNormalize(x.name)===key)||(j.results||[]).find(x=>territoryNormalize(x.admin1)==='SAO PAULO');
+   const j=await res.json();const matches=(j.results||[]).filter(x=>territoryNormalize(x.name)===key);const match=matches.find(x=>territoryNormalize(x.admin1)==='SAO PAULO')||matches[0];
    if(match){cache[key]={lat:match.latitude,lon:match.longitude};territoryLocations.set(key,cache[key])}else failed++;
   }catch(e){failed++}
   try{localStorage.setItem(cacheKey,JSON.stringify(cache))}catch(e){}
   await new Promise(resolve=>setTimeout(resolve,250));
  }
  territoryGeocoding=false;territoryResolved=true;
- status.textContent=territoryLocations.size+' cidades no mapa'+(failed?' · '+failed+' não localizadas':'');
+ status.textContent=territoryLocations.size+' cidades no mapa'+(failed?' · '+failed+' não localizadas':'')+' · nomes ambíguos ficam na lista para revisão';
  renderTerritory();
  if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.18));
 }
