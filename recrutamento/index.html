@@ -401,45 +401,57 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  if(adminProfile.role==='SUPERADMIN')await loadUsers()
  if(refreshBtn)refreshBtn.textContent='✓ Atualizado'
 }catch(e){alert(e.message)}finally{if(refreshBtn){setTimeout(()=>{refreshBtn.disabled=false;refreshBtn.textContent=oldText||'↻ Atualizar'},700)}}}
-let territoryMap=null,territoryMarkers=null,territoryLocations=new Map(),territoryGeocoding=false;
-function territoryNormalize(v){return String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()}
-function territoryFocusAll(){document.getElementById('territorySearch').value='';renderTerritory();if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15))}
-function territoryChoose(city){document.getElementById('territorySearch').value=city;renderTerritory();const match=territoryLocations.get(territoryNormalize(city));if(match&&territoryMap)territoryMap.setView([match.lat,match.lon],10)}
-function territoryOpenRecruits(city){adminTab('recruits');document.getElementById('rq').value=city;renderRecruits()}
-function renderTerritory(){
+let territoryMap=null,territoryMarkers=null,territoryLocations=new Map(),territoryGeocoding=false,territoryResolved=false;
+function territoryNormalize(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase()}
+function territoryCity(v){
+ let x=String(v||'').trim().replace(/\s+/g,' ');
+ x=x.replace(/\s*\([^)]*\b(?:SP|SAO PAULO)\b[^)]*\)\s*$/i,'');
+ x=x.replace(/\s*[-–,/]\s*(?:SP|S\.?P\.?|SÃO PAULO|SAO PAULO|ESTADO DE SÃO PAULO|ESTADO DE SAO PAULO)\s*$/i,'');
+ x=x.replace(/\s+\b(?:SP|S\.?P\.?)\s*$/i,'').replace(/\s+/g,' ').trim();
+ const aliases={'ITANHAEM':'Itanhaém','SAO PAULO':'São Paulo','SAO SEBASTIAO':'São Sebastião','GUARUJA':'Guarujá','MONGAGUA':'Mongaguá','IGARAPA':'Igarapá','RIBEIRAO PRETO':'Ribeirão Preto'};
+ return aliases[territoryNormalize(x)]||x||'Cidade não informada';
+}
+function territoryRows(){
  const counts=new Map();
- recruitsCache.forEach(r=>{const city=String(r.cidade||'').trim().replace(/\s+/g,' ');const name=city||'Cidade não informada';const key=territoryNormalize(name);const entry=counts.get(key)||{name,total:0,active:0};entry.total++;if(r.status!=='ARQUIVADO')entry.active++;counts.set(key,entry)});
- const filter=territoryNormalize(document.getElementById('territorySearch')?.value);
- const rows=[...counts.values()].filter(r=>territoryNormalize(r.name).includes(filter)).sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));
- document.getElementById('territorySummary').textContent=counts.size+' localidades · '+recruitsCache.length+' cadastros';
+ recruitsCache.forEach(r=>{const name=territoryCity(r.cidade),key=territoryNormalize(name);const e=counts.get(key)||{name,total:0,active:0};e.total++;if(r.status!=='ARQUIVADO')e.active++;counts.set(key,e)});
+ return [...counts.values()].sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));
+}
+function territoryFocusAll(){document.getElementById('territorySearch').value='';renderTerritory();if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15))}
+function territoryOpenRecruits(city){
+ adminTab('recruits');document.getElementById('rq').value='';
+ renderRecruits();
+ const key=territoryNormalize(territoryCity(city));
+ document.querySelectorAll('#recruitList tbody tr[data-id]').forEach(tr=>{const r=recruitsCache.find(x=>String(x.id)===tr.dataset.id);tr.style.display=r&&territoryNormalize(territoryCity(r.cidade))===key?'':'none'});
+}
+function renderTerritory(){
+ const all=territoryRows(),filter=territoryNormalize(document.getElementById('territorySearch')?.value);
+ const rows=all.filter(r=>territoryNormalize(r.name).includes(filter));
+ document.getElementById('territorySummary').textContent=all.length+' cidades · '+recruitsCache.length+' cadastros';
  document.getElementById('territoryList').innerHTML='<table class="atable"><thead><tr><th>Cidade</th><th>Cadastros</th><th>Não arquivados</th><th>Ação</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+r.total+'</td><td>'+r.active+'</td><td><button type="button" class="send secondary territory-view" data-city="'+esc(r.name)+'">Ver cadastros</button></td></tr>').join('')+'</tbody></table>';
  document.querySelectorAll('.territory-view').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city)));
  if(!territoryMap&&window.L){territoryMap=L.map('recruitGeoMap',{scrollWheelZoom:false}).setView([-22.4,-48.5],7);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(territoryMap);territoryMarkers=L.featureGroup().addTo(territoryMap)}
- if(territoryMap){territoryMarkers.clearLayers();rows.forEach(r=>{const c=territoryLocations.get(territoryNormalize(r.name));if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:'#c9101b',fillOpacity:.75});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>{document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city)))});marker.addTo(territoryMarkers)});setTimeout(()=>territoryMap.invalidateSize(),120)}
- if(!territoryGeocoding)territoryResolveCities([...counts.values()].map(r=>r.name));
+ if(territoryMap){territoryMarkers.clearLayers();rows.forEach(r=>{const c=territoryLocations.get(territoryNormalize(r.name));if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:'#c9101b',fillOpacity:.75});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});setTimeout(()=>territoryMap.invalidateSize(),120)}
+ if(!territoryResolved&&!territoryGeocoding)territoryResolveCities(all.map(r=>r.name));
 }
 async function territoryResolveCities(cities){
- if(territoryGeocoding)return;territoryGeocoding=true;
- const status=document.getElementById('territoryMapStatus');
- const cacheKey='pcb_recruits_citycoords_v1';let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(e){}
- let changed=false;
+ if(territoryGeocoding||territoryResolved)return;territoryGeocoding=true;
+ const status=document.getElementById('territoryMapStatus'),cacheKey='pcb_recruits_citycoords_v2';let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(e){}
+ let failed=0;
  for(const city of cities){
-  const key=territoryNormalize(city);if(key==='CIDADE NÃO INFORMADA')continue;
-  if(cache[key]){if(cache[key].lat)territoryLocations.set(key,cache[key]);continue}
-  status.textContent='Localizando cidades no mapa...';
+  const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA')continue;
+  if(cache[key]?.lat){territoryLocations.set(key,cache[key]);continue}
+  status.textContent='Localizando '+city+'...';
   try{
-   const url='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=10&language=pt&countryCode=BR';
-   const res=await fetch(url);if(!res.ok)throw Error('Geocoding');
-   const j=await res.json();const match=(j.results||[]).find(x=>x.admin1==='São Paulo'||x.admin1==='Sao Paulo');
-   if(match){cache[key]={lat:match.latitude,lon:match.longitude};territoryLocations.set(key,cache[key])}
-   else cache[key]={missing:true};
-   changed=true;
-  }catch(e){status.textContent='Algumas cidades não puderam ser localizadas.'}
-  await new Promise(resolve=>setTimeout(resolve,300));
+   const res=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(city)+'&count=20&language=pt&countryCode=BR');
+   if(!res.ok)throw Error('Geocoding');
+   const j=await res.json();const match=(j.results||[]).find(x=>territoryNormalize(x.admin1)==='SAO PAULO'&&territoryNormalize(x.name)===key)||(j.results||[]).find(x=>territoryNormalize(x.admin1)==='SAO PAULO');
+   if(match){cache[key]={lat:match.latitude,lon:match.longitude};territoryLocations.set(key,cache[key])}else failed++;
+  }catch(e){failed++}
+  try{localStorage.setItem(cacheKey,JSON.stringify(cache))}catch(e){}
+  await new Promise(resolve=>setTimeout(resolve,250));
  }
- if(changed)try{localStorage.setItem(cacheKey,JSON.stringify(cache))}catch(e){}
- territoryGeocoding=false;
- status.textContent=territoryLocations.size+' cidades localizadas no mapa';
+ territoryGeocoding=false;territoryResolved=true;
+ status.textContent=territoryLocations.size+' cidades no mapa'+(failed?' · '+failed+' não localizadas':'');
  renderTerritory();
  if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.18));
 }
