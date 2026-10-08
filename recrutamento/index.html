@@ -424,6 +424,8 @@ function territoryCity(v){
  x=x.replace(/\s*[-–,/]\s*(?:SP|SÃO PAULO|SAO PAULO|ESTADO DE SÃO PAULO|ESTADO DE SAO PAULO|RJ|RIO DE JANEIRO|MG|MINAS GERAIS)\s*$/i,'');
  x=x.replace(/\s+(?:SP|RJ|MG)\s*$/i,'').replace(/[.\s]+$/g,'').trim();
  const n=territoryNormalize(x);
+ if(n==='MACUCO'||n==='SANTOS - MACUCO'||n==='SANTOS / MACUCO')return 'Santos';
+ if(n==='ILHA CARAGUATA'||n==='JARDIM ILHA CARAGUATA'||n==='CUBATAO - ILHA CARAGUATA'||n==='CUBATAO / ILHA CARAGUATA')return 'Cubatão';
  if(/^SAO PAULO(?:\s*[-–,/]\s*.+)?$/.test(n)||/^SAO PAULO\s*\(.+\)$/.test(n))return 'São Paulo';
  if(/^SANTOS\s*[-–]\s*LITORAL\b/.test(n))return 'Santos';
  if(/^SANTOS\s*[/]\s*CUBATAO\b/.test(n))return 'Revisar: Santos / Cubatão';
