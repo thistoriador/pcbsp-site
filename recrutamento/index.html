@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#b5121b">
 <meta name="description" content="PCB São Paulo — Recrutamento e Circulismo. Organizar, formar e multiplicar.">
 <link rel="icon" type="image/svg+xml" href="/recrutamento/favicon.svg?v=20261008">
-<link rel="apple-touch-icon" href="/recrutamento/icone-recrutamento.png?v=20261004">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png">
 <link rel="manifest" href="/recrutamento/manifest.json?v=20261004">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PCB São Paulo">
@@ -574,5 +574,10 @@ async function toggleUser(id,ativo){try{await adminApi('set_user_active',{user_i
 async function changeAdminPassword(){try{await adminApi('change_password',{current_password:adminPassword(currentpass.value),password:adminPassword(newpass.value,12)});currentpass.value='';newpass.value='';msg('pmsg','Senha alterada com sucesso.',true)}catch(e){msg('pmsg',e.message,false)}}
 if(adminSession?.access_token){adminStart()}
 
+</script>
+<script>
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('/recrutamento/sw.js',{scope:'/recrutamento/'}).catch(err=>console.warn('PWA indisponível:',err)));
+}
 </script>
 </body></html>
