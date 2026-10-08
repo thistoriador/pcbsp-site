@@ -1,0 +1,9 @@
+{
+  "name": "Poder Popular — Piloto",
+  "short_name": "Poder Popular",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f1ea",
+  "theme_color": "#a80000",
+  "description": "Piloto privado de pesquisa territorial"
+}
