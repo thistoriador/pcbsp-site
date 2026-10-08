@@ -515,10 +515,11 @@ function adminHome(){go('home')}
 function respName(id){return (responsaveisCache.find(x=>x.user_id===id)||{}).nome||'Sem responsável'}
 let recruitSortColumn='nome',recruitSortDirection=1;
 function sortRecruitsBy(column){if(recruitSortColumn===column)recruitSortDirection*=-1;else{recruitSortColumn=column;recruitSortDirection=1}renderRecruits()}
+function cadastroTipo(x){return x.tipo_cadastro||(/^UJC-ENC-/i.test(x.legacy_id||'')?'ENCAMINHADO_PCB':/^UJC-/i.test(x.legacy_id||'')?'UJC':'PCB')}
 function formatRecruitDate(v){const d=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(d)?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'—'}
 function renderRecruits(){
 const q=(rq?.value||'').toLowerCase(),f=rf?.value||'',st=rs?.value||'',orig=ro?.value||'';
-const cadastroTipo=x=>x.tipo_cadastro||(/^UJC-ENC-/i.test(x.legacy_id||'')?'ENCAMINHADO_PCB':/^UJC-/i.test(x.legacy_id||'')?'UJC':'PCB');
+
 const sortValue=(x,key)=>key==='tipo'?cadastroTipo(x):key==='responsavel'?respName(x.responsavel_id):key==='cadastro'?(x.created_at||''):key==='data'?(x.data_proxima_acao||''):key==='etapa'?etapa(x.etapa):key==='proxima_acao'?(x.proxima_acao||''):x[key]||'';
 const rows=recruitsCache.filter(x=>(!f||x.etapa===f)&&(!st||x.status===st)&&(!orig||(cadastroTipo(x)===orig))&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));
 rows.sort((a,b)=>{const av=String(sortValue(a,recruitSortColumn)),bv=String(sortValue(b,recruitSortColumn));const cmp=av.localeCompare(bv,'pt-BR',{sensitivity:'base',numeric:true});return (cmp||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'}))*recruitSortDirection});
