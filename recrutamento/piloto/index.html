@@ -256,7 +256,10 @@ body{font-family:Arial,Helvetica,sans-serif;background:#f5f6f8}
  #adminPanel .admintabs{position:fixed!important;left:0;right:0;top:auto;bottom:0;width:100%;height:68px;z-index:80;display:flex!important;flex-direction:row;justify-content:space-around;align-items:center;padding:5px!important;border-radius:15px 15px 0 0!important;box-shadow:0 -4px 20px #0002!important}
  #adminPanel .admintabs:before{display:none}
  #adminPanel .admintabs button{font-size:11px!important;text-align:center!important;padding:10px 5px!important;min-width:0!important;flex:1!important}
- #adminPanel .admintabs button:nth-child(n+5){display:none!important}
+ #adminPanel .admintabs{height:auto!important;min-height:68px!important;flex-wrap:wrap!important;gap:2px!important;padding:7px 5px max(7px,env(safe-area-inset-bottom))!important}
+ #adminPanel .admintabs button{flex:1 1 30%!important;min-height:34px!important}
+ #adminPanel .admintabs button[style*="display: none"],#adminPanel .admintabs button[style*="display:none"]{display:none!important}
+ #adminPanel{padding-bottom:155px!important}
  #adminPanel .statcards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  #adminPanel .overviewgrid{display:block!important}
  #adminPanel .adminbar{padding:12px!important;gap:8px!important}
@@ -446,7 +449,7 @@ if(adminSession?.access_token){adminStart()}
   const overview=document.getElementById('a_overview');if(!overview||!adminProfile)return;
   let welcome=document.getElementById('pilotWelcome');
   if(!welcome){welcome=document.createElement('div');welcome.id='pilotWelcome';overview.prepend(welcome)}
-  const admin=adminProfile.role!=='RESPONSAVEL';
+  const admin=adminProfile.role==='ADMIN'||adminProfile.role==='SUPERADMIN';
   welcome.innerHTML='<h3>'+ (admin?'Painel Estadual · ADMIN':'Meus Recrutamentos')+'</h3><p>'+(admin?'Visão estadual, inscrições e distribuição de recrutadores.':'Acompanhamentos sob sua responsabilidade nominal.')+'</p>';
   let actions=document.getElementById('pilotActions');
   if(!actions){actions=document.createElement('div');actions.id='pilotActions';actions.className='pilot-actions';welcome.after(actions)}
