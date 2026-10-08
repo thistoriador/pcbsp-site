@@ -654,12 +654,12 @@ if(adminSession?.access_token){adminStart()}
       let city=String(v||'').trim().replace(/\s+/g,' ').replace(/[.]$/,'').trim();
       if(!city)return 'Município não informado';
       city=city.replace(/\s*\((?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO|São Paulo)\)\s*$/i,'')
-        .replace(/\s*[,\/-]\s*(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO|São Paulo)\s*$/i,'')
-        .replace(/\s+(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF)\s*$/i,'').trim();
+        .replace(/\s*[,\/\-–]\s*(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO|São Paulo)\s*$/i,'')
+        .replace(/\s+(?:SP|RJ|MG|PR|SC|RS|BA|ES|GO|DF|AC|AL|AP|AM|CE|MA|MT|MS|PA|PB|PE|PI|RN|RO|RR|SE|TO)\s*$/i,'').trim();
       if(/^s[aã]o paulo(?:\s*[-–]\s*.+)?$/i.test(city))return 'São Paulo';
       if(/^santos\s*[-–]\s*litoral de sp$/i.test(city))return 'Santos';
       if(/^santos\s*\/\s*cubat[aã]o$/i.test(city))return 'Santos / Cubatão (conferir)';
-      const canonical={'americana':'Americana','guaruja':'Guarujá','paulinia':'Paulínia','santa fe do sul':'Santa Fé do Sul','santa rita do passa quatro':'Santa Rita do Passa Quatro','sao joao de iracema':'São João de Iracema','tres fronteiras':'Três Fronteiras','severinia':'Severínia','mogi guacu':'Mogi Guaçu'};
+      const canonical={'americana':'Americana','guaruja':'Guarujá','paulinia':'Paulínia','santa fe do sul':'Santa Fé do Sul','santa rita do passa quatro':'Santa Rita do Passa Quatro','sao joao de iracema':'São João de Iracema','tres fronteiras':'Três Fronteiras','severinia':'Severínia','mogi guacu':'Mogi Guaçu','botucatu':'Botucatu'};
       const key=city.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
       return canonical[key]||city.replace(/\b\p{L}/gu,c=>c.toLocaleUpperCase('pt-BR'));
     };
