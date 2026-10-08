@@ -650,8 +650,9 @@ if(adminSession?.access_token){adminStart()}
   if(!territory){territory=document.createElement('section');territory.id='pilotTerritory';overview.append(territory)}
   if(admin){
     const grouped=new Map();
-    (Array.isArray(recruitsCache)?recruitsCache:[]).forEach(x=>{const city=String(x.cidade||'Município não informado').trim()||'Município não informado';grouped.set(city,(grouped.get(city)||0)+1)});
-    const cities=[...grouped.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR'));
+    const normalizeCity=v=>String(v||'').trim().replace(/\s*\((?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\)\s*$/i,'').replace(/\s*[-–,]\s*(?:AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\s*$/i,'').trim()||'Município não informado';
+    (Array.isArray(recruitsCache)?recruitsCache:[]).forEach(x=>{const city=normalizeCity(x.cidade);const key=city.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');const old=grouped.get(key);grouped.set(key,{city:old?.city||city,n:(old?.n||0)+1})});
+    const cities=[...grouped.values()].map(x=>[x.city,x.n]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt-BR'));
     const max=cities.length?cities[0][1]:1;
     territory.innerHTML='<div class="pilot-eyebrow">DISTRIBUIÇÃO TERRITORIAL</div><h3>Recrutamentos por município</h3><p class="pilot-subhead">'+cities.length+' município(s) / localidades informadas · '+recruitsCache.length+' cadastros</p><div class="pilot-city-list">'+cities.map(([city,n])=>'<div class="pilot-city-row"><span>'+esc(city)+'</span><div class="pilot-city-track"><i style="width:'+Math.max(3,Math.round(n*100/max))+'%"></i></div><b>'+n+'</b></div>').join('')+'</div><p class="pilot-subhead">Distribuição municipal dos registros. Mapa geográfico interativo em preparação.</p>';
   }else territory.style.display='none';
