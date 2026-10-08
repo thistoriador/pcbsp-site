@@ -438,6 +438,7 @@ if(adminSession?.access_token){adminStart()}
 <script id="pilot-behavior-2026">
 (function(){
  const originalStart=adminStart,originalRefresh=adminRefresh,originalTab=adminTab;
+ if(adminSession?.access_token){setTimeout(()=>{if(adminProfile)pilotRender()},1400)}
  adminStart=async function(){await originalStart();if(adminProfile){const btn=document.getElementById('usersTabBtn');if(btn&&adminProfile.role==='RESPONSAVEL')btn.style.display='none';pilotRender()}};
  adminRefresh=async function(btn){await originalRefresh(btn);pilotRender()};
  adminTab=function(n){originalTab(n);if(n==='overview')pilotRender()};
