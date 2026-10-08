@@ -143,6 +143,39 @@ body:has(#home.view.on) .navin{max-width:1240px}
 body:has(#home.view.on) .footer{margin-top:0!important}
 @media(max-width:920px){.footer .footerin{flex-wrap:wrap;justify-content:center;text-align:center;gap:10px}.footer .footer-brand{justify-content:center}.footer .footer-privacy{white-space:normal}}
 @media(max-width:620px){.footer .footer-brand{gap:10px;flex-wrap:wrap}.footer .footer-brand img{width:105px;height:65px}.footer .footer-divider{height:38px}.footer .footer-copy{justify-content:center;gap:7px;font-size:11px}.footer .footer-copy b{font-size:11px}.footer .footerin{padding:18px 12px}}
+
+/* Correção de proporções da página aprovada - desktop e celular */
+html,body{width:100%;margin:0;overflow-x:hidden}
+body:has(#home.view.on){background:#a50a05}
+body:has(#home.view.on) .hero{width:100%;max-width:none;margin:0;background:#ad0906;box-shadow:none}
+body:has(#home.view.on) .hero img{display:block;width:100%;height:auto;max-height:none!important;object-fit:contain!important;object-position:center}
+body:has(#home.view.on) .nav{width:100%;background:#fffaf2}
+body:has(#home.view.on) .navin{max-width:1300px;width:100%;margin:0 auto;padding:12px 22px}
+body:has(#home.view.on) .wrap{width:100%;max-width:none;margin:0;padding:0;isolation:auto;background:#a50a05 url("/recrutamento/fundo-cidade-vermelho.svg") center center/cover no-repeat}
+#home{width:100%;max-width:1300px;margin:0 auto;padding:32px 24px 46px;isolation:auto}
+#home:before{display:none!important}
+#home .home-cards{width:100%;gap:22px}
+#home .home-card{min-height:390px;padding:22px 22px 20px}
+#home .home-card .home-icon{width:118px;height:118px}
+#home .home-card .home-description{font-size:18px;line-height:1.38}
+#home .quote{display:none}
+body:has(#home.view.on) .footer{width:100%;margin:0!important}
+body:has(#home.view.on) .footer .footerin{max-width:1300px;width:100%;min-height:110px;padding:15px 24px;gap:22px}
+body:has(#home.view.on) .footer .footer-brand{gap:20px;flex-wrap:nowrap}
+body:has(#home.view.on) .footer .footer-brand img{width:150px;height:80px;object-fit:contain}
+body:has(#home.view.on) .footer .footer-copy{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px}
+body:has(#home.view.on) .footer .footer-privacy{font-size:12px}
+@media(max-width:760px){
+body:has(#home.view.on) .hero img{width:100%;height:auto;min-height:0;object-fit:contain}
+#home{padding:26px 16px 32px}
+#home .home-cards{grid-template-columns:1fr;gap:16px}
+#home .home-card{min-height:0}
+#home .home-card .home-icon{width:88px;height:88px}
+#home .home-card .home-description{font-size:16px}
+body:has(#home.view.on) .footer .footerin{flex-direction:column;gap:12px;text-align:center}
+body:has(#home.view.on) .footer .footer-brand{flex-wrap:wrap;justify-content:center;gap:12px}
+body:has(#home.view.on) .footer .footer-copy{justify-content:center}
+}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
