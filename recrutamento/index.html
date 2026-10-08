@@ -73,6 +73,8 @@ input,select,textarea{border-color:#d8dce3;border-radius:11px}input:focus,select
 .send{border-radius:11px;box-shadow:none}.send.danger{background:#bd101a}.dangerbox{border-radius:14px;background:#fff2f3;border:1px solid #f5c7cb;padding:14px;margin-top:12px}
 .detailitem{background:#f8f9fb;border:1px solid #eceef1;padding:12px}.history{border-left:3px solid var(--red);padding:12px;background:#fafafa}
 @media(max-width:760px){.adminbar{padding:14px}.admintabs{overflow-x:auto;flex-wrap:nowrap}.admintabs button{white-space:nowrap}.atable{min-width:680px}.panel{padding:16px}.detailgrid{grid-template-columns:1fr 1fr}}
+/* Indicadores coloridos */
+.statcards{grid-template-columns:repeat(4,minmax(0,1fr))}.statcards .stat{min-width:0}.statcards .stat-red{background:#fce7e9;border-color:#f4c5ca;color:#a71920}.statcards .stat-green{background:#e0f4e6;border-color:#bee6cb;color:#18743b}.statcards .stat-orange{background:#fff0d6;border-color:#f8dcaa;color:#a85b00}.statcards .stat-blue{background:#e5eaf3;border-color:#cdd7e8;color:#405775}.statcards .stat small{color:inherit;opacity:.86}@media(max-width:700px){.statcards{grid-template-columns:repeat(2,minmax(0,1fr))}.statcards .stat{padding:14px}.statcards .stat b{font-size:26px}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -222,7 +224,7 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  if(adminProfile.role!=='RESPONSAVEL'){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[]}
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const semResp=ativos.filter(x=>!x.responsavel_id).length,atrasados=ativos.filter(x=>x.data_proxima_acao&&x.data_proxima_acao<hoje).length,hojeN=ativos.filter(x=>x.data_proxima_acao===hoje).length;
- astats.innerHTML='<div class="stat"><b>'+ativos.length+'</b><small>RECRUTAMENTOS ATIVOS</small></div><div class="stat"><b>'+d.total_circulistas+'</b><small>CIRCULISTAS</small></div><div class="stat"><b>'+Object.keys(d.etapas||{}).length+'</b><small>ETAPAS ATIVAS</small></div><div class="stat"><b>'+arquivadosN+'</b><small>ARQUIVADOS</small></div>';
+ astats.innerHTML='<div class="stat stat-red"><b>'+recruitsCache.length+'</b><small>TOTAL DE CADASTROS</small></div><div class="stat stat-green"><b>'+ativos.filter(x=>x.etapa==='NOVO_CONTATO').length+'</b><small>NOVOS CONTATOS</small></div><div class="stat stat-orange"><b>'+ativos.filter(x=>x.etapa==='ACOMPANHAMENTO').length+'</b><small>EM ACOMPANHAMENTO</small></div><div class="stat stat-blue"><b>'+arquivadosN+'</b><small>ARQUIVADOS</small></div>';
  const stages=[['NOVO_CONTATO','Novo contato'],['ACOMPANHAMENTO','Acompanhamento'],['REUNIAO_CONVERSA','Reunião / conversa'],['FORMACAO','Formação'],['INGRESSO','Ingresso']];
  const total=Math.max(ativos.length,1);
  const stageHtml=stages.map(([k,label])=>{const n=ativos.filter(x=>x.etapa===k).length,p=Math.round(n*100/total);return '<div class="stageitem"><b>'+n+'</b><strong>'+label.toUpperCase()+'</strong><small>'+p+'%</small></div>'}).join('');
