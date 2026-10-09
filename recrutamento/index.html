@@ -488,8 +488,8 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 #overviewCharts .ov-empty{font-size:13px;color:#64748b;padding:14px 4px;line-height:1.5}
 </style>
 <style id="recruit-table-restored">
-#recruitList{width:100%;max-width:100%;overflow-x:auto}
-#recruitList table.atable{display:table;width:100%;min-width:1000px;border-collapse:collapse}
+#recruitList{width:100%;max-width:100%;overflow-x:hidden!important}
+#recruitList table.atable{display:table;width:100%;min-width:0!important;table-layout:fixed;border-collapse:collapse}
 #recruitList .atable thead{display:table-header-group}
 #recruitList .atable tbody{display:table-row-group}
 #recruitList .atable tr{display:table-row}
@@ -498,7 +498,21 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 #recruitList .atable tbody tr{cursor:pointer}
 #recruitList .atable tbody tr:hover{background:#f4f6f8}
 #recruitList .atable th{position:sticky;top:0;background:#edf1f5!important;color:#263442!important;z-index:1;white-space:nowrap;font-weight:700!important;border-bottom:2px solid #c8d1dc!important}#recruitList .atable th button{color:#263442!important;opacity:1!important;font-weight:700!important}#recruitList .atable th[aria-sort="ascending"],#recruitList .atable th[aria-sort="descending"]{background:#dce7f3!important;color:#173b65!important}#recruitList .atable th[aria-sort="ascending"] button,#recruitList .atable th[aria-sort="descending"] button{color:#173b65!important}#recruitList .atable th button:hover{text-decoration:underline!important}
-#recruitList .atable td:nth-child(2){min-width:180px}
+#recruitList .atable td:nth-child(2){min-width:0!important}
+#recruitList .atable td,#recruitList .atable th{padding:7px 5px!important;font-size:11px!important;overflow-wrap:anywhere;word-break:normal;white-space:normal!important}
+#recruitList .atable th button{white-space:normal!important;line-height:1.2}
+#recruitList .atable td:nth-child(1),#recruitList .atable th:nth-child(1){width:3%}
+#recruitList .atable td:nth-child(2),#recruitList .atable th:nth-child(2){width:17%}
+#recruitList .atable td:nth-child(3),#recruitList .atable th:nth-child(3){width:9%}
+#recruitList .atable td:nth-child(4),#recruitList .atable th:nth-child(4){width:5%}
+#recruitList .atable td:nth-child(5),#recruitList .atable th:nth-child(5){width:9%}
+#recruitList .atable td:nth-child(6),#recruitList .atable th:nth-child(6){width:11%}
+#recruitList .atable td:nth-child(7),#recruitList .atable th:nth-child(7){width:9%}
+#recruitList .atable td:nth-child(8),#recruitList .atable th:nth-child(8){width:10%}
+#recruitList .atable td:nth-child(9),#recruitList .atable th:nth-child(9){width:12%}
+#recruitList .atable td:nth-child(10),#recruitList .atable th:nth-child(10){width:8%}
+#recruitList .atable td:nth-child(11),#recruitList .atable th:nth-child(11){width:7%}
+@media(max-width:760px){#recruitList .atable td,#recruitList .atable th{font-size:10px!important;padding:6px 3px!important}#recruitList .atable td:nth-child(5),#recruitList .atable th:nth-child(5),#recruitList .atable td:nth-child(9),#recruitList .atable th:nth-child(9),#recruitList .atable td:nth-child(10),#recruitList .atable th:nth-child(10),#recruitList .atable td:nth-child(11),#recruitList .atable th:nth-child(11){display:none!important}}
 #circulistList{max-width:100%;overflow-x:auto}
 #bulkRecruitPanel[hidden]{display:none!important}
 #bulkRecruitCandidates label{font-size:14px}
