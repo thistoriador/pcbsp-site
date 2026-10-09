@@ -487,36 +487,21 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 #overviewCharts .overview-table-fit .atable th:nth-child(3){width:41%}
 #overviewCharts .ov-empty{font-size:13px;color:#64748b;padding:14px 4px;line-height:1.5}
 </style>
-<style id="admin-no-horizontal-tables-20261009">
-/* Listas administrativas em cartões responsivos, sem tabela larga ou barra horizontal. */
-#recruitList,#circulistList{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
-#recruitList table.atable,#circulistList table.atable{display:block;width:100%;min-width:0!important;max-width:100%;border-collapse:separate}
-#recruitList .atable thead,#circulistList .atable thead{display:none}
-#recruitList .atable tbody,#circulistList .atable tbody{display:grid;width:100%;min-width:0;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px}
-#recruitList .atable tr,#circulistList .atable tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px;align-content:start;min-width:0;max-width:100%;padding:14px;border:1px solid #dce3e6;border-radius:12px;background:#fff;box-sizing:border-box}
-#recruitList .atable td,#circulistList .atable td{display:block;min-width:0!important;max-width:100%;width:auto!important;box-sizing:border-box;padding:0!important;border:0!important;white-space:normal!important;overflow-wrap:anywhere;font-size:13px;line-height:1.4}
-#recruitList .atable td::before,#circulistList .atable td::before{display:block;font-size:10px;font-weight:800;color:#596775;text-transform:uppercase;margin-bottom:3px;letter-spacing:.02em}
-#recruitList .atable td:nth-child(1)::before,#circulistList .atable td:nth-child(1)::before{content:"Nº"}
-#recruitList .atable td:nth-child(2),#circulistList .atable td:nth-child(2){grid-column:1/-1;font-size:15px}
-#recruitList .atable td:nth-child(2)::before,#circulistList .atable td:nth-child(2)::before{content:"Nome / contato"}
-#recruitList .atable td:nth-child(3)::before{content:"Tipo"}
-#recruitList .atable td:nth-child(4)::before{content:"Idade"}
-#recruitList .atable td:nth-child(5)::before{content:"Nascimento"}
-#recruitList .atable td:nth-child(6)::before{content:"Cidade"}
-#recruitList .atable td:nth-child(7)::before{content:"Etapa"}
-#recruitList .atable td:nth-child(8)::before{content:"Responsável"}
-#recruitList .atable td:nth-child(9)::before{content:"Próxima ação"}
-#recruitList .atable td:nth-child(10)::before{content:"Cadastro"}
-#recruitList .atable td:nth-child(11)::before{content:"Próxima ação em"}
-#circulistList .atable td:nth-child(3)::before{content:"Cidade"}
-#circulistList .atable td:nth-child(4)::before{content:"WhatsApp"}
-#circulistList .atable td:nth-child(5)::before{content:"Valor"}
-#circulistList .atable td:nth-child(6)::before{content:"Situação"}
-#recruitList .atable td:nth-child(9){grid-column:1/-1}
-@media(max-width:700px){
- #recruitList .atable tbody,#circulistList .atable tbody{grid-template-columns:minmax(0,1fr);gap:10px}
- #recruitList .atable tr,#circulistList .atable tr{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}
-}
+<style id="recruit-table-restored">
+#recruitList{width:100%;max-width:100%;overflow-x:auto}
+#recruitList table.atable{display:table;width:100%;min-width:1000px;border-collapse:collapse}
+#recruitList .atable thead{display:table-header-group}
+#recruitList .atable tbody{display:table-row-group}
+#recruitList .atable tr{display:table-row}
+#recruitList .atable td,#recruitList .atable th{display:table-cell;padding:9px 11px;border-bottom:1px solid #e3e8ed;text-align:left;white-space:normal;vertical-align:middle;font-size:13px}
+#recruitList .atable td::before{content:none!important;display:none!important}
+#recruitList .atable tbody tr{cursor:pointer}
+#recruitList .atable tbody tr:hover{background:#f4f6f8}
+#recruitList .atable th{position:sticky;top:0;background:#f4f6f8;z-index:1;white-space:nowrap}
+#recruitList .atable td:nth-child(2){min-width:180px}
+#circulistList{max-width:100%;overflow-x:auto}
+#bulkRecruitPanel[hidden]{display:none!important}
+#bulkRecruitCandidates label{font-size:14px}
 </style>
 <style id="library-documents-style">.library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}.library-item{border:1px solid #dce1e6;border-radius:12px;padding:16px;min-width:0;overflow-wrap:anywhere}.library-item b{display:block;font-size:15px}.library-item p{font-size:13px;color:#647078}.library-item a{color:#a70e1c;font-weight:700;text-decoration:underline}</style><style id="territory-designated-mobile">
 @media(max-width:700px){
@@ -595,7 +580,15 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 <div class="adminbar"><div><b id="adminWho">Painel</b><small id="adminRole"></small><span class="securepill">🔒 SESSÃO SEGURA</span></div><div><button id="adminRefreshBtn" class="back" onclick="adminRefresh(this)">↻ Atualizar</button> <button class="back" onclick="adminLogout()">Sair</button></div></div>
 <div class="admintabs"><button onclick="adminTab('overview')">Visão geral</button><button onclick="adminTab('recruits')">Recrutamentos</button><button onclick="adminTab('circulists')">Circulistas</button><button onclick="adminTab('messages');loadInternalMessages()">✉ Mensagens <span id="messageUnread" style="font-weight:700"></span></button><button onclick="adminTab('documents')">📚 BIBLIOTECA</button><button onclick="adminTab('guide')">Ajuda / Manual</button><button id="usersTabBtn" onclick="adminTab('users')">Usuários</button><button id="securityTabBtn" style="display:none" onclick="adminTab('security');loadLoginHistory()">Segurança</button><button onclick="adminTab('password')">Minha senha</button></div>
 <div id="a_overview" class="atab panel"><div id="astats" class="statcards"></div><div id="astages"></div><div id="overviewCharts" aria-label="Gráficos dos cadastros"></div><section id="territoryPanel" style="margin-top:18px"><h3>Distribuição dos cadastros por cidade</h3><p id="territorySummary" style="color:#647078"></p><div class="territory-tools"><input id="territorySearch" placeholder="Filtrar cidade" oninput="renderTerritory()"><button type="button" class="send secondary" onclick="territoryFocusAll()">Ver todas</button><span id="territoryMapStatus" style="color:#657078;font-size:12px"></span></div><div id="recruitGeoMap" role="region" aria-label="Mapa de cidades com recrutamentos"></div><div class="tablewrap" id="territoryList"></div></section></div>
-<div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option><option>DESISTENCIA</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select><select id="ro" onchange="renderRecruits()" aria-label="Origem do cadastro"><option value="">Todos os tipos</option><option value="PCB">PCB</option><option value="ENCAMINHADO_PCB">Encaminhados ao PCB</option><option value="UJC">UJC</option></select><select id="recruitOrder" onchange="setRecruitOrder(this.value)" aria-label="Ordenar recrutamentos"><option value="nome">Ordenar por nome (A–Z)</option><option value="nome_desc">Nome (Z–A)</option><option value="cidade">Cidade (A–Z)</option><option value="cidade_desc">Cidade (Z–A)</option></select></div><div id="recruitList" class="tablewrap"></div></div>
+<div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option><option>DESISTENCIA</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select><select id="ro" onchange="renderRecruits()" aria-label="Origem do cadastro"><option value="">Todos os tipos</option><option value="PCB">PCB</option><option value="ENCAMINHADO_PCB">Encaminhados ao PCB</option><option value="UJC">UJC</option></select><select id="recruitOrder" onchange="setRecruitOrder(this.value)" aria-label="Ordenar recrutamentos"><option value="nome">Ordenar por nome (A–Z)</option><option value="nome_desc">Nome (Z–A)</option><option value="cidade">Cidade (A–Z)</option><option value="cidade_desc">Cidade (Z–A)</option></select></div><details id="bulkRecruitPanel" hidden style="margin:12px 0;padding:14px;border:1px solid #dce3e6;border-radius:10px">
+<summary style="cursor:pointer;font-weight:700">Reclassificar em lote: UJC para Encaminhado ao PCB</summary>
+<p>Selecione uma cidade, marque os cadastros UJC e confirme. As etapas não serão modificadas.</p>
+<div class="adminfilters"><select id="bulkRecruitCity" onchange="renderBulkRecruits()"><option value="">Selecione a cidade</option></select>
+<button type="button" class="send secondary" onclick="toggleBulkRecruits(true)">Marcar todos</button><button type="button" class="send secondary" onclick="toggleBulkRecruits(false)">Desmarcar</button></div>
+<div id="bulkRecruitCandidates" style="max-height:340px;overflow-y:auto"></div>
+<p id="bulkRecruitCount" role="status"></p>
+<button type="button" class="send" id="bulkRecruitSubmit" onclick="submitBulkRecruits()">Encaminhar selecionados ao PCB</button>
+</details><div id="recruitList" class="tablewrap"></div></div>
 <div id="a_circulists" class="atab panel" style="display:none"><div class="adminfilters"><input id="cq" placeholder="Buscar circulista" oninput="renderCirculists()"><select id="cs" onchange="renderCirculists()"><option value="ATIVOS">Ativos</option><option value="ARQUIVADOS">Arquivados</option><option value="">Todos</option></select></div><div id="circulistList" class="tablewrap"></div></div>
 <div id="a_documents" class="atab panel" style="display:none">
 <h3>📚 Biblioteca de documentos</h3><p>Materiais de consulta para todos os usuários com acesso ao sistema. Os links são carregados apenas quando você os abre.</p>
@@ -708,7 +701,7 @@ function renderOverviewCharts(){
 async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('adminRefreshBtn');const oldText=refreshBtn?.textContent;try{
  if(refreshBtn){refreshBtn.disabled=true;refreshBtn.textContent='↻ Atualizando...'}
  const d=await adminApi('dashboard');
- const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];
+ const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];renderBulkRecruits();
  if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[]}
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const semResp=ativos.filter(x=>!x.responsavel_id).length,atrasados=ativos.filter(x=>x.data_proxima_acao&&x.data_proxima_acao<hoje).length,hojeN=ativos.filter(x=>x.data_proxima_acao===hoje).length;
@@ -881,6 +874,31 @@ function cadastroTipo(x){return x.tipo_cadastro||(/^UJC-ENC-/i.test(x.legacy_id|
 function recruitAge(x){if(x.data_nascimento){const d=new Date(String(x.data_nascimento).slice(0,10)+'T12:00:00');if(!Number.isNaN(d.getTime())){const now=new Date();let age=now.getFullYear()-d.getFullYear();if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;return age>=0&&age<=120?age:null}}return x.idade===null||x.idade===undefined||x.idade===''?null:Number(x.idade)}
 function formatRecruitDate(v){const d=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(d)?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'—'}
 function labelMobileCells(root,labels){root.querySelectorAll('table.atable tbody tr').forEach(tr=>{tr.querySelectorAll('td').forEach((td,i)=>{td.dataset.label=labels[i]||''})})}
+function renderBulkRecruits(){
+ const panel=document.getElementById('bulkRecruitPanel');if(!panel)return;
+ const allowed=['SUPERADMIN','ADMIN'].includes(adminProfile?.role);panel.hidden=!allowed;if(!allowed)return;
+ const sel=document.getElementById('bulkRecruitCity'),previous=sel.value;
+ const cities=[...new Set(recruitsCache.filter(x=>cadastroTipo(x)==='UJC'&&x.cidade).map(x=>x.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+ sel.replaceChildren(new Option('Selecione a cidade',''),...cities.map(c=>new Option(c,c)));
+ if(cities.includes(previous))sel.value=previous;
+ const root=document.getElementById('bulkRecruitCandidates');root.replaceChildren();
+ recruitsCache.filter(x=>cadastroTipo(x)==='UJC'&&x.cidade===sel.value).sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).forEach(x=>{
+ const label=document.createElement('label');label.style.cssText='display:flex;gap:10px;align-items:center;padding:8px;border-bottom:1px solid #eee;cursor:pointer';
+ const check=document.createElement('input');check.type='checkbox';check.className='bulkRecruitCheck';check.value=x.id;check.onchange=updateBulkRecruitCount;
+ const name=document.createElement('span');name.textContent=x.nome||'Sem nome';label.append(check,name);root.append(label);
+ });updateBulkRecruitCount();
+}
+function updateBulkRecruitCount(){const n=document.querySelectorAll('.bulkRecruitCheck:checked').length;document.getElementById('bulkRecruitCount').textContent=n+' selecionado(s)'}
+function toggleBulkRecruits(value){document.querySelectorAll('.bulkRecruitCheck').forEach(x=>x.checked=value);updateBulkRecruitCount()}
+async function submitBulkRecruits(){
+ const cidade=document.getElementById('bulkRecruitCity').value,ids=[...document.querySelectorAll('.bulkRecruitCheck:checked')].map(x=>x.value);
+ if(!cidade||!ids.length){alert('Escolha uma cidade e marque os cadastros.');return}
+ if(ids.length>100){alert('Selecione no máximo 100 cadastros por vez.');return}
+ if(!confirm('Encaminhar '+ids.length+' cadastro(s) da cidade '+cidade+' ao PCB?'))return;
+ const button=document.getElementById('bulkRecruitSubmit');button.disabled=true;
+ try{const response=await adminApi('bulk_reclassify_recrutamentos',{cidade,ids});await adminRefresh();alert((response.updated||ids.length)+' cadastro(s) atualizado(s).')}
+ catch(e){alert('Não foi possível atualizar: '+e.message)}finally{button.disabled=false}
+}
 function renderRecruits(){
 const q=(rq?.value||'').toLowerCase(),f=rf?.value||'',st=rs?.value||'',orig=ro?.value||'';
 
