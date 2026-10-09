@@ -594,15 +594,16 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 <div class="adminbar"><div><b id="adminWho">Painel</b><small id="adminRole"></small><span class="securepill">🔒 SESSÃO SEGURA</span></div><div><button id="adminRefreshBtn" class="back" onclick="adminRefresh(this)">↻ Atualizar</button> <button class="back" onclick="adminLogout()">Sair</button></div></div>
 <div class="admintabs"><button onclick="adminTab('overview')">Visão geral</button><button onclick="adminTab('recruits')">Recrutamentos</button><button onclick="adminTab('circulists')">Circulistas</button><button onclick="adminTab('messages');loadInternalMessages()">✉ Mensagens <span id="messageUnread" style="font-weight:700"></span></button><button onclick="adminTab('documents')">📚 BIBLIOTECA</button><button onclick="adminTab('guide')">Ajuda / Manual</button><button id="usersTabBtn" onclick="adminTab('users')">Usuários</button><button id="securityTabBtn" style="display:none" onclick="adminTab('security');loadLoginHistory()">Segurança</button><button onclick="adminTab('password')">Minha senha</button></div>
 <div id="a_overview" class="atab panel"><div id="astats" class="statcards"></div><div id="astages"></div><div id="overviewCharts" aria-label="Gráficos dos cadastros"></div><section id="territoryPanel" style="margin-top:18px"><h3>Distribuição dos cadastros por cidade</h3><p id="territorySummary" style="color:#647078"></p><div class="territory-tools"><input id="territorySearch" placeholder="Filtrar cidade" oninput="renderTerritory()"><button type="button" class="send secondary" onclick="territoryFocusAll()">Ver todas</button><span id="territoryMapStatus" style="color:#657078;font-size:12px"></span></div><div id="recruitGeoMap" role="region" aria-label="Mapa de cidades com recrutamentos"></div><div class="tablewrap" id="territoryList"></div></section></div>
-<div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option><option>DESISTENCIA</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select><select id="ro" onchange="renderRecruits()" aria-label="Origem do cadastro"><option value="">Todos os tipos</option><option value="PCB">PCB</option><option value="ENCAMINHADO_PCB">Encaminhados ao PCB</option><option value="UJC">UJC</option></select><select id="recruitOrder" onchange="setRecruitOrder(this.value)" aria-label="Ordenar recrutamentos"><option value="nome">Ordenar por nome (A–Z)</option><option value="nome_desc">Nome (Z–A)</option><option value="cidade">Cidade (A–Z)</option><option value="cidade_desc">Cidade (Z–A)</option></select></div><details id="bulkRecruitPanel" open hidden style="margin:12px 0;padding:14px;border:2px solid #9f1c2b;border-radius:10px;background:#fffafa">
-<summary style="cursor:pointer;font-weight:800;color:#8e1420;font-size:16px">☑ RECLASSIFICAÇÃO EM LOTE — UJC → Encaminhado ao PCB</summary>
-<p>Selecione uma cidade, marque os cadastros UJC e confirme. As etapas não serão modificadas.</p>
-<div class="adminfilters"><select id="bulkRecruitCity" onchange="renderBulkRecruits()"><option value="">Selecione a cidade</option></select>
-<button type="button" class="send secondary" onclick="toggleBulkRecruits(true)">Marcar todos</button><button type="button" class="send secondary" onclick="toggleBulkRecruits(false)">Desmarcar</button></div>
-<div id="bulkRecruitCandidates" style="max-height:340px;overflow-y:auto"></div>
-<p id="bulkRecruitCount" role="status"></p>
+<div id="a_recruits" class="atab panel" style="display:none"><div class="adminfilters"><input id="rq" placeholder="Buscar nome, cidade ou WhatsApp" oninput="renderRecruits()"><select id="rf" onchange="renderRecruits()"><option value="">Todas as etapas</option><option>A_CLASSIFICAR</option><option>NOVO_CONTATO</option><option>ACOMPANHAMENTO</option><option>REUNIAO_CONVERSA</option><option>FORMACAO</option><option>INGRESSO</option><option>DESISTENCIA</option></select><select id="rs" onchange="renderRecruits()"><option value="ATIVO">Ativos</option><option value="ARQUIVADO">Arquivados</option><option value="">Todos</option></select><select id="ro" onchange="renderRecruits()" aria-label="Origem do cadastro"><option value="">Todos os tipos</option><option value="PCB">PCB</option><option value="ENCAMINHADO_PCB">Encaminhados ao PCB</option><option value="UJC">UJC</option></select><select id="recruitOrder" onchange="setRecruitOrder(this.value)" aria-label="Ordenar recrutamentos"><option value="nome">Ordenar por nome (A–Z)</option><option value="nome_desc">Nome (Z–A)</option><option value="cidade">Cidade (A–Z)</option><option value="cidade_desc">Cidade (Z–A)</option></select></div><div id="bulkRecruitPanel" hidden style="margin:10px 0;padding:10px;border:1px solid #dce3e6;border-radius:9px">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<b>Reclassificação em lote</b>
+<select id="bulkRecruitCity" onchange="renderRecruits()" aria-label="Filtrar município para reclassificação" style="max-width:240px"><option value="">Todas as cidades</option></select>
+<button type="button" class="send secondary" onclick="toggleBulkRecruits(true)">Marcar UJC visíveis</button>
+<button type="button" class="send secondary" onclick="toggleBulkRecruits(false)">Desmarcar</button>
 <button type="button" class="send" id="bulkRecruitSubmit" onclick="submitBulkRecruits()">Encaminhar selecionados ao PCB</button>
-</details><div id="recruitList" class="tablewrap"></div></div>
+<span id="bulkRecruitCount" role="status">0 selecionado(s)</span>
+</div><small>Marque as caixas ao lado dos números na tabela. Apenas cadastros UJC podem ser selecionados; as etapas serão preservadas.</small>
+</div><div id="recruitList" class="tablewrap"></div></div>
 <div id="a_circulists" class="atab panel" style="display:none"><div class="adminfilters"><input id="cq" placeholder="Buscar circulista" oninput="renderCirculists()"><select id="cs" onchange="renderCirculists()"><option value="ATIVOS">Ativos</option><option value="ARQUIVADOS">Arquivados</option><option value="">Todos</option></select></div><div id="circulistList" class="tablewrap"></div></div>
 <div id="a_documents" class="atab panel" style="display:none">
 <h3>📚 Biblioteca de documentos</h3><p>Materiais de consulta para todos os usuários com acesso ao sistema. Os links são carregados apenas quando você os abre.</p>
@@ -888,40 +889,55 @@ function cadastroTipo(x){return x.tipo_cadastro||(/^UJC-ENC-/i.test(x.legacy_id|
 function recruitAge(x){if(x.data_nascimento){const d=new Date(String(x.data_nascimento).slice(0,10)+'T12:00:00');if(!Number.isNaN(d.getTime())){const now=new Date();let age=now.getFullYear()-d.getFullYear();if(now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<d.getDate()))age--;return age>=0&&age<=120?age:null}}return x.idade===null||x.idade===undefined||x.idade===''?null:Number(x.idade)}
 function formatRecruitDate(v){const d=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(d)?d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4):'—'}
 function labelMobileCells(root,labels){root.querySelectorAll('table.atable tbody tr').forEach(tr=>{tr.querySelectorAll('td').forEach((td,i)=>{td.dataset.label=labels[i]||''})})}
+let bulkRecruitSelected=new Set();
 function renderBulkRecruits(){
  const panel=document.getElementById('bulkRecruitPanel');if(!panel)return;
- const allowed=['SUPERADMIN','ADMIN'].includes(adminProfile?.role);panel.hidden=!allowed;if(!allowed)return;panel.open=true;
- const sel=document.getElementById('bulkRecruitCity'),previous=sel.value;
- const cities=[...new Set(recruitsCache.filter(x=>cadastroTipo(x)==='UJC'&&x.cidade).map(x=>x.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
- sel.replaceChildren(new Option('Selecione a cidade',''),...cities.map(c=>new Option(c,c)));
- if(cities.includes(previous))sel.value=previous;
- const root=document.getElementById('bulkRecruitCandidates');root.replaceChildren();
- recruitsCache.filter(x=>cadastroTipo(x)==='UJC'&&x.cidade===sel.value).sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).forEach(x=>{
- const label=document.createElement('label');label.style.cssText='display:flex;gap:10px;align-items:center;padding:8px;border-bottom:1px solid #eee;cursor:pointer';
- const check=document.createElement('input');check.type='checkbox';check.className='bulkRecruitCheck';check.value=x.id;check.onchange=updateBulkRecruitCount;
- const name=document.createElement('span');name.textContent=x.nome||'Sem nome';label.append(check,name);root.append(label);
- });updateBulkRecruitCount();
+ const allowed=['SUPERADMIN','ADMIN'].includes(adminProfile?.role);panel.hidden=!allowed;
+ if(!allowed){bulkRecruitSelected.clear();return}
+ const sel=document.getElementById('bulkRecruitCity'),old=sel.value;
+ const cities=[...new Set(recruitsCache.filter(x=>x.cidade).map(x=>x.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+ sel.replaceChildren(new Option('Todas as cidades',''),...cities.map(c=>new Option(c,c)));
+ if(cities.includes(old))sel.value=old;
+ const eligible=new Set(recruitsCache.filter(x=>cadastroTipo(x)==='UJC'&&x.status==='ATIVO').map(x=>x.id));
+ bulkRecruitSelected.forEach(id=>{if(!eligible.has(id))bulkRecruitSelected.delete(id)});
+ updateBulkRecruitCount();
 }
-function updateBulkRecruitCount(){const n=document.querySelectorAll('.bulkRecruitCheck:checked').length;document.getElementById('bulkRecruitCount').textContent=n+' selecionado(s)'}
-function toggleBulkRecruits(value){document.querySelectorAll('.bulkRecruitCheck').forEach(x=>x.checked=value);updateBulkRecruitCount()}
+function updateBulkRecruitCount(){const el=document.getElementById('bulkRecruitCount');if(el)el.textContent=bulkRecruitSelected.size+' selecionado(s)'}
+function changeBulkRecruit(id,checked){
+ const x=recruitsCache.find(r=>r.id===id);
+ if(!x||cadastroTipo(x)!=='UJC'||x.status!=='ATIVO')return;
+ if(checked){const chosen=[...bulkRecruitSelected].map(i=>recruitsCache.find(r=>r.id===i)).filter(Boolean);if(chosen.length&&chosen[0].cidade!==x.cidade){alert('Selecione cadastros de uma mesma cidade por operação.');renderRecruits();return}bulkRecruitSelected.add(id)}
+ else bulkRecruitSelected.delete(id);
+ updateBulkRecruitCount();
+}
+function toggleBulkRecruits(checked){
+ if(!checked){bulkRecruitSelected.clear();renderRecruits();return}
+ const city=document.getElementById('bulkRecruitCity')?.value||'';
+ const rows=recruitsCache.filter(x=>x.status==='ATIVO'&&cadastroTipo(x)==='UJC'&&(!city||x.cidade===city));
+ if(!city){alert('Escolha uma cidade antes de marcar todos.');return}
+ rows.forEach(x=>bulkRecruitSelected.add(x.id));renderRecruits();
+}
 async function submitBulkRecruits(){
- const cidade=document.getElementById('bulkRecruitCity').value,ids=[...document.querySelectorAll('.bulkRecruitCheck:checked')].map(x=>x.value);
- if(!cidade||!ids.length){alert('Escolha uma cidade e marque os cadastros.');return}
- if(ids.length>100){alert('Selecione no máximo 100 cadastros por vez.');return}
- if(!confirm('Encaminhar '+ids.length+' cadastro(s) da cidade '+cidade+' ao PCB?'))return;
+ const ids=[...bulkRecruitSelected],rows=ids.map(id=>recruitsCache.find(x=>x.id===id));
+ if(!ids.length){alert('Marque os contatos na tabela antes de encaminhar.');return}
+ const cidade=rows[0]?.cidade;
+ if(!cidade||rows.some(x=>!x||x.cidade!==cidade)){alert('Selecione somente cadastros de uma cidade.');return}
+ if(ids.length>100){alert('Selecione até 100 cadastros por vez.');return}
+ if(!confirm('Encaminhar '+ids.length+' cadastro(s) de '+cidade+' ao PCB?'))return;
  const button=document.getElementById('bulkRecruitSubmit');button.disabled=true;
- try{const response=await adminApi('bulk_reclassify_recrutamentos',{cidade,ids});await adminRefresh();alert((response.updated||ids.length)+' cadastro(s) atualizado(s).')}
- catch(e){alert('Não foi possível atualizar: '+e.message)}finally{button.disabled=false}
+ try{const response=await adminApi('bulk_reclassify_recrutamentos',{cidade,ids});bulkRecruitSelected.clear();await adminRefresh();alert((response.updated||ids.length)+' cadastro(s) reclassificado(s).')}
+ catch(e){alert('Falha na atualização: '+e.message)}finally{button.disabled=false}
 }
 function renderRecruits(){
 const q=(rq?.value||'').toLowerCase(),f=rf?.value||'',st=rs?.value||'',orig=ro?.value||'';
 
 const sortValue=(x,key)=>key==='idade'?(recruitAge(x)??-1):key==='nascimento'?(x.data_nascimento||''):key==='tipo'?cadastroTipo(x):key==='responsavel'?respName(x.responsavel_id):key==='cadastro'?(x.created_at||''):key==='data'?(x.data_proxima_acao||''):key==='etapa'?etapa(x.etapa):key==='proxima_acao'?(x.proxima_acao||''):x[key]||'';
-const rows=recruitsCache.filter(x=>(!f||x.etapa===f)&&(!st||x.status===st)&&(!orig||(cadastroTipo(x)===orig))&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));
+const cityFilter=document.getElementById('bulkRecruitCity')?.value||'';
+const rows=recruitsCache.filter(x=>(!cityFilter||x.cidade===cityFilter)&&(!f||x.etapa===f)&&(!st||x.status===st)&&(!orig||(cadastroTipo(x)===orig))&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));
 rows.sort((a,b)=>{const av=String(sortValue(a,recruitSortColumn)),bv=String(sortValue(b,recruitSortColumn));const cmp=av.localeCompare(bv,'pt-BR',{sensitivity:'base',numeric:true});return (cmp||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'}))*recruitSortDirection});
 const headers=[['nome','Nome'],['tipo','Tipo'],['idade','Idade'],['nascimento','Nascimento'],['cidade','Cidade'],['etapa','Etapa'],['responsavel','Responsável'],['proxima_acao','Próxima ação'],['cadastro','Data do cadastro'],['data','Próxima ação em']];
 const thead=headers.map(([key,label])=>'<th scope="col" aria-sort="'+(recruitSortColumn===key?(recruitSortDirection===1?'ascending':'descending'):'none')+'"><button type="button" onclick="sortRecruitsBy(\''+key+'\')" title="Ordenar por '+label+'" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;font-weight:inherit">'+label+' <span aria-hidden="true">'+(recruitSortColumn===key?(recruitSortDirection===1?'▲':'▼'):'↕')+'</span></button></th>').join('');
-recruitList.innerHTML='<table class="atable"><thead><tr><th scope="col">Nº</th>'+thead+'</tr></thead><tbody>'+rows.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openRecruit(\''+x.id+'\')"><td>'+(i+1)+'</td><td><b>'+esc(x.nome)+'</b> '+''+'<br><small>'+esc(x.whatsapp||x.email||'Sem contato informado')+'</small></td><td>'+('<small style="display:inline-block;white-space:nowrap;background:'+({PCB:'#fbe0e3',ENCAMINHADO_PCB:'#dcecff',UJC:'#ffe4b2'}[cadastroTipo(x)]||'#e8edf0')+';color:'+({PCB:'#8e1420',ENCAMINHADO_PCB:'#17457d',UJC:'#653b00'}[cadastroTipo(x)]||'#233c44')+';border-radius:6px;padding:3px 7px;font-weight:700">'+esc(({PCB:'PCB',ENCAMINHADO_PCB:'ENCAMINHADO AO PCB',UJC:'UJC'})[cadastroTipo(x)]||'REVISAR')+'</small>')+'</td><td>'+esc(recruitAge(x)??'—')+'</td><td>'+esc(formatRecruitDate(x.data_nascimento))+'</td><td>'+esc(x.cidade)+'</td><td>'+esc(etapa(x.etapa))+'</td><td>'+esc(respName(x.responsavel_id))+'</td><td>'+esc(x.proxima_acao||'—')+'</td><td>'+esc(formatRecruitDate(x.created_at))+'</td><td>'+esc(formatRecruitDate(x.data_proxima_acao))+'</td></tr>').join('')+'</tbody></table>'+(rows.length?'':'<p style="padding:14px;text-align:center">Nenhum recrutamento encontrado para os filtros selecionados.</p>');
+recruitList.innerHTML='<table class="atable"><thead><tr><th scope="col">Nº / ☑</th>'+thead+'</tr></thead><tbody>'+rows.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openRecruit(\''+x.id+'\')"><td>'+(i+1)+(adminProfile&&['SUPERADMIN','ADMIN'].includes(adminProfile.role)&&cadastroTipo(x)==='UJC'&&x.status==='ATIVO'?' <input type="checkbox" aria-label="Selecionar '+esc(x.nome)+'" '+(bulkRecruitSelected.has(x.id)?'checked ':'')+'onclick="event.stopPropagation()" onchange="changeBulkRecruit(\''+x.id+'\',this.checked);event.stopPropagation()">':'')+'</td><td><b>'+esc(x.nome)+'</b> '+''+'<br><small>'+esc(x.whatsapp||x.email||'Sem contato informado')+'</small></td><td>'+('<small style="display:inline-block;white-space:nowrap;background:'+({PCB:'#fbe0e3',ENCAMINHADO_PCB:'#dcecff',UJC:'#ffe4b2'}[cadastroTipo(x)]||'#e8edf0')+';color:'+({PCB:'#8e1420',ENCAMINHADO_PCB:'#17457d',UJC:'#653b00'}[cadastroTipo(x)]||'#233c44')+';border-radius:6px;padding:3px 7px;font-weight:700">'+esc(({PCB:'PCB',ENCAMINHADO_PCB:'ENCAMINHADO AO PCB',UJC:'UJC'})[cadastroTipo(x)]||'REVISAR')+'</small>')+'</td><td>'+esc(recruitAge(x)??'—')+'</td><td>'+esc(formatRecruitDate(x.data_nascimento))+'</td><td>'+esc(x.cidade)+'</td><td>'+esc(etapa(x.etapa))+'</td><td>'+esc(respName(x.responsavel_id))+'</td><td>'+esc(x.proxima_acao||'—')+'</td><td>'+esc(formatRecruitDate(x.created_at))+'</td><td>'+esc(formatRecruitDate(x.data_proxima_acao))+'</td></tr>').join('')+'</tbody></table>'+(rows.length?'':'<p style="padding:14px;text-align:center">Nenhum recrutamento encontrado para os filtros selecionados.</p>');
 labelMobileCells(recruitList,['Nº','Nome / contato','Tipo','Idade','Nascimento','Cidade','Etapa','Responsável','Próxima ação','Data do cadastro','Próxima ação em']);
 }
 function renderCirculists(rows){if(rows)circulistsCache=rows;const q=(cq?.value||'').toLowerCase(),st=cs?.value||'ATIVOS';const list=circulistsCache.filter(x=>(st==='ATIVOS'?!x.archived_at:st==='ARQUIVADOS'?!!x.archived_at:true)&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));circulistList.innerHTML='<table class="atable"><thead><tr><th>Nº</th><th>Nome</th><th>Cidade</th><th>WhatsApp</th><th>Valor</th><th>Situação</th></tr></thead><tbody>'+list.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openCirculist(\''+x.id+'\')"><td>'+(i+1)+'</td><td><b>'+esc(x.nome)+'</b></td><td>'+esc(x.cidade)+'</td><td>'+esc(x.whatsapp)+'</td><td>'+esc(x.valor_preferido||'—')+'</td><td>'+esc(situacao(x.situacao))+'</td></tr>').join('')+'</tbody></table>'}
