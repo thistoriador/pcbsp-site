@@ -637,7 +637,7 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const semResp=ativos.filter(x=>!x.responsavel_id).length,atrasados=ativos.filter(x=>x.data_proxima_acao&&x.data_proxima_acao<hoje).length,hojeN=ativos.filter(x=>x.data_proxima_acao===hoje).length;
  astats.innerHTML='<div class="stat stat-red"><b>'+recruitsCache.length+'</b><small>TOTAL DE CADASTROS</small></div><div class="stat stat-green"><b>'+ativos.filter(x=>x.etapa==='NOVO_CONTATO').length+'</b><small>NOVOS CONTATOS</small></div><div class="stat stat-orange"><b>'+ativos.filter(x=>x.etapa==='ACOMPANHAMENTO').length+'</b><small>EM ACOMPANHAMENTO</small></div><div class="stat stat-blue"><b>'+arquivadosN+'</b><small>ARQUIVADOS</small></div>';
- const stages=[['NOVO_CONTATO','Novo contato'],['ACOMPANHAMENTO','Acompanhamento'],['REUNIAO_CONVERSA','Reunião / conversa'],['FORMACAO','Formação'],['INGRESSO','Ingresso']];
+ const stages=[['A_CLASSIFICAR','A classificar'],['NOVO_CONTATO','Novo contato'],['ACOMPANHAMENTO','Acompanhamento'],['REUNIAO_CONVERSA','Reunião / conversa'],['FORMACAO','Formação'],['INGRESSO','Ingresso']];
  const total=Math.max(ativos.length,1);
  const stageHtml=stages.map(([k,label])=>{const n=ativos.filter(x=>x.etapa===k).length,p=Math.round(n*100/total);return '<div class="stageitem"><b>'+n+'</b><strong>'+label.toUpperCase()+'</strong><small>'+p+'%</small></div>'}).join('');
  astages.innerHTML='<div class="overviewgrid"><div class="stagepanel"><h3>Etapas do recrutamento</h3><div class="stageflow">'+stageHtml+'</div></div><aside class="attentionpanel"><h3>ATENÇÃO RÁPIDA</h3><div class="attentionlist"><div class="attentionitem"><b>'+semResp+'</b><span>SEM RESPONSÁVEL</span></div><div class="attentionitem"><b>'+atrasados+'</b><span>AÇÕES ATRASADAS</span></div><div class="attentionitem"><b>'+hojeN+'</b><span>AÇÕES PARA HOJE</span></div></div></aside></div>';
@@ -688,6 +688,33 @@ function territoryRows(){
  recruitsCache.forEach(r=>{const name=territoryCity(r.cidade),key=territoryNormalize(name);const e=counts.get(key)||{name,total:0,active:0,assigned:0,unassigned:0};e.total++;if(r.status!=='ARQUIVADO')e.active++;if(r.responsavel_id)e.assigned++;else e.unassigned++;counts.set(key,e)});
  return [...counts.values()].sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name,'pt-BR'));
 }
+/* Classificação visual preliminar; não altera os dados originais nem os responsáveis. */
+function capitalZone(r){
+ const city=territoryNormalize(territoryCity(r.cidade));
+ if(city!=='SAO PAULO')return null;
+ const b=territoryNormalize(r.bairro).replace(/[^A-Z0-9 ]/g,' ').replace(/\\s+/g,' ').trim();
+ const outside=['DIADEMA','MAUA','SUZANO','MOGI DAS CRUZES','JACAREI','INDAIATUBA','CAMPINAS','TABAPUA'];
+ if(outside.some(x=>b===x||b.startsWith(x+' ')))return 'Revisar município';
+ const areas={
+ 'Centro':['BELA VISTA','CENTRO','CAMBUCI','SE','REPUBLICA','LIBERDADE'],
+ 'Norte':['CASA VERDE','PIRITUBA','VILA MEDEIROS','JARDIM BRASIL'],
+ 'Sul':['BOSQUE DA SAUDE','BROOKLYN NOVO','CAMPO LIMPO','JARDIM ANGELA','JARDIM SAO SAVERIO','PARQUE SANTO ANTONIO','SANTO AMARO','VILA MARIANA','GRAJAU','VILA CAMPO GRANDE'],
+ 'Leste':['BELEM','BELENZINHO','ITAIM PAULISTA','ITAQUERA','JARDIM SAO NICOLAU','MOOCA','SAO LUCAS','SAO MIGUEL PAULISTA','VILA MATILDE','VILA NOVA ARICANDUVA'],
+ 'Oeste':['AGUA BRANCA','BONFIGLIOLI','RIO PEQUENO','BUTANTA','LAPA','SUMAREZINHO','VILA LEOPOLDINA','CIDADE SAO FRANCISCO']
+ };
+ for(const [zone,names] of Object.entries(areas))if(names.some(x=>b===x||b.startsWith(x+' ')||b.includes(' '+x+' ')))return zone;
+ const notes=territoryNormalize(r.observacoes);
+ const m=notes.match(/NUCLEO (?:INDICADO|:)\\s*:\\s*(?:FUTURO\\s+)?(ZL|ZS|ZO|ZN)\\b/);
+ if(m)return {ZL:'Leste',ZS:'Sul',ZO:'Oeste',ZN:'Norte'}[m[1]]+' (indicação)';
+ return 'A conferir';
+}
+function capitalZoneOverview(){
+ const candidates=recruitsCache.filter(r=>territoryNormalize(territoryCity(r.cidade))==='SAO PAULO');
+ const groups=new Map();
+ candidates.forEach(r=>{const z=capitalZone(r)||'A conferir';groups.set(z,(groups.get(z)||0)+1)});
+ const order=['Centro','Norte','Sul','Leste','Oeste','Norte (indicação)','Sul (indicação)','Leste (indicação)','Oeste (indicação)','A conferir','Revisar município'];
+ return '<section class="stagepanel" style="margin:16px 0;padding:14px"><h3>São Paulo capital · zoneamento preliminar</h3><p style="font-size:13px;color:#64748b">Classificação por bairro; quando necessário, indicação de núcleo nas observações. Registros inconsistentes ficam para conferência. Nenhum cadastro é alterado.</p><div style="display:flex;gap:8px;flex-wrap:wrap">'+order.filter(z=>groups.has(z)).map(z=>'<span style="padding:7px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px">'+esc(z)+': <b>'+groups.get(z)+'</b></span>').join('')+'</div><p style="font-size:12px;color:#64748b;margin-top:8px">'+candidates.length+' registros com cidade informada como São Paulo · distribuição provisória</p></section>';
+}
 function territoryFocusAll(){document.getElementById('territorySearch').value='';renderTerritory();if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15))}
 function territoryOpenRecruits(city){
  adminTab('recruits');document.getElementById('rq').value='';
@@ -703,6 +730,7 @@ function renderTerritory(){
  rows.sort((a,b)=>{const cmp=territorySortKey==='name'?a.name.localeCompare(b.name,'pt-BR'):a[territorySortKey]-b[territorySortKey];return cmp*territorySortDir||a.name.localeCompare(b.name,'pt-BR')});
  document.getElementById('territorySummary').textContent=all.length+' cidades · '+recruitsCache.length+' cadastros';
  document.getElementById('territoryList').innerHTML='<table class="atable"><thead><tr>'+[['name','Cidade'],['total','Cadastros'],['active','Não arquivados']].map(([k,label])=>'<th scope="col" aria-sort="'+(territorySortKey===k?(territorySortDir===1?'ascending':'descending'):'none')+'"><button type="button" onclick="sortTerritoryBy(\''+k+'\')" style="all:unset;cursor:pointer;font:inherit;color:inherit;font-weight:inherit" title="Ordenar por '+label+'">'+label+' '+(territorySortKey===k?(territorySortDir===1?'▲':'▼'):'↕')+'</button></th>').join('')+'<th>Ação</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+r.total+'</td><td>'+r.active+'</td><td><button type="button" class="send secondary territory-view" data-city="'+esc(r.name)+'">Ver cadastros</button></td></tr>').join('')+'</tbody></table>';
+ document.getElementById('territoryList').insertAdjacentHTML('beforeend',capitalZoneOverview());
  document.querySelectorAll('.territory-view').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city)));
  if(!territoryMap&&window.L){territoryMap=L.map('recruitGeoMap',{scrollWheelZoom:false}).setView([-22.4,-48.5],7);const base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18,keepBuffer:2,updateWhenIdle:true}).addTo(territoryMap);let tileErrors=0,usingFallback=false;base.on('tileerror',()=>{if(++tileErrors>=3&&!usingFallback){usingFallback=true;territoryMap.removeLayer(base);L.tileLayer('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',maxZoom:18,subdomains:'abcd',updateWhenIdle:true}).addTo(territoryMap)}});territoryMarkers=L.featureGroup().addTo(territoryMap)}
  if(territoryMap){territoryMarkers.clearLayers();rows.forEach(r=>{const c=territoryLocations.get(territoryNormalize(r.name));if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:r.unassigned>0?'#dc2626':'#16a34a',fillOpacity:.85});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br>'+r.assigned+' atribuído(s) · '+r.unassigned+' não atribuído(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});setTimeout(()=>territoryMap.invalidateSize({pan:false}),150)}
