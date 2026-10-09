@@ -741,7 +741,7 @@ function editAdminUser(id,rows){
  overlay.appendChild(panel);document.body.appendChild(overlay);
  const $=id=>panel.querySelector('#'+id);
  $('editUserNome').value=u.nome||'';$('editUserLogin').value=u.login_name||'';$('editUserEmail').value=u.email||'';$('editUserRole').value=u.role||'RECRUTADOR_LOCAL';
- $('editUserPasswordEye').addEventListener('click',function(){togglePass('editUserPassword',this)});
+ $('editUserPasswordEye').addEventListener('click',function(){const field=$('editUserPassword');const visible=field.type==='password';field.type=visible?'text':'password';this.textContent=visible?'🙈':'👁️';this.setAttribute('aria-label',visible?'Ocultar nova senha':'Mostrar nova senha');this.setAttribute('aria-pressed',String(visible));});
  $('editUserCancel').addEventListener('click',closeUserEditor);
  overlay.addEventListener('click',e=>{if(e.target===overlay)closeUserEditor()});
  const onKey=e=>{if(e.key==='Escape'){closeUserEditor();document.removeEventListener('keydown',onKey)}};document.addEventListener('keydown',onKey,{once:true});
@@ -751,7 +751,7 @@ function editAdminUser(id,rows){
  const save=$('editUserSave');save.disabled=true;save.textContent='Salvando...';$('editUserError').textContent='';
  try{
  await adminApi('edit_user',{user_id:id,nome:$('editUserNome').value.trim(),login_name:$('editUserLogin').value.trim(),email:$('editUserEmail').value.trim(),role:$('editUserRole').value,password:pw?adminPassword(pw,8):''});
- closeUserEditor();await loadUsers();
+ closeUserEditor();await loadUsers();alert(pw?'Nova senha do recrutador redefinida com sucesso.':'Dados do usuário atualizados com sucesso.');
  }catch(err){$('editUserError').textContent=err.message||'Não foi possível salvar.';save.disabled=false;save.textContent='Salvar alterações'}
  });
  $('editUserNome').focus();
