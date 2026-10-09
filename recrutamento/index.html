@@ -754,6 +754,23 @@ function editAdminUser(id,rows){
  closeUserEditor();await loadUsers();alert(pw?'Nova senha do recrutador redefinida com sucesso.':'Dados do usuário atualizados com sucesso.');
  }catch(err){$('editUserError').textContent=err.message||'Não foi possível salvar.';save.disabled=false;save.textContent='Salvar alterações'}
  });
+ const history=document.createElement('section');
+ history.style.cssText='margin-top:16px;padding-top:12px;border-top:1px solid #ddd';
+ history.innerHTML='<h3 style="margin:0 0 8px">Histórico de alterações</h3><div id="userEditHistory" style="font-size:13px">Carregando...</div>';
+ panel.appendChild(history);
+ adminApi('user_change_history',{user_id:id}).then(x=>{
+   const rows=x.rows||[], box=history.querySelector('#userEditHistory');
+   box.textContent='';
+   if(!rows.length){box.textContent='Nenhuma alteração registrada desde a ativação do histórico.';return}
+   rows.forEach(h=>{
+     const item=document.createElement('p');
+     item.style.cssText='padding:8px 0;border-bottom:1px solid #eee;margin:0';
+     const when=new Date(h.created_at).toLocaleString('pt-BR');
+     const fields=(h.metadata?.campos_alterados||[]).join(', ');
+     item.textContent=when+' — '+(h.acao==='REDEFINICAO_SENHA_USUARIO'?'Senha redefinida':'Cadastro editado')+(fields?' ('+fields+')':'')+' — responsável: '+h.ator_user_id;
+     box.appendChild(item);
+   });
+ }).catch(()=>{history.querySelector('#userEditHistory').textContent='Não foi possível carregar o histórico.'});
  $('editUserNome').focus();
 }
 async function deleteAdminUser(id){if(!confirm('Excluir definitivamente este usuário administrativo?'))return;if(!confirm('Última confirmação: esta exclusão não poderá ser desfeita. Continuar?'))return;try{await adminApi('delete_user',{user_id:id});await loadUsers();alert('Usuário excluído definitivamente.')}catch(e){alert(e.message)}}
