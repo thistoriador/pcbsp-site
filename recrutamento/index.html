@@ -425,6 +425,23 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
  #userList .user-actions button{min-width:0;width:100%;margin:0!important;padding:9px 6px!important;white-space:normal!important}
 }
 </style>
+<style id="user-actions-no-clipping-20261009">
+/* A tabela de usuários deve ocupar toda a largura sem cortar a coluna Ações. */
+@media(min-width:701px){
+ #userList.tablewrap{overflow-x:auto!important;overflow-y:visible!important;max-width:100%;width:100%}
+ #userList .user-table-scroll{display:block;width:max-content!important;min-width:100%!important;max-width:none!important;overflow:visible!important}
+ #userList .user-table-scroll table.atable{width:max-content!important;min-width:1000px!important;table-layout:auto!important}
+ #userList .user-table-scroll th:last-child,#userList .user-table-scroll td:last-child{min-width:270px!important;width:270px!important;padding-right:14px!important}
+ #userList .user-actions{width:242px!important;min-width:242px!important;max-width:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #userList .user-actions button{min-width:0!important;width:100%!important;overflow:visible!important}
+}
+@media(max-width:700px){
+ #userList.tablewrap{overflow:visible!important}
+ #userList .user-table-scroll{width:100%!important;max-width:100%!important;overflow:visible!important}
+ #userList .user-table-scroll table.atable{min-width:0!important;width:100%!important}
+ #userList .user-table-scroll td:last-child{min-width:0!important;width:auto!important}
+}
+</style>
 <style id="nav-compact-20261009">.navin{justify-content:center;padding:5px 12px;min-height:40px}.navlinks{gap:5px}.navlinks button{font-size:13px;font-weight:700;padding:7px 11px;border-radius:7px;min-height:34px}@media(max-width:700px){.navin{padding:4px 8px}.navlinks button{font-size:12px;padding:7px 10px;min-height:34px}}</style>
 <style id="recrutamento-access-mobile-20261009">
 #reqAdminLogin{font-size:16px}
