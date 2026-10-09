@@ -188,6 +188,43 @@ body:has(#home.view.on) .footer .footer-divider{height:48px}
 /* Fundo urbano aprovado: arquivo real publicado no repositório */
 body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poster_like_graphic_illustration_in_a_bold.png") center center/cover no-repeat!important}
 #home:before{display:none!important}
+
+/* Listas administrativas: cartões legíveis no celular, sem rolagem lateral */
+@media(max-width:700px){
+ #recruitList,#userList{min-width:0;max-width:100%;overflow:visible}
+ #recruitList .atable,#userList .atable{display:block;width:100%;min-width:0!important;table-layout:auto}
+ #recruitList .atable thead,#userList .atable thead{display:none}
+ #recruitList .atable tbody,#userList .atable tbody{display:grid;gap:12px;width:100%}
+ #recruitList .atable tr,#userList .atable tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 12px;width:100%;max-width:100%;padding:14px;border:1px solid #dfe3e6;border-radius:12px;background:#fff;box-shadow:0 2px 6px #0000000a}
+ #recruitList .atable td,#userList .atable td{display:block;min-width:0;width:auto!important;max-width:100%;padding:0!important;border:0!important;overflow-wrap:anywhere;white-space:normal;font-size:14px;line-height:1.35}
+ #recruitList .atable td:before,#userList .atable td:before{display:block;color:#596775;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.02em}
+ #recruitList .atable td:nth-child(1):before{content:"Nº"}
+ #recruitList .atable td:nth-child(2){grid-column:1/-1;font-size:16px}
+ #recruitList .atable td:nth-child(2):before{content:"Nome e contato"}
+ #recruitList .atable td:nth-child(3):before{content:"Tipo"}
+ #recruitList .atable td:nth-child(4):before{content:"Idade"}
+ #recruitList .atable td:nth-child(5):before{content:"Nascimento"}
+ #recruitList .atable td:nth-child(6):before{content:"Cidade"}
+ #recruitList .atable td:nth-child(7):before{content:"Etapa"}
+ #recruitList .atable td:nth-child(8):before{content:"Responsável"}
+ #recruitList .atable td:nth-child(9):before{content:"Próxima ação"}
+ #recruitList .atable td:nth-child(10):before{content:"Data do cadastro"}
+ #recruitList .atable td:nth-child(11):before{content:"Próxima ação em"}
+ #userList .atable td:nth-child(1){grid-column:1/-1;font-size:16px;font-weight:700}
+ #userList .atable td:nth-child(1):before{content:"Nome"}
+ #userList .atable td:nth-child(2):before{content:"Login"}
+ #userList .atable td:nth-child(3){grid-column:1/-1}
+ #userList .atable td:nth-child(3):before{content:"E-mail"}
+ #userList .atable td:nth-child(4):before{content:"Perfil"}
+ #userList .atable td:nth-child(5):before{content:"Status"}
+ #userList .atable td:nth-child(6){grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+ #userList .atable td:nth-child(6):before{content:"Ações";width:100%}
+ #userList .atable td button{font-size:13px;min-height:40px;max-width:100%}
+ #userList .pending-role{max-width:100%;width:100%;font-size:13px}
+ #userList .atable td:nth-child(4) select{max-width:100%}
+ #userList .atable td:nth-child(5) button{margin:4px}
+ #recruitList .atable tr{cursor:pointer}
+}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
