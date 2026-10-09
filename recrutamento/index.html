@@ -791,6 +791,41 @@ function capitalZoneOverview(){
  const order=['Centro','Norte','Sul','Leste','Oeste','Norte (indicação)','Sul (indicação)','Leste (indicação)','Oeste (indicação)','A conferir','Revisar município'];
  return '<section class="stagepanel" style="margin:16px 0;padding:14px"><h3>São Paulo capital · zoneamento preliminar</h3><p style="font-size:13px;color:#64748b">Classificação por bairro; quando necessário, indicação de núcleo nas observações. Registros inconsistentes ficam para conferência. Nenhum cadastro é alterado.</p><div style="display:flex;gap:8px;flex-wrap:wrap">'+order.filter(z=>groups.has(z)).map(z=>'<span style="padding:7px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px">'+esc(z)+': <b>'+groups.get(z)+'</b></span>').join('')+'</div><p style="font-size:12px;color:#64748b;margin-top:8px">'+candidates.length+' registros com cidade informada como São Paulo · distribuição provisória</p></section>';
 }
+/* Marcadores territoriais ilustrativos: não representam endereços pessoais. */
+const capitalZonePins=[
+ {name:'Centro',lat:-23.5505,lon:-46.6333,color:'#8b5cf6'},
+ {name:'Norte',lat:-23.4775,lon:-46.6250,color:'#2563eb'},
+ {name:'Sul',lat:-23.6650,lon:-46.6650,color:'#16a34a'},
+ {name:'Leste',lat:-23.5500,lon:-46.4750,color:'#ea580c'},
+ {name:'Oeste',lat:-23.5550,lon:-46.7350,color:'#db2777'}
+];
+function territoryOpenCapitalZone(zone){
+ adminTab('recruits');
+ document.getElementById('rq').value='';
+ renderRecruits();
+ document.querySelectorAll('#recruitList tbody tr[data-id]').forEach(tr=>{
+  const r=recruitsCache.find(x=>String(x.id)===tr.dataset.id);
+  const z=r?capitalZone(r):null;
+  tr.style.display=r&&z&&(z===zone||z===zone+' (indicação)')?'':'none';
+ });
+}
+function addCapitalZonePins(){
+ if(!territoryMap||!territoryMarkers)return;
+ const groups=new Map();
+ recruitsCache.filter(r=>territoryNormalize(territoryCity(r.cidade))==='SAO PAULO').forEach(r=>{
+  const z=(capitalZone(r)||'').replace(/ \(indicação\)$/,'');
+  groups.set(z,(groups.get(z)||0)+1);
+ });
+ capitalZonePins.forEach(z=>{
+  const count=groups.get(z.name)||0;
+  if(!count)return;
+  const marker=L.circleMarker([z.lat,z.lon],{radius:Math.max(12,Math.min(22,11+Math.sqrt(count)*2)),color:'#ffffff',weight:3,fillColor:z.color,fillOpacity:.95});
+  marker.bindTooltip(z.name+': '+count+' cadastro(s)',{direction:'top'});
+  marker.bindPopup('<strong>São Paulo — '+esc(z.name)+'</strong><br>'+count+' cadastro(s) · localização aproximada da zona<br><button type="button" class="capital-zone-popup" data-zone="'+esc(z.name)+'">Ver cadastros da zona</button>');
+  marker.on('popupopen',()=>document.querySelectorAll('.capital-zone-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenCapitalZone(b.dataset.zone))));
+  marker.addTo(territoryMarkers);
+ });
+}
 function territoryFocusAll(){document.getElementById('territorySearch').value='';renderTerritory();if(territoryMap&&territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15))}
 function territoryOpenRecruits(city){
  adminTab('recruits');document.getElementById('rq').value='';
@@ -809,7 +844,7 @@ function renderTerritory(){
  document.getElementById('territoryList').insertAdjacentHTML('afterbegin',capitalZoneOverview());
  document.querySelectorAll('.territory-view').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city)));
  if(!territoryMap&&window.L){territoryMap=L.map('recruitGeoMap',{scrollWheelZoom:false}).setView([-22.4,-48.5],7);const base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18,keepBuffer:2,updateWhenIdle:true}).addTo(territoryMap);let tileErrors=0,usingFallback=false;base.on('tileerror',()=>{if(++tileErrors>=3&&!usingFallback){usingFallback=true;territoryMap.removeLayer(base);L.tileLayer('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',maxZoom:18,subdomains:'abcd',updateWhenIdle:true}).addTo(territoryMap)}});territoryMarkers=L.featureGroup().addTo(territoryMap)}
- if(territoryMap){territoryMarkers.clearLayers();rows.forEach(r=>{const c=territoryLocations.get(territoryNormalize(r.name));if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:r.unassigned>0?'#dc2626':'#16a34a',fillOpacity:.85});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br>'+r.assigned+' atribuído(s) · '+r.unassigned+' não atribuído(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});setTimeout(()=>territoryMap.invalidateSize({pan:false}),150)}
+ if(territoryMap){territoryMarkers.clearLayers();rows.forEach(r=>{const c=territoryLocations.get(territoryNormalize(r.name));if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:r.unassigned>0?'#dc2626':'#16a34a',fillOpacity:.85});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br>'+r.assigned+' atribuído(s) · '+r.unassigned+' não atribuído(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});if(rows.some(r=>territoryNormalize(r.name)==='SAO PAULO'))addCapitalZonePins();setTimeout(()=>territoryMap.invalidateSize({pan:false}),150)}
  if(!territoryResolved&&!territoryGeocoding)territoryResolveCities(all.map(r=>r.name));
 }
 async function territoryResolveCities(cities){
