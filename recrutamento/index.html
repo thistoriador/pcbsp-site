@@ -598,11 +598,11 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
 <b>Reclassificação em lote</b>
 <select id="bulkRecruitCity" onchange="renderRecruits()" aria-label="Filtrar município para reclassificação" style="max-width:240px"><option value="">Todas as cidades</option></select>
-<button type="button" class="send secondary" onclick="toggleBulkRecruits(true)">Marcar UJC visíveis</button>
+<button type="button" class="send secondary" onclick="toggleBulkRecruits(true)">Marcar UJC da lista</button>
 <button type="button" class="send secondary" onclick="toggleBulkRecruits(false)">Desmarcar</button>
 <button type="button" class="send" id="bulkRecruitSubmit" onclick="submitBulkRecruits()">Encaminhar selecionados ao PCB</button>
 <span id="bulkRecruitCount" role="status">0 selecionado(s)</span>
-</div><small>Marque as caixas ao lado dos números na tabela. Apenas cadastros UJC podem ser selecionados; as etapas serão preservadas.</small>
+</div><small>Marque contatos UJC de uma ou várias cidades diretamente na tabela. O filtro de cidade é opcional; as etapas serão preservadas.</small>
 </div><div id="recruitList" class="tablewrap"></div></div>
 <div id="a_circulists" class="atab panel" style="display:none"><div class="adminfilters"><input id="cq" placeholder="Buscar circulista" oninput="renderCirculists()"><select id="cs" onchange="renderCirculists()"><option value="ATIVOS">Ativos</option><option value="ARQUIVADOS">Arquivados</option><option value="">Todos</option></select></div><div id="circulistList" class="tablewrap"></div></div>
 <div id="a_documents" class="atab panel" style="display:none">
@@ -906,27 +906,36 @@ function updateBulkRecruitCount(){const el=document.getElementById('bulkRecruitC
 function changeBulkRecruit(id,checked){
  const x=recruitsCache.find(r=>r.id===id);
  if(!x||cadastroTipo(x)!=='UJC'||x.status!=='ATIVO')return;
- if(checked){const chosen=[...bulkRecruitSelected].map(i=>recruitsCache.find(r=>r.id===i)).filter(Boolean);if(chosen.length&&chosen[0].cidade!==x.cidade){alert('Selecione cadastros de uma mesma cidade por operação.');renderRecruits();return}bulkRecruitSelected.add(id)}
- else bulkRecruitSelected.delete(id);
+ if(checked)bulkRecruitSelected.add(id);else bulkRecruitSelected.delete(id);
  updateBulkRecruitCount();
 }
 function toggleBulkRecruits(checked){
  if(!checked){bulkRecruitSelected.clear();renderRecruits();return}
- const city=document.getElementById('bulkRecruitCity')?.value||'';
- const rows=recruitsCache.filter(x=>x.status==='ATIVO'&&cadastroTipo(x)==='UJC'&&(!city||x.cidade===city));
- if(!city){alert('Escolha uma cidade antes de marcar todos.');return}
- rows.forEach(x=>bulkRecruitSelected.add(x.id));renderRecruits();
+ document.querySelectorAll('#recruitList input[data-bulk-recruit-id]').forEach(el=>bulkRecruitSelected.add(el.dataset.bulkRecruitId));
+ renderRecruits();
 }
 async function submitBulkRecruits(){
  const ids=[...bulkRecruitSelected],rows=ids.map(id=>recruitsCache.find(x=>x.id===id));
  if(!ids.length){alert('Marque os contatos na tabela antes de encaminhar.');return}
- const cidade=rows[0]?.cidade;
- if(!cidade||rows.some(x=>!x||x.cidade!==cidade)){alert('Selecione somente cadastros de uma cidade.');return}
- if(ids.length>100){alert('Selecione até 100 cadastros por vez.');return}
- if(!confirm('Encaminhar '+ids.length+' cadastro(s) de '+cidade+' ao PCB?'))return;
+ if(rows.some(x=>!x||!x.cidade||cadastroTipo(x)!=='UJC'||x.status!=='ATIVO')){alert('Há cadastros inválidos ou sem cidade na seleção. Atualize a lista.');return}
+ const groups=new Map();
+ rows.forEach(x=>{if(!groups.has(x.cidade))groups.set(x.cidade,[]);groups.get(x.cidade).push(x.id)});
+ const totalCities=groups.size;
+ if(!confirm('Encaminhar '+ids.length+' cadastro(s) de '+totalCities+' cidade(s) ao PCB? As etapas não serão alteradas.'))return;
  const button=document.getElementById('bulkRecruitSubmit');button.disabled=true;
- try{const response=await adminApi('bulk_reclassify_recrutamentos',{cidade,ids});bulkRecruitSelected.clear();await adminRefresh();alert((response.updated||ids.length)+' cadastro(s) reclassificado(s).')}
- catch(e){alert('Falha na atualização: '+e.message)}finally{button.disabled=false}
+ let completed=0,updated=0,failed=[];
+ try{
+  for(const [cidade,cityIds] of groups){
+   for(let i=0;i<cityIds.length;i+=100){
+    const batch=cityIds.slice(i,i+100);
+    try{const response=await adminApi('bulk_reclassify_recrutamentos',{cidade,ids:batch});updated+=response.updated??batch.length;batch.forEach(id=>bulkRecruitSelected.delete(id));completed+=batch.length}
+    catch(e){failed.push(cidade+': '+e.message);break}
+   }
+  }
+  await adminRefresh();
+  alert(updated+' cadastro(s) reclassificado(s) em '+totalCities+' cidade(s).'+(failed.length?' Falhas: '+failed.join('; '):''));
+ }catch(e){alert('Erro ao atualizar lista: '+e.message+'; '+completed+' registros processados.')}
+ finally{button.disabled=false;updateBulkRecruitCount()}
 }
 function renderRecruits(){
 const q=(rq?.value||'').toLowerCase(),f=rf?.value||'',st=rs?.value||'',orig=ro?.value||'';
@@ -937,7 +946,7 @@ const rows=recruitsCache.filter(x=>(!cityFilter||x.cidade===cityFilter)&&(!f||x.
 rows.sort((a,b)=>{const av=String(sortValue(a,recruitSortColumn)),bv=String(sortValue(b,recruitSortColumn));const cmp=av.localeCompare(bv,'pt-BR',{sensitivity:'base',numeric:true});return (cmp||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'}))*recruitSortDirection});
 const headers=[['nome','Nome'],['tipo','Tipo'],['idade','Idade'],['nascimento','Nascimento'],['cidade','Cidade'],['etapa','Etapa'],['responsavel','Responsável'],['proxima_acao','Próxima ação'],['cadastro','Data do cadastro'],['data','Próxima ação em']];
 const thead=headers.map(([key,label])=>'<th scope="col" aria-sort="'+(recruitSortColumn===key?(recruitSortDirection===1?'ascending':'descending'):'none')+'"><button type="button" onclick="sortRecruitsBy(\''+key+'\')" title="Ordenar por '+label+'" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;font-weight:inherit">'+label+' <span aria-hidden="true">'+(recruitSortColumn===key?(recruitSortDirection===1?'▲':'▼'):'↕')+'</span></button></th>').join('');
-recruitList.innerHTML='<table class="atable"><thead><tr><th scope="col">Nº / ☑</th>'+thead+'</tr></thead><tbody>'+rows.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openRecruit(\''+x.id+'\')"><td>'+(i+1)+(adminProfile&&['SUPERADMIN','ADMIN'].includes(adminProfile.role)&&cadastroTipo(x)==='UJC'&&x.status==='ATIVO'?' <input type="checkbox" aria-label="Selecionar '+esc(x.nome)+'" '+(bulkRecruitSelected.has(x.id)?'checked ':'')+'onclick="event.stopPropagation()" onchange="changeBulkRecruit(\''+x.id+'\',this.checked);event.stopPropagation()">':'')+'</td><td><b>'+esc(x.nome)+'</b> '+''+'<br><small>'+esc(x.whatsapp||x.email||'Sem contato informado')+'</small></td><td>'+('<small style="display:inline-block;white-space:nowrap;background:'+({PCB:'#fbe0e3',ENCAMINHADO_PCB:'#dcecff',UJC:'#ffe4b2'}[cadastroTipo(x)]||'#e8edf0')+';color:'+({PCB:'#8e1420',ENCAMINHADO_PCB:'#17457d',UJC:'#653b00'}[cadastroTipo(x)]||'#233c44')+';border-radius:6px;padding:3px 7px;font-weight:700">'+esc(({PCB:'PCB',ENCAMINHADO_PCB:'ENCAMINHADO AO PCB',UJC:'UJC'})[cadastroTipo(x)]||'REVISAR')+'</small>')+'</td><td>'+esc(recruitAge(x)??'—')+'</td><td>'+esc(formatRecruitDate(x.data_nascimento))+'</td><td>'+esc(x.cidade)+'</td><td>'+esc(etapa(x.etapa))+'</td><td>'+esc(respName(x.responsavel_id))+'</td><td>'+esc(x.proxima_acao||'—')+'</td><td>'+esc(formatRecruitDate(x.created_at))+'</td><td>'+esc(formatRecruitDate(x.data_proxima_acao))+'</td></tr>').join('')+'</tbody></table>'+(rows.length?'':'<p style="padding:14px;text-align:center">Nenhum recrutamento encontrado para os filtros selecionados.</p>');
+recruitList.innerHTML='<table class="atable"><thead><tr><th scope="col">Nº / ☑</th>'+thead+'</tr></thead><tbody>'+rows.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openRecruit(\''+x.id+'\')"><td>'+(i+1)+(adminProfile&&['SUPERADMIN','ADMIN'].includes(adminProfile.role)&&cadastroTipo(x)==='UJC'&&x.status==='ATIVO'?' <input type="checkbox" aria-label="Selecionar '+esc(x.nome)+'" '+(bulkRecruitSelected.has(x.id)?'checked ':'')+'data-bulk-recruit-id="'+x.id+'" onclick="event.stopPropagation()" onchange="changeBulkRecruit(\''+x.id+'\',this.checked);event.stopPropagation()">':'')+'</td><td><b>'+esc(x.nome)+'</b> '+''+'<br><small>'+esc(x.whatsapp||x.email||'Sem contato informado')+'</small></td><td>'+('<small style="display:inline-block;white-space:nowrap;background:'+({PCB:'#fbe0e3',ENCAMINHADO_PCB:'#dcecff',UJC:'#ffe4b2'}[cadastroTipo(x)]||'#e8edf0')+';color:'+({PCB:'#8e1420',ENCAMINHADO_PCB:'#17457d',UJC:'#653b00'}[cadastroTipo(x)]||'#233c44')+';border-radius:6px;padding:3px 7px;font-weight:700">'+esc(({PCB:'PCB',ENCAMINHADO_PCB:'ENCAMINHADO AO PCB',UJC:'UJC'})[cadastroTipo(x)]||'REVISAR')+'</small>')+'</td><td>'+esc(recruitAge(x)??'—')+'</td><td>'+esc(formatRecruitDate(x.data_nascimento))+'</td><td>'+esc(x.cidade)+'</td><td>'+esc(etapa(x.etapa))+'</td><td>'+esc(respName(x.responsavel_id))+'</td><td>'+esc(x.proxima_acao||'—')+'</td><td>'+esc(formatRecruitDate(x.created_at))+'</td><td>'+esc(formatRecruitDate(x.data_proxima_acao))+'</td></tr>').join('')+'</tbody></table>'+(rows.length?'':'<p style="padding:14px;text-align:center">Nenhum recrutamento encontrado para os filtros selecionados.</p>');
 labelMobileCells(recruitList,['Nº','Nome / contato','Tipo','Idade','Nascimento','Cidade','Etapa','Responsável','Próxima ação','Data do cadastro','Próxima ação em']);
 }
 function renderCirculists(rows){if(rows)circulistsCache=rows;const q=(cq?.value||'').toLowerCase(),st=cs?.value||'ATIVOS';const list=circulistsCache.filter(x=>(st==='ATIVOS'?!x.archived_at:st==='ARQUIVADOS'?!!x.archived_at:true)&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));circulistList.innerHTML='<table class="atable"><thead><tr><th>Nº</th><th>Nome</th><th>Cidade</th><th>WhatsApp</th><th>Valor</th><th>Situação</th></tr></thead><tbody>'+list.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openCirculist(\''+x.id+'\')"><td>'+(i+1)+'</td><td><b>'+esc(x.nome)+'</b></td><td>'+esc(x.cidade)+'</td><td>'+esc(x.whatsapp)+'</td><td>'+esc(x.valor_preferido||'—')+'</td><td>'+esc(situacao(x.situacao))+'</td></tr>').join('')+'</tbody></table>'}
