@@ -243,6 +243,29 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
  #userList .atable td select{width:100%;max-width:100%;min-width:0}
  #userList .tablewrap{overflow:visible;max-width:100%}
 }
+
+/* Ajuste mobile: tabelas de indicadores sem rolagem horizontal */
+@media(max-width:650px){
+ #a_overview,#overviewCharts,#territoryPanel,#territoryList{min-width:0;max-width:100%}
+ #overviewCharts .ov-chart{min-width:0;max-width:100%}
+ #overviewCharts .ov-chart>div[style*="overflow-x"]{overflow-x:visible!important}
+ #overviewCharts .ov-chart .atable,#territoryList .atable{min-width:0!important;width:100%;table-layout:fixed}
+ #overviewCharts .ov-chart .atable thead,#territoryList .atable thead{display:none}
+ #overviewCharts .ov-chart .atable tbody,#territoryList .atable tbody{display:block;width:100%}
+ #overviewCharts .ov-chart .atable tr,#territoryList .atable tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px 10px;padding:12px 2px;border-bottom:1px solid #e3e7e8;width:100%;box-sizing:border-box}
+ #overviewCharts .ov-chart .atable td,#territoryList .atable td{display:block;min-width:0;overflow-wrap:anywhere;word-break:normal;padding:2px 4px;border:0;font-size:13px;text-align:left}
+ #overviewCharts .ov-chart .atable td:before,#territoryList .atable td:before{display:block;font-size:10px;font-weight:800;color:#63717a;margin-bottom:3px;text-transform:uppercase;letter-spacing:.03em}
+ #overviewCharts .ov-chart .atable td:nth-child(1):before{content:"Data"}
+ #overviewCharts .ov-chart .atable td:nth-child(2):before{content:"Município"}
+ #overviewCharts .ov-chart .atable td:nth-child(3):before{content:"Etapa / próxima ação"}
+ #overviewCharts .ov-chart .atable td:nth-child(3){grid-column:1/-1}
+ #territoryList .atable td:nth-child(1){grid-column:1/-1;font-weight:800;font-size:15px}
+ #territoryList .atable td:nth-child(1):before{content:"Cidade"}
+ #territoryList .atable td:nth-child(2):before{content:"Cadastros"}
+ #territoryList .atable td:nth-child(3):before{content:"Não arquivados"}
+ #territoryList .atable td:nth-child(4){grid-column:1/-1}
+ #territoryList .atable td:nth-child(4) .send{width:100%;padding:9px 12px;font-size:13px}
+}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
