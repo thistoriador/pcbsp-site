@@ -607,8 +607,25 @@ function togglePass(id,b){const el=document.getElementById(id);if(!el)return;con
 const ADMIN_API="https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/admin-api";
 const ADMIN_OPS="https://zhrtwoigrmizpwwzpmwr.supabase.co/functions/v1/admin-ops";
 let adminSession=JSON.parse(localStorage.getItem('pcb_admin_session')||'null'),adminProfile=null,recruitsCache=[],circulistsCache=[],responsaveisCache=[];
-async function adminApi(action,data={},auth=true){const h={'Content-Type':'application/json'};if(auth&&adminSession?.access_token)h.Authorization='Bearer '+adminSession.access_token;const r=await fetch(ADMIN_API,{method:'POST',headers:h,body:JSON.stringify({action,data})});const j=await r.json().catch(()=>({}));if(!r.ok||j.erro)throw Error(j.erro||'Falha na operação.');return j}
-async function adminOps(action,data={}){const h={'Content-Type':'application/json','Authorization':'Bearer '+(adminSession?.access_token||'')};const r=await fetch(ADMIN_OPS,{method:'POST',headers:h,body:JSON.stringify({action,data})});const j=await r.json().catch(()=>({}));if(!r.ok||j.erro)throw Error(j.erro||'Falha na operação.');return j}
+let adminRefreshPromise=null;
+async function renewAdminSession(){
+ if(!adminSession?.refresh_token)throw Error('Sessão expirada. Entre novamente.');
+ if(adminRefreshPromise)return adminRefreshPromise;
+ adminRefreshPromise=(async()=>{
+  const response=await fetch(ADMIN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refresh_session',data:{refresh_token:adminSession.refresh_token}})});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.access_token)throw Error(result.erro||'Sessão expirada. Entre novamente.');
+  adminSession=result;localStorage.setItem('pcb_admin_session',JSON.stringify(result));return result;
+ })();
+ try{return await adminRefreshPromise}finally{adminRefreshPromise=null}
+}
+async function ensureAdminSession(){
+ if(!adminSession?.access_token)return;
+ const expires=Number(adminSession.expires_at||0);
+ if(expires&&expires*1000<Date.now()+120000)await renewAdminSession();
+}
+async function adminApi(action,data={},auth=true){if(auth)await ensureAdminSession();const h={'Content-Type':'application/json'};if(auth&&adminSession?.access_token)h.Authorization='Bearer '+adminSession.access_token;const r=await fetch(ADMIN_API,{method:'POST',headers:h,body:JSON.stringify({action,data})});const j=await r.json().catch(()=>({}));if(!r.ok||j.erro)throw Error(j.erro||'Falha na operação.');return j}
+async function adminOps(action,data={}){await ensureAdminSession();const h={'Content-Type':'application/json','Authorization':'Bearer '+(adminSession?.access_token||'')};const r=await fetch(ADMIN_OPS,{method:'POST',headers:h,body:JSON.stringify({action,data})});const j=await r.json().catch(()=>({}));if(!r.ok||j.erro)throw Error(j.erro||'Falha na operação.');return j}
 function adminPassword(v,min=0){v=String(v||'');if(v.length<min)throw Error('A senha deve ter pelo menos '+min+' caracteres.');return v+'::P!'}
 function validateRequestLogin(){const field=document.getElementById('reqAdminLogin');const v=field.value.trim();const counter=document.getElementById('loginCount');if(counter)counter.textContent=v.length+'/20';return /^[a-z0-9]{6,20}$/.test(v)}
 document.getElementById('reqAdminLogin')?.addEventListener('input',()=>{const field=document.getElementById('reqAdminLogin');field.value=field.value.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20);validateRequestLogin();const box=document.getElementById('reqAdminMsg');if(box)box.textContent='';});
