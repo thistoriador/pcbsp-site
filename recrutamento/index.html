@@ -516,6 +516,26 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 #circulistList{max-width:100%;overflow-x:auto}
 #bulkRecruitPanel[hidden]{display:none!important}
 #bulkRecruitCandidates label{font-size:14px}
+/* Ajuste responsivo exclusivo da tabela de recrutamentos (2026-10-10). */
+@media(max-width:760px){
+ #recruitList .atable{table-layout:fixed!important;width:100%!important}
+ #recruitList .atable th:nth-child(4),#recruitList .atable td:nth-child(4),
+ #recruitList .atable th:nth-child(5),#recruitList .atable td:nth-child(5),
+ #recruitList .atable th:nth-child(8),#recruitList .atable td:nth-child(8),
+ #recruitList .atable th:nth-child(9),#recruitList .atable td:nth-child(9),
+ #recruitList .atable th:nth-child(10),#recruitList .atable td:nth-child(10),
+ #recruitList .atable th:nth-child(11),#recruitList .atable td:nth-child(11){display:none!important}
+ #recruitList .atable th:nth-child(1),#recruitList .atable td:nth-child(1){width:8%!important}
+ #recruitList .atable th:nth-child(2),#recruitList .atable td:nth-child(2){width:38%!important}
+ #recruitList .atable th:nth-child(3),#recruitList .atable td:nth-child(3){width:16%!important}
+ #recruitList .atable th:nth-child(6),#recruitList .atable td:nth-child(6){width:23%!important}
+ #recruitList .atable th:nth-child(7),#recruitList .atable td:nth-child(7){width:15%!important}
+ #recruitList .atable th,#recruitList .atable td{font-size:11px!important;padding:9px 4px!important;overflow-wrap:break-word!important}
+ #recruitList .atable th button{font-size:11px!important;gap:2px!important}
+ #recruitList .atable th:nth-child(1){font-size:0!important}
+ #recruitList .atable th:nth-child(1)::after{content:"Nº";font-size:11px!important}
+ #recruitList .atable td:nth-child(2) small{display:block;font-size:10px!important;overflow-wrap:anywhere}
+}
 </style>
 <style id="library-documents-style">.library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}.library-item{border:1px solid #dce1e6;border-radius:12px;padding:16px;min-width:0;overflow-wrap:anywhere}.library-item b{display:block;font-size:15px}.library-item p{font-size:13px;color:#647078}.library-item a{color:#a70e1c;font-weight:700;text-decoration:underline}</style><style id="territory-designated-mobile">
 @media(max-width:700px){
