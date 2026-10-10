@@ -521,6 +521,17 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
  #recruitList .recruit-mobile-owner{display:block;margin-top:4px;font-size:10px;font-weight:700;line-height:1.3;color:#9a5700}
  #recruitList .recruit-mobile-owner[aria-label^="Com responsável"]{color:#08775e}
 }
+.recruit-owner-board{margin:12px 0 16px;padding:14px;border:1px solid #dce3e6;border-radius:12px;background:#fff}
+.recruit-owner-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.recruit-owner-head strong{display:block;font-size:15px;color:#243642}
+.recruit-owner-head small{display:block;font-size:12px;color:#627481;margin-top:3px}
+.recruit-owner-reset{border:1px solid #b7c6ce;background:#fff;border-radius:8px;padding:7px 10px;color:#215263;cursor:pointer}
+.recruit-owner-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px}
+.recruit-owner-item{border:1px solid #dce3e6;background:#f8fafb;color:#263642;border-radius:9px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;text-align:left;font:inherit;font-size:12px}
+.recruit-owner-item span{overflow-wrap:anywhere}
+.recruit-owner-item b{font-size:17px;color:#006b74;flex:none}
+.recruit-owner-item.selected{outline:2px solid #006b74;background:#e8f5f5}
+@media(max-width:760px){.recruit-owner-items{grid-template-columns:repeat(2,minmax(0,1fr))}.recruit-owner-board{padding:10px}.recruit-owner-item{padding:8px;font-size:11px}}
 /* Ajuste responsivo exclusivo da tabela de recrutamentos (2026-10-10). */
 @media(max-width:760px){
  #recruitList .atable{table-layout:fixed!important;width:100%!important}
@@ -645,7 +656,7 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 <button type="button" class="send" id="bulkRecruitSubmit" onclick="submitBulkRecruits()">Encaminhar selecionados ao PCB</button>
 <span id="bulkRecruitCount" role="status">0 selecionado(s)</span>
 </div><small>Marque contatos UJC de uma ou várias cidades diretamente na tabela. O filtro de cidade é opcional; as etapas serão preservadas.</small>
-</div><div id="recruitList" class="tablewrap"></div></div>
+</div><section id="recruitOwnerBoard" class="recruit-owner-board" aria-label="Distribuição por responsável"></section><div id="recruitList" class="tablewrap"></div></div>
 <div id="a_circulists" class="atab panel" style="display:none"><div class="adminfilters"><input id="cq" placeholder="Buscar circulista" oninput="renderCirculists()"><select id="cs" onchange="renderCirculists()"><option value="ATIVOS">Ativos</option><option value="ARQUIVADOS">Arquivados</option><option value="">Todos</option></select></div><div id="circulistList" class="tablewrap"></div></div>
 <div id="a_documents" class="atab panel" style="display:none">
 <h3>📚 Biblioteca de documentos</h3><p>Materiais de consulta para todos os usuários com acesso ao sistema. Os links são carregados apenas quando você os abre.</p>
@@ -937,6 +948,8 @@ async function sendInternalMessage(e){
 function adminLogout(){adminSession=null;adminProfile=null;localStorage.removeItem('pcb_admin_session');adminPanel.style.display='none';document.getElementById('adminLoginBox').style.display='block'}
 function adminHome(){go('home')}
 function respName(id){return (responsaveisCache.find(x=>x.user_id===id)||{}).nome||'Sem responsável'}
+let recruitOwnerFilter='TODOS';
+function filterRecruitsByOwner(id){recruitOwnerFilter=(recruitOwnerFilter===id?'TODOS':id);renderRecruits()}
 let recruitSortColumn='nome',recruitSortDirection=1;
 function sortRecruitsBy(column){if(recruitSortColumn===column)recruitSortDirection*=-1;else{recruitSortColumn=column;recruitSortDirection=1}renderRecruits()}
 function setRecruitOrder(value){const parts=String(value||'nome').split('_');recruitSortColumn=parts[0]==='cidade'?'cidade':'nome';recruitSortDirection=parts[1]==='desc'?-1:1;renderRecruits()}
@@ -997,7 +1010,16 @@ const q=(rq?.value||'').toLowerCase(),f=rf?.value||'',st=rs?.value||'',orig=ro?.
 
 const sortValue=(x,key)=>key==='idade'?(recruitAge(x)??-1):key==='nascimento'?(x.data_nascimento||''):key==='tipo'?cadastroTipo(x):key==='responsavel'?respName(x.responsavel_id):key==='cadastro'?(x.created_at||''):key==='data'?(x.data_proxima_acao||''):key==='etapa'?etapa(x.etapa):key==='proxima_acao'?(x.proxima_acao||''):x[key]||'';
 const cityFilter=document.getElementById('bulkRecruitCity')?.value||'';
-const rows=recruitsCache.filter(x=>(!cityFilter||x.cidade===cityFilter)&&(!f||x.etapa===f)&&(!st||x.status===st)&&(!orig||(cadastroTipo(x)===orig))&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));
+const baseRows=recruitsCache.filter(x=>(!cityFilter||x.cidade===cityFilter)&&(!f||x.etapa===f)&&(!st||x.status===st)&&(!orig||(cadastroTipo(x)===orig))&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));
+const ownerCounts=new Map();
+baseRows.forEach(x=>{const id=x.responsavel_id||'SEM';ownerCounts.set(id,(ownerCounts.get(id)||0)+1)});
+const ownerEntries=[...ownerCounts.entries()].sort((a,b)=>b[1]-a[1]||respName(a[0]).localeCompare(respName(b[0]),'pt-BR'));
+const ownerBoard=document.getElementById('recruitOwnerBoard');
+if(ownerBoard){
+ const total=baseRows.length,unassigned=ownerCounts.get('SEM')||0;
+ ownerBoard.innerHTML='<div class="recruit-owner-head"><div><strong>Distribuição por responsável</strong><small>'+total+' contato(s) nos filtros atuais · '+unassigned+' sem responsável</small></div><button type="button" class="recruit-owner-reset" onclick="filterRecruitsByOwner(\'TODOS\')">Mostrar todos</button></div><div class="recruit-owner-items">'+ownerEntries.map(([id,n])=>'<button type="button" class="recruit-owner-item'+(recruitOwnerFilter===id?' selected':'')+'" onclick="filterRecruitsByOwner(\''+id+'\')" aria-pressed="'+(recruitOwnerFilter===id)+'"><span>'+esc(id==='SEM'?'Sem responsável':respName(id))+'</span><b>'+n+'</b></button>').join('')+'</div>';
+}
+const rows=baseRows.filter(x=>recruitOwnerFilter==='TODOS'||(x.responsavel_id||'SEM')===recruitOwnerFilter);
 rows.sort((a,b)=>{const av=String(sortValue(a,recruitSortColumn)),bv=String(sortValue(b,recruitSortColumn));const cmp=av.localeCompare(bv,'pt-BR',{sensitivity:'base',numeric:true});return (cmp||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR',{sensitivity:'base'}))*recruitSortDirection});
 const headers=[['nome','Nome'],['tipo','Tipo'],['idade','Idade'],['nascimento','Nascimento'],['cidade','Cidade'],['etapa','Etapa'],['responsavel','Responsável'],['proxima_acao','Próxima ação'],['cadastro','Data do cadastro'],['data','Próxima ação em']];
 const thead=headers.map(([key,label])=>'<th scope="col" aria-sort="'+(recruitSortColumn===key?(recruitSortDirection===1?'ascending':'descending'):'none')+'"><button type="button" onclick="sortRecruitsBy(\''+key+'\')" title="Ordenar por '+label+'" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;font-weight:inherit">'+label+' <span aria-hidden="true">'+(recruitSortColumn===key?(recruitSortDirection===1?'▲':'▼'):'↕')+'</span></button></th>').join('');
