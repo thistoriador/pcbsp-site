@@ -655,6 +655,8 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
 <button type="button" class="send secondary" onclick="toggleBulkRecruits(false)">Desmarcar</button>
 <button type="button" class="send" id="bulkRecruitSubmit" onclick="submitBulkRecruits()">Encaminhar selecionados ao PCB</button>
 <button type="button" class="send secondary" id="bulkRecruitSubmitUJC" onclick="submitBulkRecruitsUJC()">Encaminhar selecionados à UJC</button>
+<label for="bulkRecruitOwner" style="font-weight:600">Atribuir responsável:</label><select id="bulkRecruitOwner" aria-label="Responsável para atribuição em lote" style="max-width:230px"><option value="">Escolha o responsável</option></select>
+<button type="button" class="send secondary" id="bulkAssignButton" onclick="assignBulkRecruits()">Atribuir selecionados</button>
 <span id="bulkRecruitCount" role="status">0 selecionado(s)</span>
 </div><small>Selecione contatos na tabela para encaminhar à UJC ou ao PCB. O filtro de cidade é opcional; etapas e responsáveis serão preservados.</small>
 </div><section id="recruitOwnerBoard" class="recruit-owner-board" aria-label="Distribuição por responsável"></section><div id="recruitList" class="tablewrap"></div></div>
@@ -1135,7 +1137,7 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  if(refreshBtn){refreshBtn.disabled=true;refreshBtn.textContent='↻ Atualizando...'}
  const d=await adminApi('dashboard');
  const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];renderBulkRecruits();
- if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[]}
+ if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[];renderBulkRecruits()}
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const semResp=ativos.filter(x=>!x.responsavel_id).length,atrasados=ativos.filter(x=>x.data_proxima_acao&&x.data_proxima_acao<hoje).length,hojeN=ativos.filter(x=>x.data_proxima_acao===hoje).length;
  astats.innerHTML='<div class="stat stat-red"><b>'+recruitsCache.length+'</b><small>TOTAL DE CADASTROS</small></div><div class="stat stat-green"><b>'+ativos.filter(x=>x.etapa==='NOVO_CONTATO').length+'</b><small>NOVOS CONTATOS</small></div><div class="stat stat-orange"><b>'+ativos.filter(x=>x.etapa==='ACOMPANHAMENTO').length+'</b><small>EM ACOMPANHAMENTO</small></div><div class="stat stat-blue"><b>'+arquivadosN+'</b><small>ARQUIVADOS</small></div>';
@@ -1144,7 +1146,7 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  const stageHtml=stages.map(([k,label])=>{const n=(k==='DESISTENCIA'?recruitsCache:ativos).filter(x=>x.etapa===k).length,p=Math.round(n*100/total);return '<div class="stageitem"><b>'+n+'</b><strong>'+label.toUpperCase()+'</strong><small>'+p+'%</small></div>'}).join('');
  astages.innerHTML='<div class="overviewgrid"><div class="stagepanel"><h3>Etapas do recrutamento</h3><div class="stageflow">'+stageHtml+'</div><details class="stage-explainer" style="margin-top:12px;border-top:1px solid #dce3e8;padding-top:10px"><summary style="cursor:pointer;font-weight:700;color:#174b59">O que significa cada etapa?</summary><dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px 14px;margin:12px 0 0"><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">A classificar</dt><dd style="margin:2px 0 0">Cadastro recebido, ainda sem avaliação inicial ou encaminhamento definido.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Novo contato</dt><dd style="margin:2px 0 0">Primeiro contato realizado ou em preparação para conhecer o interesse da pessoa.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Acompanhamento</dt><dd style="margin:2px 0 0">Diálogo em andamento, com contatos periódicos e esclarecimento de dúvidas.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Reunião / Conversa</dt><dd style="margin:2px 0 0">Encontro individual ou coletivo para aprofundar o diálogo sobre a organização e o ingresso.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Formação</dt><dd style="margin:2px 0 0">Participação em leituras, encontros e atividades formativas preparatórias.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Ingresso</dt><dd style="margin:2px 0 0">Integração formal à organização correspondente, após conclusão do processo.</dd></div><div style="font-size:12px;line-height:1.45"><dt style="font-weight:700">Desistência</dt><dd style="margin:2px 0 0">Pessoa que informou não desejar continuar o recrutamento.</dd></div></dl></details></div><aside class="attentionpanel"><h3>ATENÇÃO RÁPIDA</h3><div class="attentionlist"><div class="attentionitem"><b>'+semResp+'</b><span>SEM RESPONSÁVEL</span></div><div class="attentionitem"><b>'+atrasados+'</b><span>AÇÕES ATRASADAS</span></div><div class="attentionitem"><b>'+hojeN+'</b><span>AÇÕES PARA HOJE</span></div></div></aside></div>';
  if(['SUPERADMIN','ADMIN'].includes(adminProfile.role))renderOverviewCharts();else document.getElementById('overviewCharts').innerHTML='';
- if(adminProfile.role==='RECRUTADOR_ESTADUAL')await loadStateTerritory();else if(['SUPERADMIN','ADMIN','RECRUTADOR_LOCAL'].includes(adminProfile.role)){document.getElementById('territoryPanel').style.display='';document.querySelector('#territoryPanel h3').textContent=adminProfile.role==='RECRUTADOR_LOCAL'?'Mapa dos meus recrutamentos':'Distribuição dos cadastros por cidade';renderTerritory()}else document.getElementById('territoryPanel').style.display='none';
+ if(adminProfile.role==='RECRUTADOR_ESTADUAL')await loadStateTerritory();else if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){document.getElementById('territoryPanel').style.display='';renderTerritory()}else if(adminProfile.role==='RECRUTADOR_LOCAL'){document.getElementById('territoryPanel').style.display='';document.querySelector('#territoryPanel h3').textContent='Mapa dos meus recrutamentos';renderTerritory()}else document.getElementById('territoryPanel').style.display='none';
  renderRecruits();
  if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const c=await adminApi('list_circulistas');circulistsCache=c.rows||[];renderCirculists()}
  if(adminProfile.role==='SUPERADMIN')await loadUsers()
@@ -1327,6 +1329,8 @@ function renderBulkRecruits(){
  const panel=document.getElementById('bulkRecruitPanel');if(!panel)return;
  const allowed=['SUPERADMIN','ADMIN'].includes(adminProfile?.role);panel.hidden=!allowed;
  if(!allowed){bulkRecruitSelected.clear();return}
+ const ownerSelect=document.getElementById('bulkRecruitOwner');
+ if(ownerSelect){const chosen=ownerSelect.value;ownerSelect.replaceChildren(new Option('Escolha o responsável',''),...responsaveisCache.filter(u=>u.user_id).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(u=>new Option(u.nome,u.user_id)));if([...ownerSelect.options].some(o=>o.value===chosen))ownerSelect.value=chosen}
  const sel=document.getElementById('bulkRecruitCity'),old=sel.value;
  const cities=[...new Set(recruitsCache.filter(x=>x.cidade).map(x=>x.cidade))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
  sel.replaceChildren(new Option('Todas as cidades',''),...cities.map(c=>new Option(c,c)));
@@ -1346,6 +1350,26 @@ function toggleBulkRecruits(checked){
  if(!checked){bulkRecruitSelected.clear();renderRecruits();return}
  document.querySelectorAll('#recruitList input[data-bulk-recruit-id]').forEach(el=>bulkRecruitSelected.add(el.dataset.bulkRecruitId));
  renderRecruits();
+}
+async function assignBulkRecruits(){
+ const ids=[...bulkRecruitSelected],owner=document.getElementById('bulkRecruitOwner')?.value;
+ if(!ids.length){alert('Selecione pelo menos um cadastro na tabela.');return}
+ if(!owner){alert('Escolha o responsável para os cadastros selecionados.');return}
+ const person=responsaveisCache.find(u=>u.user_id===owner);
+ if(!person){alert('Responsável inválido. Atualize a página.');return}
+ if(!confirm('Atribuir '+ids.length+' recrutamento(s) a '+person.nome+'? Responsáveis anteriores serão substituídos; etapas e observações serão preservadas.'))return;
+ const button=document.getElementById('bulkAssignButton');button.disabled=true;
+ let count=0;const failures=[];
+ try{
+  for(let i=0;i<ids.length;i+=100){
+   const batch=ids.slice(i,i+100);
+   try{const result=await adminApi('bulk_assign_recrutamentos',{ids:batch,responsavel_id:owner});count+=result.updated||batch.length;batch.forEach(id=>bulkRecruitSelected.delete(id))}
+   catch(e){failures.push(e.message);break}
+  }
+  await adminRefresh();
+  alert(count+' recrutamento(s) atribuído(s) a '+person.nome+(failures.length?'. Erro: '+failures.join('; '):'.'));
+ }catch(e){alert('Erro ao atualizar lista: '+e.message)}
+ finally{button.disabled=false;updateBulkRecruitCount()}
 }
 async function submitBulkRecruitsUJC(){
  const ids=[...bulkRecruitSelected],rows=ids.map(id=>recruitsCache.find(x=>x.id===id));
