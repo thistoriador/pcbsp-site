@@ -50,3 +50,6 @@ Foram apresentadas prévias locais chamadas `pcbsp-home-preview`, `pcbsp-home-im
 
 ## 8. Limites deste checkpoint
 Este commit registra **somente decisões e histórico** na branch `checkpoint-homepage-2026-10-10`. Não altera a homepage em produção, não publica HTML, não implementa CMS e não altera bancos ou aplicativos.
+
+## 9. Revisão de pré-lançamento (10/10/2026)
+Arquivo local gerado: `pcbsp-home-v1-revisada.zip` (entregue na conversa; não versionado no GitHub). Revisões: logo PNG original enviado pelo usuário; destinos oficiais UJC `https://www.instagram.com/ujc.sp.oficial/`, Unidade Classista `https://www.instagram.com/uc_paulista/`, Ana Montenegro nacional `https://www.instagram.com/anamontenegro.br/`; redação sobre luta revolucionária, socialismo e Poder Popular; Notícias ausentes; formulário e apoio ainda inativos. **A versão revisada não foi publicada.** Próxima etapa: homologação em staging, conferir arquivos e links, autorização para substituir homepage em produção.
