@@ -69,17 +69,18 @@ async function registerPP(){
 }
 async function loginPP(){
  const u=document.getElementById('loginUser').value.trim(),p=document.getElementById('loginPass').value;
- if(!u||!p)return document.getElementById('loginMsg').textContent='Informe usuário e senha.';
- const b=document.getElementById('loginBtn');b.disabled=true;b.textContent='ENTRANDO...';
- let email=u;
- if(!u.includes('@')){
-   const {data,error}=await sb.functions.invoke('admin-api',{body:{action:'resolve-login',login_name:u}});
-   if(error||!data?.email){document.getElementById('loginMsg').textContent='Usuário ou senha inválidos.';b.disabled=false;b.textContent='ENTRAR';return}
-   email=data.email;
- }
- const {data,error}=await sb.auth.signInWithPassword({email,password:p});
- if(error){document.getElementById('loginMsg').textContent='Usuário ou senha inválidos.';b.disabled=false;b.textContent='ENTRAR';return}
- await enterPrivate(data.user);b.disabled=false;b.textContent='ENTRAR';
+ const msg=document.getElementById('loginMsg'),btn=document.getElementById('loginBtn');
+ if(!u||!p){msg.textContent='Informe usuário e senha.';return}
+ btn.disabled=true;btn.textContent='ENTRANDO...';msg.textContent='';
+ try{
+   const r=await fetch(SB_URL+'/functions/v1/admin-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'login',data:{login_name:u,password:p+'::P!'}})});
+   const x=await r.json();
+   if(!r.ok||!x.access_token)throw new Error(x.erro||'Usuário ou senha inválidos.');
+   const {data,error}=await sb.auth.setSession({access_token:x.access_token,refresh_token:x.refresh_token});
+   if(error||!data.user)throw new Error('Não foi possível iniciar a sessão.');
+   await enterPrivate(data.user);
+ }catch(e){msg.textContent=e.message||'Não foi possível entrar.'}
+ finally{btn.disabled=false;btn.textContent='ENTRAR'}
 }
 async function enterPrivate(user){
  const {data:prof,error}=await sb.from('pp_aplicadores').select('nome,perfil,ativo').eq('user_id',user.id).maybeSingle();
