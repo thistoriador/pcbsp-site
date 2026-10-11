@@ -1290,7 +1290,7 @@ function filterLibraryDocuments(){const q=(document.getElementById("documentSear
 function adminTab(n){document.querySelectorAll('.atab').forEach(x=>x.style.display='none');document.getElementById('a_'+n).style.display='block';if(n==='overview'&&territoryMap){requestAnimationFrame(()=>setTimeout(()=>{territoryMap.invalidateSize({pan:false});if(territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15),{animate:false})},220))}document.querySelectorAll('.admintabs button').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes("'"+n+"'")))}
 let internalMessageFolder='inbox',internalMessages=[];
 async function loadMessageContacts(){
- try{const x=await adminApi('message_contacts');const sel=document.getElementById('messageTo');sel.innerHTML='<option value="">Selecione um usuário</option>'+(x.rows||[]).map(u=>'<option value="'+esc(u.user_id)+'">'+esc(u.nome)+' ('+esc(u.role)+')</option>').join('')}
+ try{const x=await adminApi('message_contacts');const sel=document.getElementById('messageTo');sel.innerHTML='<option value="">Selecione um usuário</option>'+(['SUPERADMIN','ADMIN'].includes(adminProfile?.role)?'<option value="__ALL__">📣 Todos os usuários ativos</option>':'')+(x.rows||[]).map(u=>'<option value="'+esc(u.user_id)+'">'+esc(u.nome)+' ('+esc(u.role)+')</option>').join('')}
  catch(e){document.getElementById('messageStatus').textContent=e.message}
 }
 async function loadInternalMessages(folder){
@@ -1308,7 +1308,7 @@ async function openInternalMessage(i){
 async function sendInternalMessage(e){
  e.preventDefault();const btn=document.getElementById('messageSendBtn'),status=document.getElementById('messageStatus');
  btn.disabled=true;status.textContent='Enviando...';
- try{await adminApi('message_send',{recipient_id:document.getElementById('messageTo').value,subject:document.getElementById('messageSubject').value,body:document.getElementById('messageBody').value});document.getElementById('internalMessageForm').reset();document.getElementById('composeMessage').hidden=true;status.textContent='Mensagem enviada.';await loadInternalMessages('sent')}
+ try{const recipient=document.getElementById('messageTo').value,subject=document.getElementById('messageSubject').value,body=document.getElementById('messageBody').value;let result;if(recipient==='__ALL__'){if(!['SUPERADMIN','ADMIN'].includes(adminProfile?.role))throw Error('Envio coletivo reservado à administração.');if(!confirm('Enviar esta mensagem a TODOS os usuários ativos e aprovados do portal, exceto você? Esta ação não pode ser desfeita.')){status.textContent='Envio cancelado.';return}result=await adminApi('message_send_batch',{all:true,subject,body})}else{result=await adminApi('message_send',{recipient_id:recipient,subject,body})}document.getElementById('internalMessageForm').reset();document.getElementById('composeMessage').hidden=true;status.textContent=recipient==='__ALL__'?'Mensagem enviada para '+(result.sent??'todos os')+' destinatários.':'Mensagem enviada.';await loadInternalMessages('sent')}
  catch(err){status.textContent='Não foi possível enviar: '+err.message}finally{btn.disabled=false}
 }
 function adminLogout(){adminSession=null;adminProfile=null;localStorage.removeItem('pcb_admin_session');adminPanel.style.display='none';document.getElementById('adminLoginBox').style.display='block'}
