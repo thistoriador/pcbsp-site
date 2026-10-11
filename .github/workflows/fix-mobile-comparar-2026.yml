@@ -1,0 +1,67 @@
+name: Restaurar Comparar no menu mobile
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-mobile-comparar-2026.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Inserir link Comparar na barra inferior sem alterar o mapa
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('mapa/index.html')
+          s=p.read_text(encoding='utf-8')
+          old=s
+          if 'id="mobileCompareElection2026"' in s:
+              print('Comparar ja existe: sem alteracoes')
+              raise SystemExit(0)
+          # A barra inferior contém os cinco controles existentes.
+          m=re.search(r'<div class="mobilebar">(?P<inner>.*?)</div>',s,re.S)
+          if not m:
+              raise SystemExit('ABORT: barra mobile nao encontrada')
+          inner=m.group('inner')
+          for name in ('Início','Candidaturas','Território','Panorama','Sobre'):
+              if name not in inner:
+                  raise SystemExit('ABORT: item original ausente: '+name)
+          icon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h15m0 0-4-4m4 4-4 4M20 17H5m0 0 4-4m-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+          link='<a id="mobileCompareElection2026" href="/mapa/comparar/" aria-label="Comparar eleições"><span>'+icon+'</span>Comparar</a>'
+          new_inner=inner+link
+          s=s[:m.start('inner')]+new_inner+s[m.end('inner'):]
+          css='''<style id="mobile-comparar-2026-fix">
+          @media(max-width:980px){
+            .mobilebar{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+            .mobilebar #mobileCompareElection2026{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:#292929;font-size:10px;font-weight:800;min-width:0;padding:8px 1px 6px}
+            .mobilebar #mobileCompareElection2026 span{display:block;height:24px;width:24px;margin-bottom:3px}
+            .mobilebar #mobileCompareElection2026 svg{width:24px;height:24px;display:block}
+            .mobilebar button{min-width:0}
+          }
+          </style>'''
+          if '</head>' not in s: raise SystemExit('ABORT: sem head')
+          s=s.replace('</head>',css+'</head>',1)
+          assert s.count('id="mobileCompareElection2026"')==1
+          assert s.count('href="/mapa/comparar/"')>=1
+          assert len(s)>2000000
+          assert s!=old
+          p.write_text(s,encoding='utf-8')
+          print('OK: menu atualizado',len(old),'->',len(s))
+          PY
+      - name: Commit isolado
+        run: |
+          if git diff --quiet -- mapa/index.html; then echo "Sem alteracoes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mapa/index.html
+          git diff --cached --check
+          git commit -m "fix: restaurar Comparar na barra inferior mobile do mapa"
+          git push
