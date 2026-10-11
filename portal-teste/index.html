@@ -6,6 +6,22 @@
 @media(max-width:700px){.wrap{padding-inline:15px}.headrow{min-height:67px;flex-wrap:nowrap}.brand img{height:50px;width:66px}.brand span{font-size:13px}.menu-toggle{display:block;margin-left:auto}.nav,.nav-actions{display:none}.headrow.menu-open{flex-wrap:wrap}.headrow.menu-open .nav{display:flex;flex-basis:100%;order:3;flex-direction:column;align-items:stretch;gap:0}.headrow.menu-open .nav a{padding:11px;border-top:1px solid #ffffff30;font-size:14px}.headrow.menu-open .nav-actions{display:flex;order:4;width:100%;margin:0;flex-direction:column}.topbtn{text-align:center;font-size:13px}.hero,.hero-inner{min-height:345px}.hero-inner{padding-block:38px}.hero h1{letter-spacing:-1px}.hero:after{font-size:200px;right:-30px;top:15px}.actions{grid-template-columns:1fr;gap:12px;padding-block:13px}.action{min-height:226px}.action-content{padding:20px;max-width:77%}.action h2{font-size:35px}.action p{font-size:13px}.action .photo{width:62%}.section{padding-block:31px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile-photo{height:150px}.tile-body{padding:12px;min-height:220px}.tile h3{font-size:16px}.tile p{font-size:12px}.watermark{width:90px;height:90px}.tile.uc .watermark{width:130px}.tile-link{font-size:11px;padding:9px 5px}.editorial-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.closing-grid{grid-template-columns:1fr}.closing{padding:35px 0}}
 @media(max-width:420px){.editorial-grid{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.tile-photo{height:205px}.tile-body{min-height:150px}.tile h3{font-size:19px}.tile p{font-size:13px}.watermark{width:125px;height:125px}.tile.uc .watermark{width:170px}.action-content{max-width:83%}.action .photo{width:66%}.action h2{font-size:32px}}
 </style><style>
+/* Contato compacto: preservar o bloco editorial Organizar/Formar/Multiplicar */
+.closing{padding:26px 0}
+.closing-grid{grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr);gap:28px;align-items:center}
+.closing h2{font-size:clamp(38px,5vw,60px);margin-bottom:12px}
+.closing p{margin:0;font-size:14px}
+.contact{padding:15px 18px;max-width:390px;width:100%;justify-self:end}
+.contact h3{font-size:18px;margin:0 0 4px}
+.contact>p{font-size:12px;line-height:1.35;margin:0 0 8px}
+.contact form{gap:4px}
+.contact form label{font-size:11px}
+.contact form input,.contact form textarea{padding:6px 8px;font-size:12px}
+.contact form textarea{min-height:60px;height:60px;resize:vertical}
+.contact form button{margin-top:5px;padding:8px 10px;font-size:12px}
+.contact .contact-note{font-size:10px;line-height:1.35;padding:7px;margin-top:8px}
+@media(max-width:700px){.closing-grid{grid-template-columns:1fr;gap:20px}.contact{max-width:100%;justify-self:stretch}.closing{padding:25px 0}}
+</style><style>
 .hero::after{content:none!important}
 .tile-body{min-height:168px!important;padding:15px!important}
 .tile p{margin-bottom:12px!important}
