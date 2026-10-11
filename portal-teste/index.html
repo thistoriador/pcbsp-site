@@ -49,7 +49,12 @@
 .editorial-grid .feature.formation .soon{background:linear-gradient(135deg,#ffdc00,#e5b900);color:#171717;border-color:#ffdc00;box-shadow:0 3px 12px #0006}
 .editorial-grid .feature a.soon:hover,.editorial-grid .feature a.soon:focus-visible{background:var(--yellow);color:#111}
 @media(max-width:700px){.cards .tile-photo{margin-bottom:-18px}.cards .tile-link{min-height:43px}.editorial-grid .feature .soon{min-height:42px;font-size:11px}}
-</style><style>.feature.formation{background-image:linear-gradient(0deg,#090909ed,#09090955),url('assets/formacao-historica.jpg');background-position:center 42%}</style></head><body>
+</style><style>.feature.formation{background-image:linear-gradient(0deg,#090909ed,#09090955),url('assets/formacao-historica.jpg');background-position:center 42%}</style><style>
+/* Marcas-d'água: fundir fundos retangulares escuros ao cartão, sem mexer nas fotos */
+.cards .tile-body .watermark{mix-blend-mode:screen!important;filter:contrast(1.45) brightness(.85);opacity:.19!important}
+.cards .tile.uc .watermark,.cards .tile.ana .watermark{opacity:.16!important}
+.cards .tile.lgbt .watermark,.cards .tile.minervino .watermark{opacity:.16!important}
+</style></head><body>
 
 <header class="header"><div class="wrap headrow" id="headrow"><a aria-label="PCB São Paulo, início" class="brand" href="#inicio"><img alt="Logomarca original PCB São Paulo" src="assets/pcb-sp-logo.png"/><span>PCB<br/>SÃO PAULO</span></a><button aria-controls="mainnav" aria-expanded="false" class="menu-toggle" id="menu-toggle" type="button">☰ Menu</button><nav aria-label="Navegação principal" class="nav" id="mainnav"><a href="#inicio">Início</a><a href="#opcb">O PCB</a><a href="Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf" target="_blank" rel="noopener noreferrer" style="color:#ffdc00;font-weight:900">PROGRAMA PARA SP ↗</a><a href="#atuacao">Nossa atuação</a><a href="galeria/">Galeria de Arte</a><a href="#contato">Contato</a></nav><div class="nav-actions"><a class="topbtn organize" href="https://pcbsp.com.br/recrutamento/">ORGANIZE SUA REVOLTA ↗</a><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
 <main id="inicio"><section class="hero" id="opcb"><div class="wrap hero-inner"><span class="eyebrow">Partido Comunista Brasileiro · São Paulo</span><h1>Conheça o PCB.<br/><span>Vamos conversar?</span></h1><p>Organizamos a luta revolucionária pela superação do capitalismo, pela construção do socialismo e pelo Poder Popular.</p><a class="btn red" href="#contato">Vamos conversar →</a></div></section>
