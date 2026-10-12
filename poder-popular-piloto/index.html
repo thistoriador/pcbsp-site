@@ -165,10 +165,14 @@ const deckSourceUrls=["https://tr.ee/P3CnvVp1fQ0i","https://tr.ee/Uii3CdShBwxl",
 for(const item of deckData)item.sourceUrl=deckSourceUrls[item.n-1];
 // Carta 23: vídeo indicado especificamente para esta carta.
 deckData.find(item=>item.n===23).sourceUrl='https://www.instagram.com/reel/DeRyHvChwIx/?obrf=bm5wd3lqMzZ5aWsz';
-const deckArtKind={1:'pix',2:'petroleo',3:'trabalho',4:'pf',5:'crime',6:'universidade',7:'cotas',8:'tributos',9:'redes',10:'social',11:'salario',12:'creche',13:'sus',14:'mulher',15:'seguranca',16:'saude',17:'tarifas',18:'eua',19:'clima',20:'vacina',21:'armas',22:'anistia',23:'milicia',24:'cortes',25:'racismo',26:'mulheres',27:'trabalho',28:'social',29:'salario',30:'sus',31:'trabalho',32:'banco'};
+const deckArtKind=['pix','petroleo','trabalho','pf','crime','universidade','cotas','tributos','redes','social','salario','creche','sus','mulher','seguranca','saude','tarifas','eua','clima','vacina','armas','anistia','milicia','cortes','racismo','mulheres','trabalho','social','salario','sus','trabalho','banco'];
 function deckPosterArt(x){
- const k=deckArtKind[x.n], bad=x.n>=17, bg=bad?'#b9d2e4':'#f2c9b8', ink=bad?'#164f78':'#b3121b', dark='#171717';
- const icons={pix:'PIX',petroleo:'⛽',trabalho:'⚙',pf:'PF',crime:'
+ const k=deckArtKind[x.n-1]||'povo',bad=x.n>=17,bg=bad?'#b9d2e4':'#f2c9b8',ink=bad?'#164f78':'#b3121b';
+ const icons={pix:'PIX',petroleo:'PETRÓLEO',trabalho:'TRABALHO',pf:'PF',crime:'$',universidade:'UNI',cotas:'COTAS',tributos:'%',redes:'@',social:'SOCIAL',salario:'↗',creche:'ABC',sus:'SUS',mulher:'♀',seguranca:'SEG',saude:'SAÚDE',tarifas:'TARIFAS',eua:'EUA',clima:'CLIMA',vacina:'VACINA',armas:'ARMAS',anistia:'ANISTIA',milicia:'MILÍCIAS',cortes:'CORTES',racismo:'RACISMO',mulheres:'MULHERES',banco:'BANCO'};
+ const label=icons[k]||'POVO',size=label.length>6?26:label.length>3?35:51;
+ return '<svg viewBox="0 0 420 230" aria-hidden="true"><rect width="420" height="230" fill="'+bg+'"/><path d="M0 160L55 126l47 18 52-48 58 34 57-61 61 51 90-38v148H0z" fill="'+ink+'" opacity=".35"/><circle cx="210" cy="93" r="65" fill="'+ink+'"/><text x="210" y="104" text-anchor="middle" font-family="Arial" font-size="'+size+'" font-weight="900" fill="#fff">'+label+'</text><g fill="#171717"><circle cx="95" cy="170" r="20"/><path d="M60 230c5-43 18-62 35-62s30 19 35 62"/><circle cx="325" cy="170" r="20"/><path d="M290 230c5-43 18-62 35-62s30 19 35 62"/></g><g fill="'+ink+'"><circle cx="160" cy="180" r="17"/><path d="M130 230c4-35 15-51 30-51s26 16 30 51"/><circle cx="260" cy="180" r="17"/><path d="M230 230c4-35 15-51 30-51s26 16 30 51"/></g></svg>';
+}
+let deckOrder=[],deckPos=0,deckChoice='',deckCover=true;
 function startDeck(){if(!deckOrder.length){deckOrder=[...deckData];deckCover=true}renderDeck(false)}
 function shuffleDeck(){deckOrder=[...deckData].sort(()=>Math.random()-.5);deckPos=0;deckChoice='';deckCover=false;renderDeck(false)}
 function beginDeck(){deckOrder=[...deckData].sort(()=>Math.random()-.5);deckCover=false;deckPos=0;deckChoice='';renderDeck(false)}
