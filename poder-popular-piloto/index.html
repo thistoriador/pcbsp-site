@@ -168,6 +168,8 @@ const deckSourceUrls=["https://tr.ee/P3CnvVp1fQ0i","https://tr.ee/Uii3CdShBwxl",
 for(const item of deckData)item.sourceUrl=deckSourceUrls[item.n-1];
 // Carta 23: vídeo indicado especificamente para esta carta.
 deckData.find(item=>item.n===23).sourceUrl='https://www.instagram.com/reel/DeRyHvChwIx/?obrf=bm5wd3lqMzZ5aWsz';
+// Carta 1 (Pix): vídeo informado para a fonte desta carta.
+deckData.find(item=>item.n===1).sourceUrl='https://www.youtube.com/shorts/1p3L2jTY51A';
 const deckScenes={
  32:{sky:'#d5d8db',ink:'#50565b',accent:'#171717',label:'BANCO MASTER',symbol:'BANCO',landmark:'institution'},
  31:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'LEIS TRABALHISTAS',symbol:'CLT',landmark:'industry'},
