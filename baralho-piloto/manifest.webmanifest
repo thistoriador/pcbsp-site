@@ -1,0 +1,9 @@
+{
+  "name":"Baralho Piloto — Poder Popular",
+  "short_name":"Baralho Piloto",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f4f1ea",
+  "theme_color":"#a80000",
+  "description":"Baralho digital Poder Popular — 32 cartas"
+}
