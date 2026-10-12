@@ -150,7 +150,7 @@ const deckData=[
 {n:20,s:'♦',q:'Fazer parte de grupos antivacinas.',tag:'#saude',p:'FLÁVIO BOLSONARO'},
 {n:21,s:'♦',q:'Defender o armamento da população.',tag:'#seguranca',p:'FLÁVIO BOLSONARO'},
 {n:22,s:'♦',q:'Defender anistia para os golpistas.',tag:'#democracia',p:'FLÁVIO BOLSONARO'},
-{n:23,s:'♦',q:'Parcerias público-privadas na educação e universidades públicas fora do MEC.',tag:'#privatizacao',p:'FLÁVIO BOLSONARO'},
+{n:23,s:'♦',q:'Milícias dominando bairros e cidades é algo bom?',tag:'#seguranca',p:'FLÁVIO BOLSONARO'},
 {n:24,s:'♦',q:'Adotar o “tesouraço” (cortes extremos) nos gastos públicos.',tag:'#estadominimo',p:'FLÁVIO BOLSONARO'},
 {n:25,s:'♣',q:'Mudar a Lei do Racismo retirando a punição do agressor.',tag:'#diversidade',p:'FLÁVIO BOLSONARO'},
 {n:26,s:'♣',q:'Afirmar que mulheres solteiras votam mal.',tag:'#democracia',p:'FLÁVIO BOLSONARO'},
@@ -162,6 +162,8 @@ const deckData=[
 {n:32,s:'♣',q:'Manter inexplicada a relação próxima com Vorcaro, do Banco Master, e os pedidos e recebimentos de dinheiro que realizou.',tag:'#corrupcao',p:'FLÁVIO BOLSONARO'}];
 const deckSourceUrls=["https://tr.ee/P3CnvVp1fQ0i","https://tr.ee/Uii3CdShBwxl","https://tr.ee/RuBjxDsa20u6","https://tr.ee/dHGAbK07EeNi","https://tr.ee/lmLDolxxmbe8","https://tr.ee/6Y0k0NSEqYAf","https://tr.ee/Cp5ld7d74eJz","https://tr.ee/QHoDIaW0s76S","https://tr.ee/uAb6X5qlvgko","https://tr.ee/10EPtzvJ411n","https://tr.ee/JmgHvVIK4FBU","https://tr.ee/2Sc5Lu0f8PPN","https://tr.ee/SQUb1SmH42wq","https://tr.ee/DMZ1zvaCDaw3","https://tr.ee/YyTiU7HM7WL7","https://tr.ee/S0B0B1E97d8N","https://tr.ee/UoEx65lF6nZF","https://tr.ee/IRpAL11u7tZb","https://tr.ee/FXJPpBwpARsu","https://tr.ee/r3qicEHilUxB","https://tr.ee/G865aP0aFgA0","https://tr.ee/aWboVks4X5lT","https://tr.ee/q80ubrYZId3Z","https://tr.ee/uu6vzXHD7U5j","https://tr.ee/h17vk7S01piQ","https://tr.ee/m0iExcVCaq4R","https://tr.ee/P4cnvYcH4gdq","https://tr.ee/zOoIqlwZDYK2","https://tr.ee/m4nC9mwZT0Xh","https://tr.ee/ySUaZPPBLM49","https://tr.ee/aW1h8Pyq2v1n","https://tr.ee/jeBg9jv4F1r6"];
 for(const item of deckData)item.sourceUrl=deckSourceUrls[item.n-1];
+// Carta 23: vídeo indicado especificamente para esta carta.
+deckData.find(item=>item.n===23).sourceUrl='https://www.instagram.com/reel/DeRyHvChwIx/?obrf=bm5wd3lqMzZ5aWsz';
 let deckOrder=[],deckPos=0,deckChoice='',deckCover=true;
 function startDeck(){if(!deckOrder.length){deckOrder=[...deckData];deckCover=true}renderDeck(false)}
 function shuffleDeck(){deckOrder=[...deckData].sort(()=>Math.random()-.5);deckPos=0;deckChoice='';deckCover=true;renderDeck(false)}
