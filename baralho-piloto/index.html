@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#a80000">
+<link rel="manifest" href="./manifest.webmanifest"><title>Poder Popular — Piloto</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f1ea;color:#191919}.app{max-width:560px;margin:auto;min-height:100vh;padding-bottom:86px}
+header{background:#a80000;color:#fff;padding:22px 20px 18px;border-bottom:8px solid #f1c40f}header h1{margin:0;font-size:31px;letter-spacing:-1px}header p{margin:5px 0 0;font-weight:700;color:#ffd92f}
+main{padding:18px}.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px #0001}.muted{color:#666}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#191919;color:white;border-radius:14px;padding:15px}.stat b{display:block;font-size:29px;color:#ffd92f}
+button,.btn{border:0;border-radius:13px;padding:15px 16px;font-size:16px;font-weight:800;width:100%;cursor:pointer}.primary{background:#b00000;color:#fff}.secondary{background:#191919;color:#fff}.ghost{background:#eee;color:#222}
+label{display:block;font-weight:800;margin:16px 0 7px}input,select,textarea{width:100%;padding:14px;border:1px solid #bbb;border-radius:12px;font-size:16px;background:#fff}textarea{min-height:90px}.options label{font-weight:600;margin:8px 0;padding:11px;border:1px solid #ddd;border-radius:11px}.options input{width:auto;margin-right:8px}.hide{display:none!important}.notice{background:#fff4c7;border-left:5px solid #e0b600;padding:12px;border-radius:8px;margin:12px 0}.map{height:230px;border-radius:16px;background:linear-gradient(135deg,#dfe9d8,#d4e4ee);display:grid;place-items:center;text-align:center;padding:25px;border:1px solid #c6c6c6}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:#a80000;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:10}nav button{background:transparent;color:white;padding:7px 2px;font-size:12px}nav button span{display:block;font-size:22px;margin-bottom:3px}
+.row{display:flex;gap:10px}.row>*{flex:1}.tag{display:inline-block;background:#ffd92f;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.record{padding:13px 0;border-bottom:1px solid #ddd}.record:last-child{border:0}
+
+.touch-title{display:block;font-weight:800;margin:18px 0 8px}
+.touch-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.touch-grid.one{grid-template-columns:1fr}
+.touch-option{position:relative}
+.touch-option input{position:absolute;opacity:0;pointer-events:none}
+.touch-option span{display:flex;align-items:center;justify-content:center;text-align:center;min-height:58px;padding:10px 9px;border:2px solid #d4d4d4;border-radius:13px;background:#fff;font-weight:800;line-height:1.15;transition:.12s}
+.touch-option input:checked+span{background:#191919;color:#fff;border-color:#191919;box-shadow:inset 0 -4px 0 #f1c40f}
+.touch-grid.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:390px){.touch-grid.three{grid-template-columns:1fr 1fr}.touch-option span{font-size:14px}}
+.login{min-height:55vh;display:flex;align-items:center}.login .card{width:100%}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.smallbtn{width:auto;padding:8px 10px;font-size:12px}.error{color:#a80000;font-weight:700}.success{color:#176b32;font-weight:700}
+.deck-card{--ink:#171717;--paper:#f7f0df;width:min(100%,560px);box-sizing:border-box;margin:auto;background:linear-gradient(#faf5e8,#f3ead7);border:2px solid #ded5c2;border-radius:24px;min-height:660px;padding:22px 22px 20px;box-shadow:0 12px 28px #0003;display:flex;flex-direction:column;position:relative;overflow:hidden;font-family:Arial,sans-serif}.deck-card:before{content:"";position:absolute;inset:9px;border:3px solid var(--ink);border-radius:16px;pointer-events:none}.deck-card>*{position:relative;z-index:1}.deck-corner{position:absolute;left:25px;top:25px;text-align:center}.deck-no{font-size:38px;font-weight:1000;line-height:.88}.deck-suit{font-size:31px;line-height:1}.deck-question{text-align:center;font-size:29px;font-weight:1000;line-height:.94;margin:12px 48px 7px}.deck-question b{display:inline;color:#bd1118;font-size:38px}.deck-quote{text-align:center;font-size:26px;font-weight:1000;line-height:1.12;margin:30px 12px 10px}.deck-tag{align-self:center;background:#f3c7b7;color:#171717;padding:6px 17px;border-radius:18px;font-weight:1000;margin:7px 0 12px;font-size:14px}.deck-art{height:230px;margin:auto 1px 14px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;position:relative;border-radius:9px;background:linear-gradient(180deg,#f6d4c8,#c91d23)}.deck-art.blue{background:#9fc0d8}.deck-art.gold{background:#e5bd50}.deck-art.red{background:#d98d77}.deck-art svg{width:100%;height:100%;display:block}.deck-art:after{content:"";position:absolute;left:0;right:0;bottom:0;height:32%;background:linear-gradient(0deg,#a90d16dd,transparent);pointer-events:none}.deck-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.deck-actions button{font-size:20px;font-weight:1000;border:0;border-radius:14px;box-shadow:none;padding:18px 8px}.good{background:#188d4d;color:#fff}.bad{background:#e21f29;color:#fff}.deck-back{color:#fff;text-align:center;justify-content:flex-start;background:linear-gradient(145deg,#9e0010,#d10e18 52%,#8e0010);border:2px solid #e4c9a7;min-height:660px;padding-top:25px}.deck-back:before{border:2px solid #f7e6bd}.deck-back.flavio{background:linear-gradient(145deg,#062743,#0a4d79 55%,#041c32);border-color:#d8e0e6}.deck-back.flavio:before{border-color:#e6eef3}.deck-back .deck-no{position:absolute;left:25px;top:25px;width:72px;text-align:left}.deck-choice{font-size:14px;font-weight:1000;letter-spacing:.04em;margin:9px 20px 0 92px;min-height:34px;display:flex;align-items:flex-start;justify-content:center}.deck-portrait{width:155px;height:155px;margin:15px auto 2px;border-radius:50%;background:#f4ead7;display:grid;place-items:center;overflow:hidden;border:7px solid #f0ce32;box-shadow:0 0 0 5px #171717}.flavio .deck-portrait{border-color:#fff}.deck-portrait svg{width:155px;height:155px}.deck-portrait .face{fill:#171717}.deck-portrait .hair{fill:#f4ead7}.deck-portrait .shirt{fill:#171717}.flavio .deck-portrait .face,.flavio .deck-portrait .shirt{fill:#123b50}.deck-person{font-size:34px;font-weight:1000;line-height:.95;margin:7px 0 8px;text-transform:uppercase}.deck-reveal{background:#f7f0df;color:#111;padding:11px 12px;border:0;box-shadow:none;transform:rotate(-2deg);font-weight:1000;font-size:17px;margin:5px 7px 9px;clip-path:polygon(2% 9%,98% 0,96% 89%,1% 100%)}.deck-qr{display:grid;grid-template-columns:116px 1fr;grid-template-rows:auto auto;align-items:center;gap:7px 12px;margin:5px 8px 2px;text-align:left}.deck-qr img{grid-row:1/3;background:#fff;padding:5px;border:3px solid #171717;border-radius:4px;box-sizing:border-box;width:116px;height:116px}.deck-source{background:#fff;color:#111;display:block;padding:11px 8px;border-radius:6px;text-decoration:none;font-weight:1000;border:3px solid #171717;text-align:center}.deck-qr small{font-size:10px;line-height:1.2;opacity:.9;text-align:center}.deck-progress{text-align:center;font-weight:900;margin:0 0 10px;color:#666}.deck-note{text-align:center;font-size:11px;opacity:.82;margin-top:8px}.deck-cover{background:#a90d16;color:#fff;text-align:center;justify-content:center;border-color:#efca2d}.deck-cover:before{border-color:#a90d16;outline-color:#efca2d}.deck-cover-mark{font-size:72px;line-height:1.05;letter-spacing:8px;color:#f4d52d}.deck-cover h3{font-size:43px;line-height:.9;margin:22px 0 10px;text-transform:uppercase}.deck-cover p{font-size:18px;font-weight:900;letter-spacing:.1em}.deck-cover button{margin-top:28px;background:#f1c40f;color:#161616;border:4px solid #171717;box-shadow:4px 4px 0 #171717;font-weight:1000}.deck-card+.ghost{margin-top:14px}.deck-test-controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:9px 0;opacity:.78}.deck-test-controls button{padding:10px 5px;font-size:12px;min-height:44px}.deck-test-picker{display:none;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:9px 0;width:100%;box-sizing:border-box}.deck-test-picker .smallbtn{min-width:0;width:100%;padding:8px 2px;font-size:12px}@media(max-width:600px){.deck-test-picker{grid-template-columns:repeat(4,minmax(0,1fr))}.deck-test-picker .smallbtn{font-size:13px;padding:9px 2px}.deck-test-controls button{font-size:11px;padding:9px 3px}.deck-card{min-height:0;border-radius:24px;padding:19px 18px 17px}.deck-question{font-size:25px;margin:10px 52px 5px}.deck-question b{font-size:34px}.deck-quote{font-size:23px;margin:25px 8px 8px}.deck-art{height:185px}.deck-actions button{font-size:18px;padding:15px 5px}.deck-back{min-height:0}.deck-portrait{width:140px;height:140px;margin-top:12px}.deck-person{font-size:32px}.deck-reveal{font-size:15px}.deck-qr{grid-template-columns:108px 1fr}.deck-qr img{width:108px;height:108px}.deck-note{margin-top:5px}}.deck-bottom-corner{position:absolute;right:24px;bottom:20px;display:flex;flex-direction:column;align-items:center;transform:rotate(180deg);font-weight:1000}.deck-bottom-corner .deck-no{font-size:27px}.deck-bottom-corner .deck-suit{font-size:25px}.deck-actions{margin-right:42px}.deck-back .deck-bottom-corner{display:none}
+.lula-avatar{overflow:hidden}.lula-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.flavio-avatar{overflow:hidden}.flavio-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.deck-art img{width:100%;height:100%;object-fit:cover;display:block}
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><div class="app">
+<header><h1>BARALHO PILOTO</h1><p>PODER POPULAR • 32 CARTAS</p></header>
+<main><section id="publicDeckHome"><div class="card"><div class="tag">REDE DO PODER POPULAR</div><h2>Escolha uma opção</h2><button class="primary" style="font-size:22px;padding:22px" onclick="openPublicDeck()">🂡 BARALHO</button><button class="secondary" style="font-size:22px;padding:22px;margin-top:12px" onclick="openLogin()">☷ PESQUISA</button></div></section><section id="login" class="login hide"><div class="card"><div class="tag">ACESSO RESTRITO</div><h2>Poder Popular</h2><p class="muted">Acesso próprio do Poder Popular. Entre com o e-mail cadastrado neste sistema.</p><label>E-mail</label><input id="loginUser" type="email" autocomplete="username"><label>Senha</label><div style="position:relative"><input id="loginPass" type="password" autocomplete="current-password" style="padding-right:56px"><button type="button" aria-label="Mostrar ou ocultar senha" onclick="togglePassword('loginPass',this)" style="position:absolute;right:7px;top:7px;width:44px;padding:8px;background:transparent;font-size:21px">👁</button></div><button id="loginBtn" class="primary" style="margin-top:16px" onclick="loginPP()">ENTRAR</button><p id="loginMsg" class="error"></p><button class="ghost" onclick="toggleSignup(true)">CRIAR MINHA CONTA</button><div id="signupBox" class="hide"><h3>Autocadastro de aplicador</h3><div class="notice">O cadastro é enviado para aprovação. O acesso à pesquisa só será liberado após autorização.</div><label>Nome completo</label><input id="regName" autocomplete="name" maxlength="120"><label>E-mail</label><input id="regEmail" type="email" autocomplete="email"><label>Município</label><input id="regCity" maxlength="120"><label>Território / bairro (opcional)</label><input id="regTerritory" maxlength="120"><label>Crie uma senha (mínimo 8 caracteres)</label><div style="position:relative"><input id="regPass" type="password" autocomplete="new-password" minlength="8" style="padding-right:56px"><button type="button" aria-label="Mostrar ou ocultar senha" onclick="togglePassword('regPass',this)" style="position:absolute;right:7px;top:7px;width:44px;padding:8px;background:transparent;font-size:21px">👁</button></div><label>Confirme a senha</label><div style="position:relative"><input id="regPass2" type="password" autocomplete="new-password" minlength="8" style="padding-right:56px"><button type="button" aria-label="Mostrar ou ocultar senha" onclick="togglePassword('regPass2',this)" style="position:absolute;right:7px;top:7px;width:44px;padding:8px;background:transparent;font-size:21px">👁</button></div><button id="regBtn" class="primary" onclick="registerPP()">SOLICITAR CADASTRO</button><p id="regMsg" role="status"></p><button class="ghost" onclick="toggleSignup(false)">VOLTAR AO LOGIN</button></div></div></section><div id="privateApp" class="hide">
+<section id="home"><div class="card" style="padding:10px 14px"><div class="topline"><b id="who">Aplicador</b><button class="ghost smallbtn" onclick="logoutPP()">SAIR</button></div></div><div class="card"><div class="tag">PODER POPULAR</div><h2 id="hello">Olá</h2><p class="muted">Pesquisa territorial com acesso privado.</p><div class="stats"><div class="stat"><b id="countMine">0</b>Meus registros</div><div class="stat"><b id="countToday">0</b>Hoje</div></div></div><button class="secondary" onclick="show('baralho');startDeck()">🂡 BARALHO — BOM OU RUIM?</button><div style="height:10px"></div><button class="primary" onclick="show('novo')">＋ NOVO REGISTRO</button><div style="height:10px"></div><button class="secondary" onclick="show('mapa')">⌖ MAPA TERRITORIAL</button><div id="adminHomeBtn" class="hide" style="margin-top:10px"><button class="secondary" onclick="show('admin');loadAdminUsers()">⚙ ADMINISTRAÇÃO</button></div></section>
+<section id="novo" class="hide"><div class="card"><h2>Novo registro</h2><div class="notice"><b>Consentimento</b><br>Pesquisa voluntária. As respostas serão armazenadas com acesso restrito ao aplicador autenticado.</div><label class="options"><input id="cons" type="checkbox"> A pessoa concorda em participar</label><label class="options"><input id="ident" type="checkbox" onchange="toggleIdent()"> Autoriza registrar nome e contato</label><div id="identbox" class="hide"><label>Nome ou apelido</label><input id="nomeApelido" placeholder="Opcional"><label>WhatsApp</label><input id="telefone" placeholder="Opcional"></div>
+<label>Município</label><input id="municipio" value="Franca"><label>Bairro / região</label><input id="bairro" placeholder="Ex.: Jardim Aeroporto">
+<div class="row"><div><label>Zona eleitoral</label><input id="zona" placeholder="Opcional"></div><div><label>Local de votação</label><input id="localVotacao" placeholder="Opcional"></div></div>
+<button class="ghost" style="margin-top:12px" onclick="alert('No piloto: aqui entra geolocalização autorizada + identificação territorial.')">⌖ USAR MINHA LOCALIZAÇÃO</button>
+<label>Votou no primeiro turno?</label><div class="options"><label><input type="radio" name="v1" value="Sim" onchange="motivo(false)">Sim</label><label><input type="radio" name="v1" value="Não" onchange="motivo(true)">Não</label><label><input type="radio" name="v1" value="Prefiro não responder" onchange="motivo(false)">Prefiro não responder</label></div>
+<div id="motivo" class="hide"><label>Principal motivo da abstenção</label><select id="motivoAbst"><option value="">Selecione</option><option>Trabalho</option><option>Viagem</option><option>Saúde</option><option>Dificuldade de transporte/deslocamento</option><option>Problema com título/local de votação</option><option>Não se identificava com as opções</option><option>Outro</option><option>Prefiro não responder</option></select></div>
+<span class="touch-title">Pretende votar no segundo turno?</span><div class="touch-grid"><label class="touch-option"><input type="radio" name="v2" value="Com certeza"><span>Com certeza</span></label><label class="touch-option"><input type="radio" name="v2" value="Provavelmente"><span>Provavelmente</span></label><label class="touch-option"><input type="radio" name="v2" value="Ainda não sei"><span>Ainda não sei</span></label><label class="touch-option"><input type="radio" name="v2" value="Provavelmente não"><span>Provavelmente não</span></label><label class="touch-option"><input type="radio" name="v2" value="Não pretendo votar"><span>Não pretendo votar</span></label><label class="touch-option"><input type="radio" name="v2" value="Prefiro não responder"><span>Prefiro não responder</span></label></div>
+<span class="touch-title">Tendência atual</span><div class="touch-grid"><label class="touch-option"><input type="radio" name="tend" value="Lula"><span>Lula</span></label><label class="touch-option"><input type="radio" name="tend" value="Flávio Bolsonaro"><span>Flávio Bolsonaro</span></label><label class="touch-option"><input type="radio" name="tend" value="Branco / nulo"><span>Branco / nulo</span></label><label class="touch-option"><input type="radio" name="tend" value="Ainda não decidiu"><span>Ainda não decidiu</span></label><label class="touch-option" style="grid-column:1/-1"><input type="radio" name="tend" value="Prefiro não responder"><span>Prefiro não responder</span></label></div>
+<span class="touch-title">Grau de decisão</span><div class="touch-grid one"><label class="touch-option"><input type="radio" name="dec" value="Decisão tomada"><span>Decisão tomada</span></label><label class="touch-option"><input type="radio" name="dec" value="Bastante decidido(a)"><span>Bastante decidido(a)</span></label><label class="touch-option"><input type="radio" name="dec" value="Tenho tendência, mas posso mudar"><span>Tenho tendência, mas posso mudar</span></label><label class="touch-option"><input type="radio" name="dec" value="Bastante indeciso(a)"><span>Bastante indeciso(a)</span></label><label class="touch-option"><input type="radio" name="dec" value="Totalmente indeciso(a)"><span>Totalmente indeciso(a)</span></label></div>
+<label>Observações</label><textarea id="observacao"></textarea><button id="save" class="primary" onclick="saveReal()">SALVAR REGISTRO</button></div></section>
+<section id="baralho" class="hide"><div class="card"><button id="deckBackPublic" class="ghost smallbtn hide" style="margin-bottom:12px" onclick="closePublicDeck()">← VOLTAR</button><div class="tag">BARALHO DIGITAL • V1</div><h2>Isso é bom ou ruim?</h2><p class="muted">Leia a afirmação e escolha antes de revelar a autoria.</p><div id="deckProgress" class="deck-progress"></div><div id="deckCard"></div><div id="deckTestControls" class="deck-test-controls"><button class="ghost" onclick="prevDeck()">← ANTERIOR</button><button class="ghost" onclick="toggleDeckTest()">TESTAR TODAS</button><button class="ghost" onclick="nextDeck()">PRÓXIMA →</button></div><div id="deckTestPicker" class="hide deck-test-picker"></div><button class="ghost" style="margin-top:12px" onclick="shuffleDeck()">↻ EMBARALHAR</button></div></section>
+<section id="registros" class="hide"><div class="card"><h2>Meus registros</h2><input id="recordSearch" placeholder="Buscar nos meus registros" oninput="renderRecords()"><div id="recordList"><p class="muted">Carregando…</p></div></div></section>
+<section id="admin" class="hide"><div class="card"><div class="topline"><h2>Administração</h2><span class="tag" id="adminRoleTag">ADMIN</span></div><p class="muted">Aprovação e gestão dos aplicadores do Poder Popular.</p><button class="ghost" onclick="loadAdminUsers()">↻ ATUALIZAR</button><div id="adminUsers"><p class="muted">Carregando usuários…</p></div></div></section><section id="mapa" class="hide"><div class="card"><h2>Mapa territorial</h2><div class="row"><select><option>Território</option><option>Zona eleitoral</option><option>Local de votação</option></select><select><option>Abstenção 1º turno</option><option>Intenção de comparecer</option><option>Grau de decisão</option></select></div><div id="realmap" style="height:350px;border-radius:16px;margin-top:14px;z-index:0"></div>
+<div style="margin-top:12px"><input id="placeSearch" placeholder="Pesquisar bairro ou endereço em Franca"><button class="secondary" style="margin-top:8px" onclick="searchPlace()">BUSCAR NO MAPA</button><button class="ghost" style="margin-top:8px" onclick="locateMe()">⌖ MINHA LOCALIZAÇÃO</button></div>
+<div class="notice" id="electoralPanel"><b>Resultados eleitorais — 1º turno de 2026</b><br>Selecione uma área no mapa. Os totais por bairro dependem da associação validada entre locais, seções e resultados oficiais; nenhum número será estimado ou inventado.<br><br><a href="https://dadosabertos.tse.jus.br/pt_BR/dataset/resultados-2026" target="_blank" rel="noopener">Consultar dados oficiais do TSE ↗</a></div><p class="muted">A visualização territorial será agregada; localização exata só mediante autorização.</p></div></section>
+</div></main>
+<nav id="bottomNav" class="hide"><button onclick="show('home')"><span>⌂</span>Início</button><button onclick="show('novo')"><span>＋</span>Novo</button><button onclick="show('registros')"><span>☷</span>Registros</button><button onclick="show('mapa')"><span>⌖</span>Mapa</button></nav>
+</div><script>
+function openPublicDeck(){document.getElementById('publicDeckHome').classList.add('hide');document.getElementById('login').classList.add('hide');document.getElementById('privateApp').classList.remove('hide');document.getElementById('bottomNav').classList.add('hide');document.getElementById('deckBackPublic').classList.remove('hide');show('baralho');startDeck()}
+function closePublicDeck(){document.getElementById('privateApp').classList.add('hide');document.getElementById('baralho').classList.add('hide');document.getElementById('publicDeckHome').classList.remove('hide')}
+function openLogin(){document.getElementById('publicDeckHome').classList.add('hide');document.getElementById('login').classList.remove('hide')}
+function show(id){['home','novo','registros','mapa','admin','baralho'].forEach(x=>document.getElementById(x).classList.toggle('hide',x!==id));scrollTo(0,0);if(id==='mapa')setTimeout(initMap,90)}
+function togglePassword(id,b){const x=document.getElementById(id);x.type=x.type==='password'?'text':'password';b.textContent=x.type==='password'?'👁':'🙈'}
+function toggleIdent(){document.getElementById('identbox').classList.toggle('hide',!document.getElementById('ident').checked)}
+function motivo(v){document.getElementById('motivo').classList.toggle('hide',!v)}
+
+const SB_URL='https://zhrtwoigrmizpwwzpmwr.supabase.co';
+const SB_KEY='sb_publishable_6EL9VyTAmrtm1_CpyRUzVQ_x-6ITY1J';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+let ppUser=null,ppProfile=null,records=[];
+function radioVal(n){return document.querySelector('input[name="'+n+'"]:checked')?.value||null}
+function toggleSignup(open){document.getElementById('signupBox').classList.toggle('hide',!open);document.getElementById('loginBtn').classList.toggle('hide',open)}
+async function registerPP(){
+ const get=id=>document.getElementById(id).value.trim();
+ const nome=get('regName'),email=get('regEmail'),municipio=get('regCity'),territorio=get('regTerritory'),senha=document.getElementById('regPass').value,confirm=document.getElementById('regPass2').value;
+ const msg=document.getElementById('regMsg'),b=document.getElementById('regBtn');msg.className='error';msg.textContent='';
+ if(!nome||!municipio||!email.includes('@')||senha.length<8||senha!==confirm){msg.textContent='Preencha nome, e-mail, município e duas senhas iguais (mínimo 8 caracteres).';return}
+ b.disabled=true;b.textContent='ENVIANDO...';
+ try{
+   const {error}=await sb.auth.signUp({email,password:senha,options:{data:{app_origin:'poder_popular',nome,municipio,territorio},emailRedirectTo:location.origin+location.pathname}});
+   if(error)throw error;
+   await sb.auth.signOut();
+   msg.className='success';msg.textContent='Solicitação recebida. Confirme seu e-mail se receber uma mensagem. Aguarde a aprovação para acessar a pesquisa.';
+ }catch(e){msg.textContent='Não foi possível cadastrar: '+e.message}
+ finally{b.disabled=false;b.textContent='SOLICITAR CADASTRO'}
+}
+async function loginPP(){
+ const email=document.getElementById('loginUser').value.trim(),p=document.getElementById('loginPass').value;
+ const msg=document.getElementById('loginMsg'),btn=document.getElementById('loginBtn');
+ if(!email||!p){msg.textContent='Informe e-mail e senha.';return}
+ if(!email.includes('@')){msg.textContent='Neste sistema, use o e-mail cadastrado no Poder Popular.';return}
+ btn.disabled=true;btn.textContent='ENTRANDO...';msg.textContent='';
+ try{
+   const {data,error}=await sb.auth.signInWithPassword({email,password:p});
+   if(error||!data.user)throw new Error('E-mail ou senha inválidos.');
+   await enterPrivate(data.user);
+ }catch(e){msg.textContent=e.message||'Não foi possível entrar.'}
+ finally{btn.disabled=false;btn.textContent='ENTRAR'}
+}
+async function enterPrivate(user){
+ const {data:prof,error}=await sb.from('pp_aplicadores').select('nome,perfil,ativo').eq('user_id',user.id).maybeSingle();
+ if(error||!prof||!prof.ativo){await sb.auth.signOut();document.getElementById('loginMsg').textContent='Este usuário ainda não está autorizado no Poder Popular.';return}
+ ppUser=user;ppProfile=prof;document.getElementById('publicDeckHome').classList.add('hide');document.getElementById('deckBackPublic').classList.add('hide');document.getElementById('login').classList.add('hide');document.getElementById('privateApp').classList.remove('hide');document.getElementById('bottomNav').classList.remove('hide');document.getElementById('who').textContent='Aplicador: '+prof.nome;document.getElementById('hello').textContent='Olá, '+prof.nome;const isAdmin=['ADMIN','SUPERADMIN'].includes(prof.perfil);document.getElementById('adminHomeBtn').classList.toggle('hide',!isAdmin);document.getElementById('adminRoleTag').textContent=prof.perfil;if(isAdmin)await loadAdminUsers();await loadRecords();show('home');
+}
+async function loadAdminUsers(){
+ if(!ppProfile||!['ADMIN','SUPERADMIN'].includes(ppProfile.perfil))return;
+ const box=document.getElementById('adminUsers');box.innerHTML='<p class="muted">Carregando…</p>';
+ const {data,error}=await sb.from('pp_aplicadores').select('user_id,nome,municipio,territorio,perfil,ativo,created_at').order('created_at',{ascending:false});
+ if(error){box.innerHTML='<p class="error">Erro ao carregar usuários.</p>';return}
+ const pending=data.filter(x=>!x.ativo),active=data.filter(x=>x.ativo);
+ const card=(x,pending)=>'<div class="record"><b>'+escapeHTML(x.nome)+'</b><br><span class="muted">'+escapeHTML(x.municipio||'')+(x.territorio?' • '+escapeHTML(x.territorio):'')+' • '+escapeHTML(x.perfil)+'</span><div class="row" style="margin-top:8px">'+(pending?'<button class="primary smallbtn" onclick="setApplicant(\''+x.user_id+'\',true)">APROVAR</button>':'<button class="ghost smallbtn" onclick="setApplicant(\''+x.user_id+'\',false)">DESATIVAR</button>')+'</div></div>';
+ box.innerHTML='<h3>Pendentes ('+pending.length+')</h3>'+(pending.map(x=>card(x,true)).join('')||'<p class="muted">Nenhum pendente.</p>')+'<h3>Ativos ('+active.length+')</h3>'+active.map(x=>card(x,false)).join('');
+}
+async function setApplicant(id,active){
+ if(id===ppUser.id&&!active)return alert('Você não pode desativar seu próprio acesso.');
+ const {error}=await sb.from('pp_aplicadores').update({ativo:active,updated_at:new Date().toISOString()}).eq('user_id',id);
+ if(error)return alert('Não foi possível atualizar: '+error.message);
+ await loadAdminUsers();
+}
+async function logoutPP(){await sb.auth.signOut();location.reload()}
+async function loadRecords(){
+ const {data,error}=await sb.from('pp_pesquisas').select('id,realizada_at,municipio,bairro,participou_primeiro_turno').order('realizada_at',{ascending:false});
+ records=error?[]:(data||[]);document.getElementById('countMine').textContent=records.length;
+ const today=new Date().toISOString().slice(0,10);document.getElementById('countToday').textContent=records.filter(r=>r.realizada_at?.slice(0,10)===today).length;renderRecords();
+}
+function renderRecords(){
+ const el=document.getElementById('recordList');if(!el)return;const q=(document.getElementById('recordSearch')?.value||'').toLowerCase();
+ const rr=records.filter(r=>JSON.stringify(r).toLowerCase().includes(q));
+ el.innerHTML=rr.length?rr.map((r,i)=>'<div class="record"><b>Registro '+escapeHTML(String(records.length-i).padStart(3,'0'))+'</b><br><span class="muted">'+escapeHTML(r.municipio||'')+(r.bairro?' • '+escapeHTML(r.bairro):'')+(r.participou_primeiro_turno?' • '+escapeHTML(r.participou_primeiro_turno):'')+'</span></div>').join(''):'<p class="muted">Nenhum registro.</p>';
+}
+async function saveReal(){
+ if(!ppUser)return alert('Sessão inválida. Entre novamente.');
+ if(!document.getElementById('cons').checked)return alert('É necessário registrar o consentimento para participar.');
+ const mun=document.getElementById('municipio').value.trim();if(!mun)return alert('Informe o município.');
+ const identified=document.getElementById('ident').checked,b=document.getElementById('save');b.disabled=true;b.textContent='SALVANDO...';
+ const payload={aplicador_id:ppUser.id,rodada:'ATUAL',origem:'PODER_POPULAR',nome_apelido:identified?document.getElementById('nomeApelido').value.trim()||null:null,telefone:identified?document.getElementById('telefone').value.trim()||null:null,municipio:mun,bairro:document.getElementById('bairro').value.trim()||null,zona_local_votacao:[document.getElementById('zona').value.trim(),document.getElementById('localVotacao').value.trim()].filter(Boolean).join(' — ')||null,participou_primeiro_turno:radioVal('v1'),motivo_abstencao:document.getElementById('motivoAbst').value||null,pretende_votar_segundo_turno:radioVal('v2'),tendencia_atual:radioVal('tend'),grau_decisao:radioVal('dec'),observacao:document.getElementById('observacao').value.trim()||null,consentimento:true};
+ const {error}=await sb.from('pp_pesquisas').insert(payload);b.disabled=false;b.textContent='SALVAR REGISTRO';
+ if(error)return alert('Não foi possível salvar: '+error.message);
+ alert('Registro salvo com sucesso.');document.getElementById('cons').checked=false;document.getElementById('ident').checked=false;toggleIdent();await loadRecords();show('registros');
+}
+
+const deckData=[
+{n:1,s:'♥',q:'O Pix é do Brasil e do povo Brasileiro!',tag:'#economia',p:'LULA'},
+{n:2,s:'♥',q:'Defender nossas riquezas é defender nossa soberania.',tag:'#economia',p:'LULA'},
+{n:3,s:'♥',q:'Adotar jornada de trabalho com duas folgas por semana, sem redução de salário.',tag:'#direitostrabalhistas',p:'LULA'},
+{n:4,s:'♥',q:'Fortalecer a autonomia da Polícia Federal.',tag:'#seguranca',p:'LULA'},
+{n:5,s:'♥',q:'Combater o crime organizado, atacando as suas fontes financeiras.',tag:'#seguranca',p:'LULA'},
+{n:6,s:'♥',q:'Aumentar vagas nas universidades públicas.',tag:'#educacao',p:'LULA'},
+{n:7,s:'♥',q:'Manter cotas para Indígenas, Quilombolas e Negros nas universidades e concursos públicos.',tag:'#educacao',p:'LULA'},
+{n:8,s:'♥',q:'Cobrar impostos dos super-ricos para melhorar saúde, educação e segurança.',tag:'#reformatributaria',p:'LULA'},
+{n:9,s:'♠',q:'Regular as redes sociais para preservar a Democracia e combater as fake news e os crimes digitais.',tag:'#soberania',p:'LULA'},
+{n:10,s:'♠',q:'Reforçar programas sociais para reduzir a pobreza.',tag:'#programassociais',p:'LULA'},
+{n:11,s:'♠',q:'Garantir o aumento anual do salário mínimo acima da inflação.',tag:'#direitostrabalhistas',p:'LULA'},
+{n:12,s:'♠',q:'Aumentar o número de creches.',tag:'#programassociais',p:'LULA'},
+{n:13,s:'♠',q:'Fortalecer o SUS para garantir saúde para todos.',tag:'#saude',p:'LULA'},
+{n:14,s:'♠',q:'Fortalecer a Casa da Mulher Brasileira para acolher vítimas de violência doméstica.',tag:'#defesadamulher',p:'LULA'},
+{n:15,s:'♠',q:'Criação do Sistema Único de Segurança semelhante ao SUS.',tag:'#seguranca',p:'LULA'},
+{n:16,s:'♠',q:'Ampliar o Programa das Carretas de Saúde com Especialistas.',tag:'#saude',p:'LULA'},
+{n:17,s:'♦',q:'Apoiar o tarifaço imposto por Trump.',tag:'#economia',p:'FLÁVIO BOLSONARO'},
+{n:18,s:'♦',q:'Oferecer o Brasil para exploração dos Estados Unidos.',tag:'#economia',p:'FLÁVIO BOLSONARO'},
+{n:19,s:'♦',q:'Não reconhecer as mudanças climáticas e apostar que saneamento básico é suficiente para enfrentar os desafios que estão surgindo.',tag:'#meioambiente',p:'FLÁVIO BOLSONARO'},
+{n:20,s:'♦',q:'Fazer parte de grupos antivacinas.',tag:'#saude',p:'FLÁVIO BOLSONARO'},
+{n:21,s:'♦',q:'Defender o armamento da população.',tag:'#seguranca',p:'FLÁVIO BOLSONARO'},
+{n:22,s:'♦',q:'Defender anistia para os golpistas.',tag:'#democracia',p:'FLÁVIO BOLSONARO'},
+{n:23,s:'♦',q:'Milícias dominando bairros e cidades é algo bom?',tag:'#seguranca',p:'FLÁVIO BOLSONARO'},
+{n:24,s:'♦',q:'Adotar o “tesouraço” (cortes extremos) nos gastos públicos.',tag:'#estadominimo',p:'FLÁVIO BOLSONARO'},
+{n:25,s:'♣',q:'Mudar a Lei do Racismo retirando a punição do agressor.',tag:'#diversidade',p:'FLÁVIO BOLSONARO'},
+{n:26,s:'♣',q:'Afirmar que mulheres solteiras votam mal.',tag:'#democracia',p:'FLÁVIO BOLSONARO'},
+{n:27,s:'♣',q:'Afirmar que contratar mulheres dá prejuízo para o patrão.',tag:'#direitostrabalhistas',p:'FLÁVIO BOLSONARO'},
+{n:28,s:'♣',q:'Cortar programas sociais.',tag:'#estadominimo',p:'FLÁVIO BOLSONARO'},
+{n:29,s:'♣',q:'Congelar o salário-mínimo e aposentadorias.',tag:'#direitostrabalhistas',p:'FLÁVIO BOLSONARO'},
+{n:30,s:'♣',q:'Acabar com o SUS e adotar saúde somente para quem puder pagar.',tag:'#estadominimo',p:'FLÁVIO BOLSONARO'},
+{n:31,s:'♣',q:'Acabar com as leis trabalhistas deixando cada empregado negociar direto com o patrão.',tag:'#direitostrabalhistas',p:'FLÁVIO BOLSONARO'},
+{n:32,s:'♣',q:'Manter inexplicada a relação próxima com Vorcaro, do Banco Master, e os pedidos e recebimentos de dinheiro que realizou.',tag:'#corrupcao',p:'FLÁVIO BOLSONARO'}];
+const deckSourceUrls=["https://tr.ee/P3CnvVp1fQ0i","https://tr.ee/Uii3CdShBwxl","https://tr.ee/RuBjxDsa20u6","https://tr.ee/dHGAbK07EeNi","https://tr.ee/lmLDolxxmbe8","https://tr.ee/6Y0k0NSEqYAf","https://tr.ee/Cp5ld7d74eJz","https://tr.ee/QHoDIaW0s76S","https://tr.ee/uAb6X5qlvgko","https://tr.ee/10EPtzvJ411n","https://tr.ee/JmgHvVIK4FBU","https://tr.ee/2Sc5Lu0f8PPN","https://tr.ee/SQUb1SmH42wq","https://tr.ee/DMZ1zvaCDaw3","https://tr.ee/YyTiU7HM7WL7","https://tr.ee/S0B0B1E97d8N","https://tr.ee/UoEx65lF6nZF","https://tr.ee/IRpAL11u7tZb","https://tr.ee/FXJPpBwpARsu","https://tr.ee/r3qicEHilUxB","https://tr.ee/G865aP0aFgA0","https://tr.ee/aWboVks4X5lT","https://tr.ee/q80ubrYZId3Z","https://tr.ee/uu6vzXHD7U5j","https://tr.ee/h17vk7S01piQ","https://tr.ee/m0iExcVCaq4R","https://tr.ee/P4cnvYcH4gdq","https://tr.ee/zOoIqlwZDYK2","https://tr.ee/m4nC9mwZT0Xh","https://tr.ee/ySUaZPPBLM49","https://tr.ee/aW1h8Pyq2v1n","https://tr.ee/jeBg9jv4F1r6"];
+for(const item of deckData)item.sourceUrl=deckSourceUrls[item.n-1];
+// Carta 23: vídeo indicado especificamente para esta carta.
+deckData.find(item=>item.n===23).sourceUrl='https://www.instagram.com/reel/DeRyHvChwIx/?obrf=bm5wd3lqMzZ5aWsz';
+// Carta 1 (Pix): vídeo informado para a fonte desta carta.
+deckData.find(item=>item.n===1).sourceUrl='https://www.youtube.com/shorts/1p3L2jTY51A';
+// Carta 2: vídeo informado para a fonte desta carta.
+deckData.find(item=>item.n===2).sourceUrl='https://www.youtube.com/watch?v=AnoygcD4iHw';
+// Carta 3: vídeo informado para a fonte desta carta.
+deckData.find(item=>item.n===3).sourceUrl='https://www.youtube.com/watch?v=NOX58VcUUP8';
+const deckScenes={
+ 32:{sky:'#d5d8db',ink:'#50565b',accent:'#171717',label:'BANCO MASTER',symbol:'BANCO',landmark:'institution'},
+ 31:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'LEIS TRABALHISTAS',symbol:'CLT',landmark:'industry'},
+ 30:{sky:'#c9dfd2',ink:'#147047',accent:'#171717',label:'SAÚDE PÚBLICA',symbol:'SUS',landmark:'health'},
+ 29:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'SALÁRIO E APOSENTADORIA',symbol:'CONGELA',landmark:'industry'},
+ 28:{sky:'#d5d8db',ink:'#50565b',accent:'#171717',label:'PROGRAMAS SOCIAIS',symbol:'CORTES',landmark:'city'},
+ 27:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'MULHERES E TRABALHO',symbol:'TRABALHO',landmark:'industry'},
+ 26:{sky:'#efd0d7',ink:'#a51c4d',accent:'#171717',label:'MULHERES E VOTO',symbol:'♀',landmark:'city'},
+ 25:{sky:'#d7c7df',ink:'#603a70',accent:'#171717',label:'RACISMO',symbol:'RACISMO',landmark:'city'},
+ 24:{sky:'#d5d8db',ink:'#50565b',accent:'#171717',label:'CORTES NO ESTADO',symbol:'CORTES',landmark:'institution'},
+ 23:{sky:'#b9cedc',ink:'#123f61',accent:'#171717',label:'MILÍCIAS',symbol:'MILÍCIA',landmark:'city'},
+ 22:{sky:'#bed4e4',ink:'#164f78',accent:'#171717',label:'ANISTIA',symbol:'8/1',landmark:'institution'},
+ 21:{sky:'#bed4e4',ink:'#164f78',accent:'#171717',label:'ARMAMENTO',symbol:'ARMAS',landmark:'city'},
+ 20:{sky:'#c9dfd2',ink:'#147047',accent:'#171717',label:'VACINAÇÃO',symbol:'VACINA',landmark:'health'},
+ 19:{sky:'#c7d9c2',ink:'#356b3d',accent:'#171717',label:'MUDANÇAS CLIMÁTICAS',symbol:'CLIMA',landmark:'nature'},
+ 18:{sky:'#bed4e4',ink:'#164f78',accent:'#171717',label:'SOBERANIA NACIONAL',symbol:'EUA',landmark:'institution'},
+ 17:{sky:'#bed4e4',ink:'#164f78',accent:'#171717',label:'TARIFAÇO',symbol:'TARIFAS',landmark:'industry'},
+ 16:{sky:'#c9dfd2',ink:'#147047',accent:'#171717',label:'SAÚDE COM ESPECIALISTAS',symbol:'SUS',landmark:'health'},
+ 15:{sky:'#c8dced',ink:'#164f78',accent:'#171717',label:'SEGURANÇA PÚBLICA',symbol:'SUSP',landmark:'institution'},
+ 14:{sky:'#efd0d7',ink:'#a51c4d',accent:'#171717',label:'PROTEÇÃO À MULHER',symbol:'♀',landmark:'institution'},
+ 13:{sky:'#c9dfd2',ink:'#147047',accent:'#171717',label:'SISTEMA ÚNICO DE SAÚDE',symbol:'SUS',landmark:'health'},
+ 12:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'CRECHES',symbol:'ABC',landmark:'institution'},
+ 11:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'SALÁRIO MÍNIMO',symbol:'↗',landmark:'industry'},
+ 10:{sky:'#c7e1df',ink:'#11635e',accent:'#171717',label:'PROGRAMAS SOCIAIS',symbol:'SOCIAL',landmark:'city'},
+ 9:{sky:'#c7e1df',ink:'#11635e',accent:'#171717',label:'REDES E DEMOCRACIA',symbol:'@',landmark:'city'},
+ 8:{sky:'#f2c9b8',ink:'#b3121b',accent:'#171717',label:'JUSTIÇA TRIBUTÁRIA',symbol:'%',landmark:'city'},
+ 7:{sky:'#efd2a5',ink:'#9b4f00',accent:'#171717',label:'COTAS E DIREITOS',symbol:'COTAS',landmark:'institution'},
+ 6:{sky:'#f3d6a5',ink:'#a65b00',accent:'#171717',label:'UNIVERSIDADE',symbol:'VAGAS',landmark:'institution'},
+ 5:{sky:'#c8dced',ink:'#164f78',accent:'#171717',label:'CRIME ORGANIZADO',symbol:'$',landmark:'city'},
+ 4:{sky:'#c8dced',ink:'#164f78',accent:'#171717',label:'POLÍCIA FEDERAL',symbol:'PF',landmark:'institution'},
+ 3:{sky:'#f5d79a',ink:'#a65b00',accent:'#171717',label:'JORNADA E DIREITOS',symbol:'2 FOLGAS',landmark:'industry'},
+ 2:{sky:'#f2c9b8',ink:'#b3121b',accent:'#171717',label:'RIQUEZAS DO BRASIL',symbol:'PETRÓLEO',landmark:'industry'},
+ 1:{sky:'#f2c9b8',ink:'#b3121b',accent:'#171717',label:'PIX E SOBERANIA',symbol:'PIX',landmark:'institution'},};
+const deckArtAssets={1:'../poder-popular-piloto/assets/1.pix.png?v=d0fab4238a',2:'../poder-popular-piloto/assets/recursosnaturais-rio.png?v=2b066166fe',3:'../poder-popular-piloto/assets/direitostrabalhistas.png?v=fb4b8362a7',4:'../poder-popular-piloto/assets/policiafederal.png?v=a34b52f0b6',5:'../poder-popular-piloto/assets/5.combatercrimeorganizado.png?v=d7af45e6b7',6:'../poder-popular-piloto/assets/6.universidades.png?v=8e35f3c4b3',7:'../poder-popular-piloto/assets/7.cotas.png?v=d1a8a57002',8:'../poder-popular-piloto/assets/8.impostosdosricos.png?v=c219682840',9:'../poder-popular-piloto/assets/9.redessociais.png?v=1938079262',10:'../poder-popular-piloto/assets/10.reforçarprogamas.png?v=b4aee5f422',11:'../poder-popular-piloto/assets/11.salariominimo.png?v=ea003a2deb',12:'../poder-popular-piloto/assets/12.creche.png?v=631c3c1568',13:'../poder-popular-piloto/assets/13.sus.png?v=3cacd632aa',14:'../poder-popular-piloto/assets/14.mulheres.png?v=9bc0b62a02',15:'../poder-popular-piloto/assets/15.susp.png?v=a3b2ae9d21',16:'../poder-popular-piloto/assets/16.carretasus.png?v=e84824592d',17:'../poder-popular-piloto/assets/17.tarifaçotrump.png?v=6414097cf6',18:'../poder-popular-piloto/assets/18.recursosbrasileua.png?v=c2ae01ace9',19:'../poder-popular-piloto/assets/19.mudançaclimatica.png?v=3dd5757f62',20:'../poder-popular-piloto/assets/20.antivacina.png?v=01c6bc425c',21:'../poder-popular-piloto/assets/21.armamentos.png?v=7baaf8a5ee',22:'../poder-popular-piloto/assets/22.anistiaaosgolpistas.png?v=063eb7e688',23:'../poder-popular-piloto/assets/23.milicias.png?v=a5fc8d00eb',24:'../poder-popular-piloto/assets/24.tesouraço.png?v=767e383f70',25:'../poder-popular-piloto/assets/25.racismo.png?v=219c1c642f',26:'../poder-popular-piloto/assets/26.votosmulheressolteiras.png?v=5f3c89fc52',27:'../poder-popular-piloto/assets/27.contratarmulheres.png?v=6e745f4a40',28:'../poder-popular-piloto/assets/28.cortarprogramas.png?v=b5816144cc',29:'../poder-popular-piloto/assets/29.congelarsalariominimo.png?v=356bef1abb',30:'../poder-popular-piloto/assets/30.desmontedosus.png?v=774988ae19',31:'../poder-popular-piloto/assets/31.fimdaclt.png?v=dbbb284c5c',32:'../poder-popular-piloto/assets/32.vorcaro.png?v=7d1c8a2fc9'};
+function deckFrontArt(x){const src=deckArtAssets[x.n];return src?'<img src="'+src+'" alt="" loading="eager">':deckPosterArt(x)}
+function deckPosterArt(x){
+ const d=deckScenes[x.n]||{sky:x.n>=17?'#b9d2e4':'#f2c9b8',ink:x.n>=17?'#164f78':'#b3121b',accent:'#171717',label:x.tag.replace('#','').toUpperCase(),symbol:'●',landmark:'city'};
+ const people='<g fill="'+d.accent+'"><circle cx="72" cy="181" r="18"/><path d="M40 230c5-38 16-55 32-55s27 17 32 55"/><circle cx="348" cy="181" r="18"/><path d="M316 230c5-38 16-55 32-55s27 17 32 55"/></g>';
+ const land=d.landmark==='industry'?'<path d="M0 167h420v63H0z" fill="'+d.ink+'" opacity=".38"/><rect x="42" y="111" width="28" height="56" fill="'+d.ink+'"/><rect x="84" y="130" width="88" height="37" fill="'+d.ink+'"/><path d="M84 130l44-29 44 29" fill="'+d.ink+'"/>':d.landmark==='institution'?'<path d="M72 165h276v65H72z" fill="'+d.ink+'" opacity=".3"/><path d="M60 165l150-74 150 74z" fill="'+d.ink+'" opacity=".65"/><g fill="'+d.ink+'"><rect x="95" y="154" width="24" height="76"/><rect x="145" y="154" width="24" height="76"/><rect x="251" y="154" width="24" height="76"/><rect x="301" y="154" width="24" height="76"/></g>':d.landmark==='health'?'<rect x="128" y="102" width="164" height="128" rx="8" fill="'+d.ink+'" opacity=".45"/><rect x="190" y="119" width="40" height="94" fill="#f7f0df"/><rect x="163" y="146" width="94" height="40" fill="#f7f0df"/>':d.landmark==='nature'?'<path d="M0 180l70-65 58 42 70-89 72 94 62-55 88 73v50H0z" fill="'+d.ink+'" opacity=".48"/><circle cx="337" cy="62" r="28" fill="'+d.ink+'" opacity=".65"/>':'<path d="M0 172l55-43 42 20 52-51 55 42 55-64 60 57 101-45v142H0z" fill="'+d.ink+'" opacity=".34"/>';
+ return '<svg viewBox="0 0 420 230" aria-hidden="true"><rect width="420" height="230" fill="'+d.sky+'"/>'+land+'<circle cx="210" cy="86" r="58" fill="'+d.ink+'"/><text x="210" y="97" text-anchor="middle" font-family="Arial" font-size="'+(d.symbol.length>3?28:50)+'" font-weight="900" fill="#fff">'+d.symbol+'</text><rect x="116" y="137" width="188" height="31" rx="15" fill="#f7f0df" opacity=".9"/><text x="210" y="158" text-anchor="middle" font-family="Arial" font-size="14" font-weight="900" fill="'+d.accent+'">'+d.label+'</text>'+people+'</svg>';
+}
+let deckOrder=[],deckPos=0,deckChoice='',deckCover=true;
+function startDeck(){if(!deckOrder.length){deckOrder=[...deckData];deckCover=true}renderDeck(false)}
+function shuffleDeck(){deckOrder=[...deckData].sort(()=>Math.random()-.5);deckPos=0;deckChoice='';deckCover=false;renderDeck(false)}
+function beginDeck(){deckOrder=[...deckData].sort(()=>Math.random()-.5);deckCover=false;deckPos=0;deckChoice='';renderDeck(false)}
+function renderDeck(reveal){
+ const el=document.getElementById('deckCard');
+ if(deckCover){document.getElementById('deckProgress').textContent='32 cartas';el.innerHTML='<div class="deck-card deck-cover"><div class="deck-cover-mark">♥ ♠<br>♦ ♣</div><h3>ISSO É<br>BOM OU RUIM?</h3><p>BARALHO DIGITAL</p><button onclick="beginDeck()">EMBARALHAR E COMEÇAR</button><div class="deck-note">Leia • escolha • revele</div></div>';return}
+ const x=deckOrder[deckPos]||deckData[0];document.getElementById('deckProgress').textContent='Carta '+(deckPos+1)+' de '+deckOrder.length;
+ if(!reveal){const tone=x.tag.includes('seguranca')?'blue':x.tag.includes('trabalh')?'gold':'red';const art=deckFrontArt(x);el.innerHTML='<div class="deck-card"><div class="deck-corner"><div><span class="deck-no">'+x.n+'</span><div class="deck-suit">'+x.s+'</div></div></div><h3 class="deck-question">Isso é<br><b>bom ou ruim?</b></h3><div class="deck-quote">“'+escapeHTML(x.q)+'”</div><div class="deck-tag">'+escapeHTML(x.tag)+'</div><div class="deck-art '+tone+'">'+art+'</div><div class="deck-bottom-corner"><span class="deck-suit">'+x.s+'</span><span class="deck-no">'+x.n+'</span></div><div class="deck-actions"><button class="good" onclick="revealDeck(\'BOM\')">👍 BOM</button><button class="bad" onclick="revealDeck(\'RUIM\')">👎 RUIM</button></div></div>';return}
+ const flavio=x.p.startsWith('FLÁVIO');el.innerHTML='<div class="deck-card deck-back '+(flavio?'flavio':'')+'"><div class="deck-no">'+x.n+' '+x.s+'</div><div class="deck-choice">VOCÊ MARCOU: '+deckChoice+'</div>'+(flavio?'<div class="deck-portrait flavio-avatar"><img src="../poder-popular-piloto/assets/avatar-flavio.png?v=cf1619083e" alt="Retrato ilustrado de Flávio Bolsonaro" loading="eager"></div>':'<div class="deck-portrait lula-avatar"><img src="../poder-popular-piloto/assets/avatar-lula.png" alt="Retrato ilustrado de Lula" loading="eager"></div>')+'<div class="deck-person">'+escapeHTML(x.p)+'</div><div class="deck-reveal">ESSA AFIRMAÇÃO É DE<br>'+escapeHTML(x.p)+'</div><div class="deck-qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;margin=12&amp;data='+encodeURIComponent(x.sourceUrl)+'" alt="QR Code da fonte indicada na carta '+x.n+'" width="116" height="116" loading="lazy"><a href="'+escapeHTML(x.sourceUrl)+'" target="_blank" rel="noopener noreferrer" class="deck-source">ABRIR FONTE ↗</a><small>Fonte indicada no material original</small></div><button class="ghost" style="margin-top:6px;padding:12px" onclick="nextDeck()">PRÓXIMA CARTA →</button><div class="deck-note">A escolha feita nesta dinâmica não é salva no banco.</div></div>'
+}
+function revealDeck(v){deckChoice=v;renderDeck(true)}
+function prevDeck(){deckCover=false;deckChoice='';deckPos=Math.max(0,deckPos-1);renderDeck(false)}
+function toggleDeckTest(){const p=document.getElementById('deckTestPicker');if(!p)return;const opening=p.style.display!=='grid';p.style.display=opening?'grid':'none';p.classList.toggle('hide',!opening);if(opening){p.innerHTML=deckData.map((x,i)=>'<button class="smallbtn" onclick="jumpDeck('+i+')">'+x.n+x.s+'</button>').join('')}}
+function jumpDeck(i){deckOrder=[...deckData];deckPos=i;deckCover=false;deckChoice='';document.getElementById('deckTestPicker').style.display='none';renderDeck(false)}
+function nextDeck(){deckPos++;deckChoice='';if(deckPos>=deckOrder.length){deckPos=0;deckCover=true;renderDeck(false);return}renderDeck(false)}
+
+async function bootBaralho(){
+ document.getElementById('publicDeckHome').classList.add('hide');
+ document.getElementById('login').classList.add('hide');
+ document.getElementById('privateApp').classList.remove('hide');
+ document.getElementById('bottomNav').classList.add('hide');
+ document.getElementById('deckBackPublic').classList.add('hide');
+ show('baralho');startDeck();
+}
+bootBaralho();
+
+let leafletMap=null,marker=null;
+function initMap(){if(typeof L==='undefined'){document.getElementById('electoralPanel').innerHTML='Não foi possível carregar o mapa. Verifique a conexão.';return}if(!leafletMap){leafletMap=L.map('realmap').setView([-20.5386,-47.4008],13);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(leafletMap);leafletMap.on('click',e=>markPoint(e.latlng,'Ponto selecionado no mapa'))}leafletMap.invalidateSize()}
+function markPoint(latlng,label){if(marker)leafletMap.removeLayer(marker);marker=L.marker(latlng).addTo(leafletMap).bindPopup(label).openPopup();document.getElementById('electoralPanel').innerHTML='<b>'+escapeHTML(label)+'</b><br>Coordenadas aproximadas: '+latlng.lat.toFixed(4)+', '+latlng.lng.toFixed(4)+'<br><br><b>Votos por candidato, brancos, nulos e abstenções:</b> aguardando importação e conferência dos dados oficiais por seção/local. Não há números simulados.<br><br><a href="https://dadosabertos.tse.jus.br/pt_BR/dataset/resultados-2026" target="_blank" rel="noopener">Fonte oficial: TSE ↗</a>'}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+async function searchPlace(){initMap();const q=document.getElementById('placeSearch').value.trim();if(!q)return alert('Digite um bairro ou endereço.');try{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q='+encodeURIComponent(q+', Franca, São Paulo'));const data=await r.json();if(!data.length)return alert('Local não encontrado. Tente um endereço mais completo.');const p=data[0],point=L.latLng(+p.lat,+p.lon);leafletMap.setView(point,16);markPoint(point,p.display_name)}catch(e){alert('Busca indisponível no momento.')}}
+function locateMe(){initMap();if(!navigator.geolocation)return alert('Geolocalização não disponível.');navigator.geolocation.getCurrentPosition(p=>{const point=L.latLng(p.coords.latitude,p.coords.longitude);leafletMap.setView(point,16);markPoint(point,'Localização atual (não armazenada)')},()=>alert('Não foi possível obter a localização.'),{enableHighAccuracy:false,timeout:10000})}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script></body></html>
