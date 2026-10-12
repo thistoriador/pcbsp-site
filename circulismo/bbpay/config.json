@@ -1,0 +1,32 @@
+{
+  "provider": "bbpay",
+  "environment": "homologation",
+  "enabled": false,
+  "realPaymentsEnabled": false,
+  "methods": {
+    "pix": {
+      "enabled": false
+    },
+    "creditCard": {
+      "enabled": false
+    },
+    "recurringCreditCard": {
+      "enabled": false
+    }
+  },
+  "requirements": {
+    "partyAccountApproval": "pending",
+    "bbPayAgreement": "pending",
+    "creditCardAcceptance": "pending",
+    "recurringCardAcceptance": "pending",
+    "merchantCredentials": "pending",
+    "webhookRegistration": "pending",
+    "treasuryLegalReview": "pending"
+  },
+  "receipt": {
+    "cpfRequired": true,
+    "onePerConfirmedPayment": true,
+    "issueOnlyAfterSettlement": true
+  },
+  "note": "Configuração pública de estado, sem credenciais. Nunca colocar tokens, segredos ou dados de doadores neste arquivo."
+}
