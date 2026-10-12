@@ -166,6 +166,7 @@ for(const item of deckData)item.sourceUrl=deckSourceUrls[item.n-1];
 // Carta 23: vídeo indicado especificamente para esta carta.
 deckData.find(item=>item.n===23).sourceUrl='https://www.instagram.com/reel/DeRyHvChwIx/?obrf=bm5wd3lqMzZ5aWsz';
 const deckScenes={
+ 2:{sky:'#f2c9b8',ink:'#b3121b',accent:'#171717',label:'RIQUEZAS DO BRASIL',symbol:'PETRÓLEO',landmark:'industry'},
  1:{sky:'#f2c9b8',ink:'#b3121b',accent:'#171717',label:'PIX E SOBERANIA',symbol:'PIX',landmark:'institution'},};
 function deckPosterArt(x){
  const d=deckScenes[x.n]||{sky:x.n>=17?'#b9d2e4':'#f2c9b8',ink:x.n>=17?'#164f78':'#b3121b',accent:'#171717',label:x.tag.replace('#','').toUpperCase(),symbol:'●',landmark:'city'};
