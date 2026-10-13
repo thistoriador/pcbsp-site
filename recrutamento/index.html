@@ -1250,14 +1250,20 @@ function renderTerritory(){
  if(pending.length){const marker=L.circleMarker([-23.59,-46.60],{radius:Math.max(7,Math.min(16,6+Math.sqrt(pending.length)*2)),color:'#334155',weight:2,fillColor:'#facc15',fillOpacity:.95});marker.bindPopup('<strong>São Paulo · a conferir</strong><br>'+pending.length+' cadastro(s) sem zona validada ou com município inconsistente<br><small>Marcador ilustrativo; localização não identificada.</small><br><button type="button" class="territory-popup" data-city="São Paulo">Ver cadastros da capital</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)}
  return;
  }const c=territoryLocations.get(cityKey);if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:r.unassigned>0?'#dc2626':'#16a34a',fillOpacity:.85});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br>'+r.assigned+' atribuído(s) · '+r.unassigned+' não atribuído(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});setTimeout(()=>territoryMap.invalidateSize({pan:false}),150)}
- if(!territoryResolved&&!territoryGeocoding)territoryResolveCities(all.map(r=>r.name));
+ if(!territoryGeocoding&&all.some(r=>!territoryLocations.has(territoryNormalize(r.name))))territoryResolveCities(all.map(r=>r.name));
 }
 async function territoryResolveCities(cities){
- if(territoryGeocoding||territoryResolved)return;territoryGeocoding=true;
+ if(territoryGeocoding)return;territoryGeocoding=true;
  const status=document.getElementById('territoryMapStatus'),cacheKey='pcb_recruits_citycoords_v2';let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(e){}
  let failed=0;
+ const fixedKey=territoryNormalize('Barueri');
+ if(cities.some(city=>territoryNormalize(city)===fixedKey)){
+  const fixedPoint={lat:-23.51,lon:-46.88};
+  territoryLocations.set(fixedKey,fixedPoint);cache[fixedKey]=fixedPoint;
+ }
  for(const city of cities){
   const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA'||key.startsWith('REVISAR:'))continue;
+  if(territoryLocations.has(key))continue;
   if(cache[key]?.lat){territoryLocations.set(key,cache[key]);continue}
   status.textContent='Localizando '+city+'...';
   try{
