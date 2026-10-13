@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>PCB São Paulo</title>
+
+  <!-- FAVICON -->
+  <link rel="icon" type="image/png" href="/favicon.png?v=3">
+  <link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
+
+  <!-- DESCRIÇÃO -->
+  <meta
+    name="description"
+    content="Aplicativos e ferramentas do PCB São Paulo"
+  >
+
+  <meta
+    name="theme-color"
+    content="#b5121b"
+  >
+
+  <!-- WHATSAPP / FACEBOOK / OPEN GRAPH -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PCB São Paulo">
+  <meta property="og:locale" content="pt_BR">
+
+  <meta property="og:url" content="https://pcbsp.com.br/">
+
+  <meta property="og:title" content="PCB São Paulo">
+
+  <meta
+    property="og:description"
+    content="Aplicativos e ferramentas do PCB São Paulo"
+  >
+
+  <meta
+    property="og:image"
+    content="https://pcbsp.com.br/preview.png"
+  >
+
+  <meta
+    property="og:image:secure_url"
+    content="https://pcbsp.com.br/preview.png"
+  >
+
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta
+    property="og:image:alt"
+    content="PCB São Paulo — Aplicativos e ferramentas"
+  >
+
+  <!-- X / TWITTER -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta
+    name="twitter:title"
+    content="PCB São Paulo"
+  >
+
+  <meta
+    name="twitter:description"
+    content="Aplicativos e ferramentas do PCB São Paulo"
+  >
+
+  <meta
+    name="twitter:image"
+    content="https://pcbsp.com.br/preview.png"
+  >
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+
+      background:
+        linear-gradient(
+          145deg,
+          #8d0d14 0%,
+          #b5121b 55%,
+          #760a10 100%
+        );
+
+      display: flex;
+      justify-content: center;
+
+      padding: 24px;
+    }
+
+    .pagina {
+      width: 100%;
+      max-width: 1000px;
+      text-align: center;
+    }
+
+
+    /* =========================
+       BANNER PRINCIPAL
+       ========================= */
+
+    .banner {
+      width: 100%;
+      display: block;
+
+      margin: 0 auto 32px;
+
+      border-radius: 20px;
+
+      box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.35);
+    }
+
+
+    /* =========================
+       TÍTULO
+       ========================= */
+
+    .apps-titulo {
+      color: #ffd400;
+
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+
+      margin-bottom: 22px;
+    }
+
+
+    /* =========================
+       GRADE DE APLICATIVOS
+       ========================= */
+
+    .apps-grid {
+      width: 100%;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 24px;
+
+      align-items: stretch;
+    }
+
+
+    /* =========================
+       CARD
+       ========================= */
+
+    .app-card {
+      display: flex;
+
+      flex-direction: column;
+      align-items: center;
+
+      width: 100%;
+
+      background: #ffffff;
+
+      border-radius: 24px;
+
+      padding: 26px 22px;
+
+      text-decoration: none;
+
+      box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.35);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .app-card:hover {
+      transform: translateY(-5px);
+
+      box-shadow:
+        0 20px 45px
+        rgba(0, 0, 0, 0.45);
+    }
+
+
+    /* =========================
+       ÍCONES
+       ========================= */
+
+    .icone-container {
+      width: 100%;
+      height: 220px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 18px;
+    }
+
+    .icone {
+      max-width: 210px;
+      max-height: 210px;
+
+      width: auto;
+      height: auto;
+
+      object-fit: contain;
+    }
+
+    .icone-recrutamento {
+      border-radius: 22px;
+    }
+
+
+    /* =========================
+       TEXTOS
+       ========================= */
+
+    .app-nome {
+      color: #111111;
+
+      font-size: 25px;
+      font-weight: 900;
+
+      line-height: 1.15;
+
+      min-height: 58px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-descricao {
+      color: #555555;
+
+      font-size: 15px;
+      line-height: 1.5;
+
+      margin-top: 10px;
+
+      flex-grow: 1;
+    }
+
+
+    /* =========================
+       BOTÃO
+       ========================= */
+
+    .botao {
+      display: block;
+
+      width: 100%;
+
+      margin-top: 22px;
+
+      background: #b5121b;
+      color: #ffffff;
+
+      border-radius: 12px;
+
+      padding: 15px;
+
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+
+    /* =========================
+       RODAPÉ
+       ========================= */
+
+    .rodape {
+      margin-top: 38px;
+      margin-bottom: 10px;
+
+      color: rgba(255, 255, 255, 0.75);
+
+      font-size: 12px;
+    }
+
+
+    /* =========================
+       CELULAR
+       ========================= */
+
+    @media (max-width: 700px) {
+
+      body {
+        padding: 14px;
+      }
+
+      .pagina {
+        max-width: 100%;
+      }
+
+      .banner {
+        border-radius: 14px;
+        margin-bottom: 26px;
+      }
+
+      .apps-titulo {
+        font-size: 14px;
+        margin-bottom: 18px;
+      }
+
+      .apps-grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+      }
+
+      .app-card {
+        padding: 22px 18px;
+      }
+
+      .icone-container {
+        height: 190px;
+      }
+
+      .icone {
+        max-width: 180px;
+        max-height: 180px;
+      }
+
+      .app-nome {
+        font-size: 22px;
+        min-height: auto;
+      }
+
+      .app-descricao {
+        font-size: 15px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <main class="pagina">
+
+
+    <!-- =========================
+         BANNER PCB SÃO PAULO
+         ========================= -->
+
+    <img
+      class="banner"
+      src="/preview.png"
+      alt="PCB São Paulo — Aplicativos e ferramentas"
+    >
+
+
+    <!-- =========================
+         APLICATIVOS
+         ========================= -->
+
+    <div class="apps-titulo">
+      ACESSE NOSSOS APLICATIVOS
+    </div>
+
+
+    <section class="apps-grid">
+
+
+      <!-- =========================
+           MAPA DOS VOTOS PCB-SP
+           ========================= -->
+
+      <a
+        class="app-card"
+        href="/mapa/"
+      >
+
+        <div class="icone-container">
+
+          <img
+            class="icone"
+            src="/mapa/icone-mapa.png"
+            alt="Mapa dos Votos PCB-SP"
+          >
+
+        </div>
+
+        <div class="app-nome">
+          Mapa dos Votos PCB-SP
+        </div>
+
+        <div class="app-descricao">
+          Consulte e analise dados eleitorais e a distribuição
+          territorial dos votos do PCB em São Paulo.
+        </div>
+
+        <span class="botao">
+          ACESSAR MAPA
+        </span>
+
+      </a>
+
+
+      <!-- ACESSO PÚBLICO AO SISTEMA DE RECRUTAMENTOS: autenticação permanece no aplicativo -->
+      <a class="app-card" href="/recrutamento/" aria-label="Acessar sistema de recrutamentos PCB-SP">
+        <div class="icone-container">
+          <img class="icone icone-recrutamento" src="https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png" alt="Ícone do sistema de recrutamentos" loading="lazy">
+        </div>
+        <div class="app-nome">Recrutamento e Circulismo</div>
+        <div class="app-descricao">Acesse os formulários e a área de acompanhamento do PCB-SP. As funções internas exigem autenticação e permissões próprias.</div>
+        <span class="botao">ACESSAR SISTEMA</span>
+      </a>
+
+    </section>
+
+
+    <!-- =========================
+         RODAPÉ
+         ========================= -->
+
+    <footer class="rodape">
+      PCB São Paulo
+    </footer>
+
+
+  </main>
+
+<!-- pages-rebuild-app2: 2026-10-04 --><!-- pages-rebuild-macro-fix-06 --><!-- pages-trigger-20261005-1400 -->
+<!-- pages-restore-app2-98285087 -->
+<!-- pages-rollback-app2-pre-municipal -->
+<!-- pages-app2-map-functional-f16a091e -->
+<!-- pages-app2-restore-map-583d802 -->
+<!-- APP2-PAGES-TRIGGER:V03-62183312 --></body>
+
+</html>
