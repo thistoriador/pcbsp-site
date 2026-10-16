@@ -435,6 +435,12 @@ body:has(#home.view.on) footer.footer{display:none!important}
 @media(min-width:1000px){#home .recruit-stage{height:calc(100dvh - 145px)!important}}
 @media(max-width:1150px){#home .headrow{flex-wrap:wrap!important;justify-content:center!important}#home .brand{min-width:0!important}#home .recruit-footer img{width:120px!important}}
 @media(max-width:750px){#home .brand img{width:72px!important;height:54px!important}#home .brand span{font-size:10px!important}#home .recruit-footer{padding:10px 15px!important}#home .recruit-footer img{width:120px!important;height:55px!important}}
+
+/* Seta desenhada em SVG, sem caracteres tipográficos deformados */
+#home .recruit-rule{height:12px!important;background:none!important;color:#b40812!important;display:block!important;line-height:0!important;margin:0!important;overflow:visible!important}
+#home .recruit-rule svg{width:100%!important;height:12px!important;display:block!important}
+/* Evita falsa indicação de fonte instalada; tipografia provisória até disponibilizar LEMON MILK */
+#home .recruit-content h1{font-family:'LEMON MILK',Montserrat,'Arial Black',Arial,sans-serif!important;font-stretch:normal!important;transform:none!important;letter-spacing:-.035em!important}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -768,8 +774,8 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <section id="home" class="view on">
 <header class="header"><div class="headrow" id="headrow"><a class="brand" href="/portal-teste/" aria-label="PCB São Paulo"><img src="/portal-teste/assets/pcb-sp-logo.png" alt="PCB São Paulo"><span>PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></span></a><button class="menu-toggle" type="button" onclick="document.getElementById('mainnav').classList.toggle('open')" aria-label="Abrir menu">☰ Menu</button><nav class="nav" id="mainnav" aria-label="Navegação principal"><a href="/portal-teste/">Início</a><a href="/portal-teste/#opcb">O PCB</a><a class="program" href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf">PROGRAMA PARA SP ↗</a><a href="/portal-teste/#atuacao">Nossa atuação</a><a href="/portal-teste/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="/portal-teste/#contato">Contato</a></nav><div class="nav-actions"><button type="button" class="topbtn organize" onclick="go('rec')">ORGANIZE SUA REVOLTA ↗</button><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
 <div class="recruit-stage">
- <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><svg class="recruit-poster" viewBox="0 0 560 748" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="/portal-teste/assets/fundo-circulismo.png" x="0" y="0" width="1073" height="932" preserveAspectRatio="xMinYMin meet"/></svg></div>
- <div class="recruit-content"><h1>ORGANIZE-SE</h1><div class="recruit-rule" aria-hidden="true">➜</div><p class="recruit-intro">O PCB convoca trabalhadores e trabalhadoras, estudantes, jovens e todos aqueles que desejam transformar a sociedade a se organizar e fortalecer a luta pelo socialismo.</p>
+ <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><svg class="recruit-poster" viewBox="0 0 545 730" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="/portal-teste/assets/fundo-circulismo.png" x="0" y="0" width="1073" height="932" preserveAspectRatio="xMinYMin meet"/></svg></div>
+ <div class="recruit-content"><h1>ORGANIZE-SE</h1><div class="recruit-rule" aria-hidden="true"><svg viewBox="0 0 700 12" preserveAspectRatio="none"><path d="M0 6H693M685 1L694 6L685 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/></svg></div><p class="recruit-intro">O PCB convoca trabalhadores e trabalhadoras, estudantes, jovens e todos aqueles que desejam transformar a sociedade a se organizar e fortalecer a luta pelo socialismo.</p>
  <button class="recruit-cta" type="button" onclick="go('rec')"><span aria-hidden="true">▤</span> QUERO ME ORGANIZAR <span aria-hidden="true">→</span></button>
  <div class="recruit-links">
   <a href="/portal-teste/#opcb"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="13" r="7"/><circle cx="9" cy="21" r="5"/><circle cx="39" cy="21" r="5"/><path d="M12 42V34a12 12 0 0 1 24 0v8ZM1 42v-8a8 8 0 0 1 8-8h3M47 42v-8a8 8 0 0 0-8-8h-3"/></svg><strong>Conheça o PCB</strong><span>Nossa história, programa e organização</span></a>
