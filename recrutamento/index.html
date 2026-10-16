@@ -346,40 +346,6 @@ body:has(#home.view.on) footer.footer{display:none!important}
 #home .campaign-social a{font-size:18px!important}
 @media(min-width:701px){#home .campaign-mobile-actions{display:none!important}}
 @media(max-width:700px){#home.view.on{min-height:100dvh!important;overflow:visible!important}#home .header .headrow{min-height:60px!important;padding:6px 12px!important}#home .header .brand{min-width:0!important}#home .header .brand img{width:62px!important;height:47px!important}#home .campaign-live{flex:1 1 auto!important;justify-content:flex-start!important}#home .campaign-visual{width:100%!important;max-width:100%!important;height:auto!important;aspect-ratio:1073/932!important;flex:0 0 auto!important}#home .campaign-copy h1{font-size:clamp(20px,5.7vw,34px)!important}#home .campaign-copy p{font-size:clamp(8px,1.7vw,11px)!important;max-height:unset!important;overflow:visible!important;margin:5px 0 0!important}#home .campaign-mobile-actions{display:grid!important}#home .campaign-footer{padding:10px!important;min-height:55px!important}#home .campaign-footer-motto{font-size:9px!important}}
-
-/* Correção consolidada da página inicial 2026-10-16 */
-/* Não aplicar amarelo ao cabeçalho: a regra antiga afetava todo .wrap */
-body:has(#home.view.on) #home .header,
-body:has(#home.view.on) #home .header .headrow,
-body:has(#home.view.on) #home .header .nav{background:#a52722!important;color:#fff!important}
-body:has(#home.view.on) #home .header .nav{background:transparent!important}
-body:has(#home.view.on) #home .header .headrow{max-width:1300px!important;width:100%!important;min-height:66px!important;padding:4px 22px!important;display:flex!important;align-items:center!important}
-body:has(#home.view.on) #home .header .brand{min-width:295px!important;gap:12px!important}
-body:has(#home.view.on) #home .header .brand img{width:83px!important;height:58px!important;object-fit:contain!important}
-body:has(#home.view.on) #home .header .brand span{font-size:11px!important;white-space:nowrap!important;color:#fff!important}
-body:has(#home.view.on) #home .header .brand small{font-size:9px!important}
-body:has(#home.view.on) #home .header .nav a{color:#fff!important}
-body:has(#home.view.on) #home .header .nav a[style]{color:#e6ce2e!important}
-body:has(#home.view.on) #home .header .topbtn.organize{background:#e6ce2e!important;color:#171717!important}
-body:has(#home.view.on) #home .header .topbtn.support{background:transparent!important;border:1px solid #e6ce2e!important;color:#fff!important}
-/* Mantém a arte sem distorcer; limita a altura para caber na primeira tela */
-#home.view.on{height:100dvh!important;min-height:0!important;overflow:hidden!important}
-#home .campaign-live{min-height:0!important;flex:1 1 auto!important;display:flex!important;align-items:center!important;justify-content:center!important}
-#home .campaign-visual{aspect-ratio:1073/932!important;width:auto!important;height:auto!important;max-height:calc(100dvh - 132px)!important;max-width:calc((100dvh - 132px)*1073/932)!important;margin:auto!important;flex:0 1 auto!important}
-#home .campaign-visual>img{width:100%!important;height:100%!important;aspect-ratio:1073/932!important;object-fit:contain!important}
-/* Parágrafo deve terminar ANTES do botão, que começa em 62.7% da imagem */
-#home .campaign-copy{top:27%!important;left:59%!important;width:37%!important;line-height:1.13!important}
-#home .campaign-eyebrow{font-size:clamp(7px,.85vw,11px)!important;letter-spacing:1.5px!important}
-#home .campaign-copy h1{font-family:Impact,'Arial Narrow',Arial,sans-serif!important;font-size:clamp(23px,4.6vw,52px)!important;letter-spacing:-.5px!important;transform:scaleX(.98)!important;margin:9px 0 4px!important}
-#home .campaign-rule{height:3px!important}
-#home .campaign-copy p{font-size:clamp(9px,1.2vw,14px)!important;font-weight:750!important;line-height:1.17!important;margin:9px 0 0!important;max-height:calc((62.7% - 27%) * 1)!important;overflow:visible!important}
-#home .campaign-footer{min-height:64px!important;background:#a52722!important;padding:5px 25px!important}
-#home .campaign-footer img{width:120px!important;max-height:58px!important;object-fit:contain!important}
-#home .campaign-footer-motto{font-size:12px!important}
-#home .campaign-social a{font-size:19px!important}
-body:has(#home.view.on) footer.footer{display:none!important;height:0!important;margin:0!important;padding:0!important}
-@media(max-width:1100px) and (min-width:701px){#home .header .headrow{flex-wrap:wrap!important;min-height:75px!important;justify-content:center!important}#home .campaign-visual{max-height:calc(100dvh - 158px)!important;max-width:calc((100dvh - 158px)*1073/932)!important}}
-@media(max-width:700px){#home.view.on{height:auto!important;min-height:100dvh!important;overflow:visible!important}#home .campaign-visual{width:100%!important;height:auto!important;max-height:none!important;max-width:100%!important}#home .campaign-copy h1{font-size:clamp(20px,5vw,33px)!important}#home .campaign-copy p{font-size:clamp(8px,1.6vw,11px)!important;margin-top:5px!important}#home .header .headrow{min-height:60px!important}#home .header .brand{min-width:0!important}#home .campaign-mobile-actions{display:grid!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
