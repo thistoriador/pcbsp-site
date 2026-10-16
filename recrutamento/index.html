@@ -414,6 +414,27 @@ body:has(#home.view.on) footer.footer{display:none!important}
 @media(min-width:1000px){#home .recruit-stage{height:calc(100dvh - 130px)!important}#home .recruit-art{height:100%!important}#home .recruit-content{height:100%!important}}
 @media(max-width:999px) and (min-width:751px){#home .recruit-stage{min-height:590px!important}#home .recruit-content{gap:15px!important}#home .recruit-art{min-height:590px!important}}
 @media(max-width:750px){#home .recruit-stage{display:flex!important;flex-direction:column!important;overflow:visible!important}#home .recruit-art{height:min(70vh,560px)!important;min-height:300px!important;padding:0!important;width:100%!important}#home .recruit-poster{height:100%!important;width:100%!important}#home .recruit-content{height:auto!important;max-height:none!important;overflow:visible!important;padding:15px!important;gap:16px!important}#home .recruit-links{gap:16px 0!important}#home .recruit-links strong{font-size:14px!important}#home .recruit-links span{font-size:12px!important}#home .recruit-intro{font-size:18px!important}#home .recruit-cta{min-height:58px!important}}
+
+/* Refinamento final: recorte sem CTA duplicada, cabeçalho e rodapé equilibrados */
+#home .recruit-art{padding:0!important;overflow:hidden!important}
+#home .recruit-poster{width:100%!important;height:100%!important;display:block!important}
+#home .header{background:linear-gradient(100deg,#b8241d,#a70c16)!important}
+#home .headrow{min-height:72px!important;max-width:1500px!important;padding:5px 24px!important;gap:15px!important}
+#home .brand{min-width:315px!important;gap:14px!important}
+#home .brand img{width:102px!important;height:64px!important;object-fit:contain!important}
+#home .brand span{font-size:12px!important;line-height:1.22!important;color:#fff!important}
+#home .brand small{font-size:10px!important;line-height:1.3!important}
+#home .nav{gap:13px!important}
+#home .nav a{font-size:11px!important}
+#home .topbtn{font-size:10px!important;padding:11px 9px!important}
+#home .recruit-footer{background:linear-gradient(100deg,#c91808,#a80011)!important;min-height:73px!important;padding:5px 35px!important;display:flex!important;align-items:center!important;justify-content:space-between!important}
+#home .recruit-footer img{width:150px!important;height:63px!important;object-fit:contain!important}
+#home .recruit-motto{font-size:clamp(12px,1.3vw,17px)!important;gap:18px!important}
+#home .recruit-motto span+span{padding-left:18px!important}
+#home .recruit-social a{font-size:24px!important}
+@media(min-width:1000px){#home .recruit-stage{height:calc(100dvh - 145px)!important}}
+@media(max-width:1150px){#home .headrow{flex-wrap:wrap!important;justify-content:center!important}#home .brand{min-width:0!important}#home .recruit-footer img{width:120px!important}}
+@media(max-width:750px){#home .brand img{width:72px!important;height:54px!important}#home .brand span{font-size:10px!important}#home .recruit-footer{padding:10px 15px!important}#home .recruit-footer img{width:120px!important;height:55px!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -747,7 +768,7 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <section id="home" class="view on">
 <header class="header"><div class="headrow" id="headrow"><a class="brand" href="/portal-teste/" aria-label="PCB São Paulo"><img src="/portal-teste/assets/pcb-sp-logo.png" alt="PCB São Paulo"><span>PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></span></a><button class="menu-toggle" type="button" onclick="document.getElementById('mainnav').classList.toggle('open')" aria-label="Abrir menu">☰ Menu</button><nav class="nav" id="mainnav" aria-label="Navegação principal"><a href="/portal-teste/">Início</a><a href="/portal-teste/#opcb">O PCB</a><a class="program" href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf">PROGRAMA PARA SP ↗</a><a href="/portal-teste/#atuacao">Nossa atuação</a><a href="/portal-teste/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="/portal-teste/#contato">Contato</a></nav><div class="nav-actions"><button type="button" class="topbtn organize" onclick="go('rec')">ORGANIZE SUA REVOLTA ↗</button><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
 <div class="recruit-stage">
- <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><svg class="recruit-poster" viewBox="0 0 575 760" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="/portal-teste/assets/fundo-circulismo.png" x="0" y="0" width="1073" height="932" preserveAspectRatio="none"/></svg></div>
+ <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><svg class="recruit-poster" viewBox="0 0 560 765" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="/portal-teste/assets/fundo-circulismo.png" x="0" y="0" width="1073" height="932" preserveAspectRatio="xMinYMin meet"/></svg></div>
  <div class="recruit-content"><h1>ORGANIZE-SE</h1><div class="recruit-rule" aria-hidden="true">➜</div><p class="recruit-intro">O PCB convoca trabalhadores e trabalhadoras, estudantes, jovens e todos aqueles que desejam transformar a sociedade a se organizar e fortalecer a luta pelo socialismo.</p>
  <button class="recruit-cta" type="button" onclick="go('rec')"><span aria-hidden="true">▤</span> QUERO ME ORGANIZAR <span aria-hidden="true">→</span></button>
  <div class="recruit-links">
