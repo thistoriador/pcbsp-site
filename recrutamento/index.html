@@ -316,6 +316,36 @@ body:has(#home.view.on) .wrap,body:has(#home.view.on) #home{max-width:none!impor
 body:has(#home.view.on)>.footer{display:none!important}
 @media(max-width:1100px){#home .header .headrow{flex-wrap:wrap!important;justify-content:center!important;padding:10px 16px!important}#home .header .brand{min-width:0!important}#home .header .nav{margin-left:0!important;justify-content:center!important;flex-wrap:wrap!important}}
 @media(max-width:700px){#home .header .headrow{justify-content:space-between!important;min-height:75px!important}#home .header .brand{gap:7px!important}#home .header .brand img{width:68px!important;height:54px!important}#home .header .brand span{font-size:10px!important}#home .header .brand small{font-size:8px!important}#home .header .menu-toggle{display:block!important}#home .header .nav{display:none!important;flex-basis:100%!important;order:3!important;flex-direction:column!important}#home .header .nav.open{display:flex!important}#home .header .nav-actions{display:none!important}.campaign-copy h1{font-size:clamp(23px,6vw,38px)!important;margin:6px 0 3px!important}.campaign-copy p{font-size:clamp(8px,1.75vw,12px)!important;margin:6px 0 0!important;line-height:1.18!important}.campaign-eyebrow{font-size:7px!important;letter-spacing:1px!important}}
+
+/* Layout inicial em uma tela: não altera formulário nem administração */
+body:has(#home.view.on){background:#ffdf20!important;overflow-x:hidden}
+body:has(#home.view.on) .wrap{background:#ffdf20!important}
+body:has(#home.view.on) footer.footer{display:none!important}
+#home.view.on{min-height:100dvh!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+#home .header{flex:0 0 auto!important;background:#a52722!important;color:#fff!important}
+#home .header .headrow{min-height:66px!important;max-width:1300px!important;padding:4px 22px!important;gap:12px!important}
+#home .header .brand{min-width:295px!important;gap:10px!important}
+#home .header .brand img{width:76px!important;height:56px!important}
+#home .header .brand span{font-size:11px!important;color:#fff!important}
+#home .header .brand small{font-size:9px!important}
+#home .header .nav{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;gap:10px!important}
+#home .header .nav a{color:#fff!important;font-size:10px!important}
+#home .header .topbtn{padding:9px 8px!important;font-size:9px!important}
+#home .campaign-live{flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;max-width:none!important;width:100%!important;padding:0!important}
+#home .campaign-visual{height:100%!important;min-height:0!important;max-width:min(100vw,calc((100dvh - 130px)*1073/932))!important;width:100%!important;aspect-ratio:1073/932!important;margin:auto!important;flex:0 1 auto!important}
+#home .campaign-visual>img{width:100%!important;height:100%!important;object-fit:fill!important}
+#home .campaign-copy{top:27%!important;left:59%!important;width:38%!important;line-height:1.16!important}
+#home .campaign-copy h1{font-size:clamp(22px,5.6vh,59px)!important;margin:9px 0 4px!important}
+#home .campaign-eyebrow{font-size:clamp(7px,1.05vh,11px)!important;letter-spacing:1.5px!important}
+#home .campaign-copy p{font-size:clamp(9px,1.75vh,17px)!important;line-height:1.18!important;margin:10px 0 0!important;max-height:17vh!important;overflow:hidden!important}
+#home .campaign-rule{height:3px!important}
+#home .campaign-footer{flex:0 0 auto!important;min-height:64px!important;padding:5px 22px!important;gap:14px!important}
+#home .campaign-footer img{width:108px!important;max-height:53px!important;object-fit:contain!important}
+#home .campaign-footer-motto{font-size:12px!important;gap:12px!important}
+#home .campaign-footer-motto span+span{padding-left:12px!important}
+#home .campaign-social a{font-size:18px!important}
+@media(min-width:701px){#home .campaign-mobile-actions{display:none!important}}
+@media(max-width:700px){#home.view.on{min-height:100dvh!important;overflow:visible!important}#home .header .headrow{min-height:60px!important;padding:6px 12px!important}#home .header .brand{min-width:0!important}#home .header .brand img{width:62px!important;height:47px!important}#home .campaign-live{flex:1 1 auto!important;justify-content:flex-start!important}#home .campaign-visual{width:100%!important;max-width:100%!important;height:auto!important;aspect-ratio:1073/932!important;flex:0 0 auto!important}#home .campaign-copy h1{font-size:clamp(20px,5.7vw,34px)!important}#home .campaign-copy p{font-size:clamp(8px,1.7vw,11px)!important;max-height:unset!important;overflow:visible!important;margin:5px 0 0!important}#home .campaign-mobile-actions{display:grid!important}#home .campaign-footer{padding:10px!important;min-height:55px!important}#home .campaign-footer-motto{font-size:9px!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
