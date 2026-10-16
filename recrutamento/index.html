@@ -485,26 +485,6 @@ body:has(#home.view.on) footer.footer{display:none!important}
 #home .recruit-motto span+span{padding-left:8px!important}
 #home .recruit-social{grid-area:social!important;justify-self:end!important;display:flex!important;gap:22px!important}
 }
-
-/* Rodapé do recrutamento reproduz a estrutura e medidas do Index principal */
-#home .recruit-index-footer{background:#7f080c;color:#fff;text-align:left;padding:0;font-size:14px;font-family:inherit}
-#home .recruit-index-footer .wrap{width:min(100% - 32px,1280px);margin-inline:auto}
-#home .recruit-index-footer .footer-main{display:grid;grid-template-columns:minmax(340px,1.65fr) repeat(3,minmax(120px,1fr));gap:clamp(14px,2vw,28px);padding:10px 0;align-items:start}
-#home .recruit-index-footer .footer-identity{display:grid;grid-template-columns:118px minmax(0,1fr);grid-template-rows:auto auto;align-content:start;align-items:center;column-gap:12px;row-gap:3px;padding:0;margin:0}
-#home .recruit-index-footer .footer-logo-branca{grid-column:1;grid-row:1/3;display:block;width:118px;height:92px;max-width:118px;object-fit:contain;object-position:center;margin:0}
-#home .recruit-index-footer .footer-title{grid-column:2;grid-row:1;align-self:end;font-size:14px;font-weight:900;line-height:1.2;margin:0}
-#home .recruit-index-footer .footer-title small{display:block;margin-top:3px;font-size:11px}
-#home .recruit-index-footer .footer-identity p{grid-column:2;grid-row:2;align-self:start;margin:0;font-size:9px;font-weight:700;line-height:1.4;text-transform:uppercase;letter-spacing:0}
-#home .recruit-index-footer .footer-identity p span{color:#ffdf25;padding:0 3px}
-#home .recruit-index-footer .footer-column{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-#home .recruit-index-footer .footer-column h3{font-size:11px;font-weight:900;color:#ffdf25;margin:0 0 2px}
-#home .recruit-index-footer .footer-column a{color:#fff;text-decoration:none;font-size:11px;line-height:1.22}
-#home .recruit-index-footer .footer-column a:hover{text-decoration:underline;text-underline-offset:3px}
-#home .recruit-index-footer .footer-column .admin-footer-link{color:#ffdf25;font-weight:800;margin-top:4px}
-#home .recruit-index-footer .footer-bottom{background:#4d0509;border-top:1px solid rgba(255,255,255,.15);padding:5px 0;color:#eee}
-#home .recruit-index-footer .footer-bottom .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px}
-@media(max-width:1000px){#home .recruit-index-footer .footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}#home .recruit-index-footer .footer-identity{grid-column:1/-1}}
-@media(max-width:560px){#home .recruit-index-footer .footer-main{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 0;gap:14px 12px}#home .recruit-index-footer .footer-identity{grid-column:1/-1;grid-template-columns:95px minmax(0,1fr);column-gap:9px}#home .recruit-index-footer .footer-logo-branca{width:95px;max-width:95px;height:82px}#home .recruit-index-footer .footer-title{font-size:12px}#home .recruit-index-footer .footer-title small{font-size:10px}#home .recruit-index-footer .footer-identity p{font-size:8px}#home .recruit-index-footer .footer-column:last-child{grid-column:1/-1}#home .recruit-index-footer .footer-bottom .wrap{flex-direction:column;align-items:flex-start;gap:3px}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -848,7 +828,7 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
   <button type="button" onclick="go('admin')"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 11v12c0 12-8 19-18 22C14 42 6 35 6 23V11zM18 22h12v12H18zM21 22v-4a3 3 0 0 1 6 0v4"/></svg><strong>Área administrativa</strong><span>Acesso restrito aos responsáveis</span></button>
  </div></div>
 </div>
-<footer class="recruit-index-footer" id="rodape-recrutamento"><div class="wrap footer-main"><div class="footer-identity"><img class="footer-logo-branca" src="/portal-teste/assets/logos%20pcb%20%20sp%20BRANCO%20sem%20fundo.png" alt="Logomarca branca do PCB São Paulo" loading="lazy" decoding="async"><div class="footer-title">PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></div><p>Socialismo <span>•</span> Poder Popular <span>•</span> Contra o Fascismo</p></div><div class="footer-column"><h3>O PARTIDO</h3><a href="/#inicio">Início</a><a href="/#opcb">O PCB</a><a href="/#atuacao">Nossa atuação</a><a href="/vamos-conversar/">Redes do PCB</a><a href="/galeria/">Galeria de Arte</a></div><div class="footer-column"><h3>CONHEÇA E PARTICIPE</h3><a href="/mapa/">Mapa dos Votos</a><a href="/formacao/">Formação Política</a><a href="/ferramentas/">Ferramentas</a><a href="/recrutamento/">Organize sua revolta</a><a href="/circulismo/">Apoie essa luta</a><a href="#" onclick="go('admin');return false" class="admin-footer-link" aria-label="Área administrativa do recrutamento">🔒 Área administrativa</a><a href="/#contato">Contato</a></div><div class="footer-column"><h3>ACOMPANHE</h3><a href="https://www.instagram.com/pcb_sp/" target="_blank" rel="noopener noreferrer">Instagram · @pcb_sp ↗</a><a href="https://www.youtube.com/c/partidocomunistabrasileiropcbsp" target="_blank" rel="noopener noreferrer">YouTube · PCB-SP ↗</a><a href="/#pcb-em-video">Vídeo em destaque</a></div></div><div class="footer-bottom"><div class="wrap"><span>2026 · PCB — Comitê Regional de São Paulo</span><span>Organizar • Formar • Mobilizar</span></div></div></footer>
+<footer class="recruit-footer"><a href="/"><img src="/portal-teste/assets/pcb-sp-logo.png" alt="PCB São Paulo"></a><div class="recruit-motto"><span>SOCIALISMO</span><span>PODER POPULAR</span><span>CONTRA O FASCISMO</span></div><div class="recruit-social"><a href="https://www.instagram.com/pcbpartidao/" aria-label="Instagram do PCB">◎</a><a href="/" aria-label="Portal PCB">↗</a></div></footer>
 </section>
 
 <section id="rec" class="view">
