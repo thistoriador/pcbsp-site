@@ -463,6 +463,13 @@ body:has(#home.view.on) footer.footer{display:none!important}
 @media(min-width:751px) and (max-width:999px){#home .recruit-content h1{font-size:clamp(46px,6vw,64px)!important}}
 @media(min-width:751px){#home .recruit-stage{column-gap:0!important;gap:0!important;background:#ffdf15!important}#home .recruit-art{margin-right:0!important;width:100%!important;background:transparent!important;border-right:0!important;box-shadow:none!important}#home .recruit-art img.recruit-poster{display:block!important;mix-blend-mode:normal!important}#home .recruit-content{border-left:0!important;box-shadow:none!important}}
 
+
+/* Corrige filete branco causado pelo espaço lateral do cartaz: preencher toda a coluna sem deformar a arte */
+@media(min-width:751px){
+#home .recruit-art{display:flex!important;justify-content:flex-end!important;align-items:stretch!important;overflow:hidden!important;margin:0!important;padding:0!important;min-width:0!important;background:transparent!important}
+#home .recruit-art img.recruit-poster{display:block!important;position:relative!important;flex:none!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:right center!important;border:0!important;outline:0!important}
+#home .recruit-content{margin-left:-1px!important;padding-left:11px!important}
+}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
