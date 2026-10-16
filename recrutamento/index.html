@@ -279,6 +279,23 @@ body:has(#home.view.on) .wrap,body:has(#home.view.on) #home{max-width:none!impor
 @media(max-width:950px){.campaign-header{flex-wrap:wrap;justify-content:center;gap:10px}.campaign-nav{justify-content:center}.campaign-footer{flex-wrap:wrap;justify-content:center}.campaign-copy h1{letter-spacing:-1px}.campaign-copy p{margin-top:18px}}
 @media(max-width:620px){.campaign-header{padding:12px 10px;min-height:0}.campaign-brand img{width:165px}.campaign-nav{gap:8px}.campaign-nav a{font-size:11px}.campaign-nav button{padding:9px;font-size:11px}.campaign-copy{top:27%;left:58%;width:40%}.campaign-eyebrow{font-size:7px;letter-spacing:1px}.campaign-copy h1{font-size:clamp(25px,7vw,43px);margin:10px 0 3px;letter-spacing:-1px}.campaign-rule{height:2px}.campaign-rule:after{font-size:16px;top:-8px}.campaign-copy p{font-size:clamp(9px,2.15vw,13px);margin-top:8px;line-height:1.22}.campaign-mobile-actions{display:grid;gap:8px;padding:12px 15px}.campaign-mobile-actions button{background:#b30917;color:#fff;border:0;border-radius:7px;padding:13px;font-size:15px;font-weight:900;min-height:48px}.campaign-mobile-actions button+button{background:#fff5be;color:#151515;border:2px solid #151515}.campaign-footer{padding:18px 12px;gap:16px}.campaign-footer img{width:155px}.campaign-footer-motto{gap:8px;font-size:10px;flex-wrap:wrap;justify-content:center}.campaign-footer-motto span+span{padding-left:8px}.campaign-social a{font-size:18px}}
 
+
+/* Cabeçalho idêntico ao portal-teste/index.html, isolado da área interna */
+#home .header{background:#a52722;color:#fff;position:relative;z-index:20}
+#home .header .headrow{max-width:1240px;margin:auto;padding:0 24px;display:flex;align-items:center;gap:19px;min-height:78px}
+#home .header .brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;color:#fff}
+#home .header .brand img{height:68px;width:98px;object-fit:contain}
+#home .header .brand span{font-weight:900;line-height:1.05;font-size:15px}
+#home .header .nav{display:flex;align-items:center;gap:15px;margin-left:auto;position:static;background:transparent;border:0;backdrop-filter:none;box-shadow:none}
+#home .header .nav a{text-decoration:none;font-size:12px;font-weight:800;white-space:nowrap;color:#fff}
+#home .header .nav a:hover{text-decoration:underline;text-underline-offset:5px}
+#home .header .nav-actions{display:flex;gap:8px}
+#home .header .topbtn{font-size:11px;font-weight:900;text-decoration:none;border-radius:7px;padding:12px 11px;white-space:nowrap}
+#home .header .topbtn.organize{background:#e6ce2e;color:#171717}
+#home .header .topbtn.support{border:1px solid #e6ce2e;color:#fff}
+#home .header .menu-toggle{display:none}
+@media(max-width:1050px){#home .header .headrow{flex-wrap:wrap;justify-content:center;padding:8px 16px;gap:10px}#home .header .nav{margin-left:0;flex-wrap:wrap;justify-content:center}}
+@media(max-width:700px){#home .header .headrow{justify-content:space-between}#home .header .brand img{height:54px;width:76px}#home .header .brand span{font-size:12px}#home .header .menu-toggle{display:block;background:#e6ce2e;border:0;border-radius:6px;padding:9px;font-weight:800}#home .header .nav{display:none;width:100%;order:3;flex-direction:column;gap:12px;padding:10px}#home .header .nav.open{display:flex}#home .header .nav-actions{margin-left:auto}#home .header .topbtn{font-size:9px;padding:9px 6px}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -610,10 +627,7 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <nav class="nav" aria-label="Navegação principal"><div class="navin"><div class="navlinks"><button onclick="go('home')">Início</button><button onclick="go('admin')">Área administrativa</button></div></div></nav>
 <main class="wrap">
 <section id="home" class="view on">
-<header class="campaign-header">
- <a class="campaign-brand" href="/portal-teste/" aria-label="PCB São Paulo — página principal"><img src="/portal-teste/assets/pcb-sp-logo.png" alt="PCB São Paulo"></a>
- <nav class="campaign-nav" aria-label="Navegação do PCB São Paulo"><a href="/portal-teste/">Início</a><a href="/portal-teste/#opcb">Quem somos</a><a href="/portal-teste/#atuacao">Organização</a><a href="/portal-teste/formacao/">Materiais</a><a href="/mapa/">Mapa dos Votos</a><a href="/portal-teste/formacao/">Biblioteca</a><button onclick="go('rec')">RECRUTAMENTO</button></nav>
-</header>
+<header class="header"><div class="wrap headrow" id="headrow"><a aria-label="PCB São Paulo, início" class="brand" href="/portal-teste/#inicio"><img alt="Logomarca original PCB São Paulo" src="/portal-teste/assets/pcb-sp-logo.png"/><span>PCB<br/>SÃO PAULO</span></a><button aria-controls="mainnav" aria-expanded="false" class="menu-toggle" id="menu-toggle" type="button" onclick="document.getElementById('mainnav').classList.toggle('open')">☰ Menu</button><nav aria-label="Navegação principal" class="nav" id="mainnav"><a href="/portal-teste/#inicio">Início</a><a href="/portal-teste/#opcb">O PCB</a><a href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf" target="_blank" rel="noopener noreferrer" style="color:#e6ce2e;font-weight:900">PROGRAMA PARA SP ↗</a><a href="/portal-teste/#atuacao">Nossa atuação</a><a href="/portal-teste/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="/portal-teste/#contato">Contato</a></nav><div class="nav-actions"><a class="topbtn organize" href="#" onclick="go('rec');return false;">ORGANIZE SUA REVOLTA ↗</a><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
 <div class="campaign-live">
  <div class="campaign-visual">
   <img src="/portal-teste/assets/fundo-circulismo.png" alt="Arte original da campanha: Enquanto existir miséria e opressão, ser comunista é nossa decisão. Oscar Niemeyer. Quero me organizar. Acessos: Conheça o PCB, Cadastre-se, Materiais e Área administrativa." width="1073" height="932" fetchpriority="high">
