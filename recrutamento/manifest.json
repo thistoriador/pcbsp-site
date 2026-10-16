@@ -1,13 +1,19 @@
 {
-  "name": "PCB SP | Recrutamento e Circulismo",
-  "short_name": "Recrutamento PCB",
-  "description": "Aplicativo PCB SP | Recrutamento e Circulismo",
+  "name": "PCB-SP | Recrutamento",
+  "short_name": "Recrutamento",
+  "description": "Portal de recrutamento PCB-SP para organização e acompanhamento por usuários autorizados.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#b5121b",
   "theme_color": "#b5121b",
   "icons": [
+    {
+      "src": "/recrutamento/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "https://raw.githubusercontent.com/thistoriador/icones-apps/main/icone-recrutamento.png",
       "sizes": "512x512",
