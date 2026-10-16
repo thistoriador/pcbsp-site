@@ -444,6 +444,11 @@ body:has(#home.view.on) footer.footer{display:none!important}
 
 /* Título pesado, sem depender de fonte externa não instalada */
 #home .recruit-content h1{font-family:Impact,'Arial Black',sans-serif!important;font-weight:900!important;letter-spacing:.005em!important;font-stretch:condensed!important;text-transform:uppercase!important}
+
+/* Cartaz definitivo: arquivo isolado, sem recorte, máscara ou distorção */
+#home .recruit-art{background:#ffdc17!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+#home .recruit-art img.recruit-poster{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;position:static!important;transform:none!important;clip-path:none!important}
+@media(max-width:750px){#home .recruit-art img.recruit-poster{width:100%!important;height:auto!important;max-height:70vh!important;object-fit:contain!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -777,7 +782,7 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <section id="home" class="view on">
 <header class="header"><div class="headrow" id="headrow"><a class="brand" href="/portal-teste/" aria-label="PCB São Paulo"><img src="/portal-teste/assets/pcb-sp-logo.png" alt="PCB São Paulo"><span>PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></span></a><button class="menu-toggle" type="button" onclick="document.getElementById('mainnav').classList.toggle('open')" aria-label="Abrir menu">☰ Menu</button><nav class="nav" id="mainnav" aria-label="Navegação principal"><a href="/portal-teste/">Início</a><a href="/portal-teste/#opcb">O PCB</a><a class="program" href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf">PROGRAMA PARA SP ↗</a><a href="/portal-teste/#atuacao">Nossa atuação</a><a href="/portal-teste/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="/portal-teste/#contato">Contato</a></nav><div class="nav-actions"><button type="button" class="topbtn organize" onclick="go('rec')">ORGANIZE SUA REVOLTA ↗</button><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
 <div class="recruit-stage">
- <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><svg class="recruit-poster" viewBox="0 0 540 745" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><image href="/portal-teste/assets/fundo-circulismo.png" x="0" y="0" width="1073" height="932" preserveAspectRatio="none"/></svg></div>
+ <div class="recruit-art" role="img" aria-label="Cartaz original de Oscar Niemeyer: Enquanto existir miséria e opressão, ser comunista é nossa decisão."><img class="recruit-poster" src="/portal-teste/assets/fundo-circulismo-cartaz.png" alt="Cartaz com frase Enquanto existir miséria e opressão, ser comunista é nossa decisão, e assinatura de Oscar Niemeyer" loading="eager" decoding="async"></div>
  <div class="recruit-content"><h1>ORGANIZE-SE</h1><div class="recruit-rule" aria-hidden="true"><svg viewBox="0 0 700 12" preserveAspectRatio="none"><path d="M0 6H693M685 1L694 6L685 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter"/></svg></div><p class="recruit-intro">O PCB convoca trabalhadores e trabalhadoras, estudantes, jovens e todos aqueles que desejam transformar a sociedade a se organizar e fortalecer a luta pelo socialismo.</p>
  <button class="recruit-cta" type="button" onclick="go('rec')"><span aria-hidden="true">▤</span> QUERO ME ORGANIZAR <span aria-hidden="true">→</span></button>
  <div class="recruit-links">
