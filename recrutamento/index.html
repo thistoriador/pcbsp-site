@@ -449,6 +449,11 @@ body:has(#home.view.on) footer.footer{display:none!important}
 #home .recruit-art{background:#ffdc17!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
 #home .recruit-art img.recruit-poster{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;position:static!important;transform:none!important;clip-path:none!important}
 @media(max-width:750px){#home .recruit-art img.recruit-poster{width:100%!important;height:auto!important;max-height:70vh!important;object-fit:contain!important}}
+
+/* Título ORGANIZE-SE grande, sem alterar paleta ou cartaz */
+@media(min-width:1000px){#home .recruit-content h1{font-family:Impact,'Arial Black',sans-serif!important;font-weight:900!important;font-size:clamp(72px,7.2vw,112px)!important;line-height:.93!important;letter-spacing:-.025em!important;white-space:nowrap!important;margin:0!important}}
+@media(min-width:751px) and (max-width:999px){#home .recruit-content h1{font-size:clamp(49px,7vw,74px)!important;line-height:.96!important;letter-spacing:-.02em!important}}
+@media(max-width:750px){#home .recruit-content h1{font-size:clamp(48px,11vw,78px)!important;line-height:.95!important}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
