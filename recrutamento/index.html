@@ -264,6 +264,25 @@ body:has(#home.view.on) .wrap{background:#a50a05 url("/recrutamento/a_wide_poste
  #territoryList .atable td:nth-child(4){grid-column:1/-1}
  #territoryList .atable td:nth-child(4) .send{width:100%;padding:9px 12px;font-size:13px}
 }
+
+/* Nova página pública de recrutamento: arte original preservada, hotspots funcionais */
+body:has(#home.view.on){background:#ffdf21!important}
+body:has(#home.view.on)>.hero,body:has(#home.view.on)>.nav{display:none!important}
+body:has(#home.view.on) .wrap{max-width:none!important;margin:0!important;padding:0!important;background:#ffdf21!important}
+body:has(#home.view.on) #home{max-width:none!important;margin:0!important;padding:0!important;background:#ffdf21!important}
+.campaign-live{width:100%;max-width:1073px;margin:0 auto;background:#ffdf21;padding:0 0 20px}
+.campaign-visual{position:relative;width:100%;line-height:0}
+.campaign-visual img{width:100%;height:auto;display:block;object-fit:contain}
+.campaign-hotspot{position:absolute;z-index:2;background:transparent;border:0;border-radius:7px;cursor:pointer;appearance:none;touch-action:manipulation}
+.campaign-hotspot:focus-visible{outline:4px solid #171717;outline-offset:2px;background:#fff4}
+.campaign-join{left:53%;top:62.7%;width:44%;height:10%}
+.campaign-admin{left:73%;top:79%;width:26%;height:19%}
+.campaign-mobile-actions{display:flex;gap:12px;justify-content:center;max-width:900px;margin:12px auto 0;padding:0 18px}
+.campaign-mobile-actions button{min-height:55px;padding:14px 18px;border-radius:9px;font-weight:900;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;flex:1}
+.campaign-mobile-join{background:#b30917;color:#fff;border:2px solid #b30917}
+.campaign-mobile-admin{background:#fff4ce;color:#191919;border:2px solid #242424}
+@media(min-width:850px){.campaign-mobile-actions{max-width:1073px;padding:0 30px}}
+@media(max-width:600px){.campaign-live{padding-bottom:18px}.campaign-mobile-actions{flex-direction:column;padding:0 15px;margin-top:12px}.campaign-mobile-actions button{min-height:52px;font-size:16px}.campaign-hotspot{border-radius:2px}}
 </style>
 <style id="admin-v7-style">
 #admin{--teal:#087b87;--teal2:#075f69;--ink:#17212b;--soft:#f4f5f3;--line:#d9dddc}
@@ -595,13 +614,17 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <nav class="nav" aria-label="Navegação principal"><div class="navin"><div class="navlinks"><button onclick="go('home')">Início</button><button onclick="go('admin')">Área administrativa</button></div></div></nav>
 <main class="wrap">
 <section id="home" class="view on">
-  <div class="intro"><h1>Participe da construção do Poder Popular</h1><p>Escolha abaixo como deseja participar.</p></div>
-  <div class="cards home-cards">
-    <button class="card home-card" onclick="go('rec')"><span class="home-icon home-red" aria-hidden="true"><svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><circle cx="32" cy="17" r="9"/><circle cx="12" cy="26" r="7"/><circle cx="52" cy="26" r="7"/><path d="M17 51V43c0-9 7-15 15-15s15 6 15 15v8a3 3 0 0 1-3 3H20a3 3 0 0 1-3-3ZM2 49v-9c0-7 5-12 12-12 3 0 5 1 7 3-4 4-6 9-6 15v6H5a3 3 0 0 1-3-3Zm47 3v-6c0-6-2-11-6-15 2-2 4-3 7-3 7 0 12 5 12 12v9a3 3 0 0 1-3 3Z"/></svg></span><strong>RECRUTAMENTO</strong><span class="home-description">Cadastre-se para se organizar no PCB.</span><span class="home-action home-red">FAZER CADASTRO <span aria-hidden="true">→</span></span></button>
-    
-    <button class="card home-card" onclick="go('admin')"><span class="home-icon home-blue" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M18 29V19a14 14 0 0 1 28 0v10"/><rect x="12" y="28" width="40" height="31" rx="5" fill="currentColor" stroke="none"/><circle cx="32" cy="42" r="4" fill="#0870ce" stroke="none"/><path d="M32 45v6" stroke="#0870ce"/></svg></span><strong>ÁREA ADMINISTRATIVA</strong><span class="home-description">Acesso restrito para responsáveis e coordenações autorizadas.</span><span class="home-action home-blue">ENTRAR <span aria-hidden="true">→</span></span></button>
+  <div class="campaign-live">
+    <div class="campaign-visual">
+      <img src="/portal-teste/assets/fundo-circulismo.png" alt="Campanha de organização PCB São Paulo: Enquanto existir miséria e opressão, ser comunista é nossa decisão. Arte original com seta e chamada Quero me organizar." width="1073" height="932" fetchpriority="high">
+      <button type="button" class="campaign-hotspot campaign-join" onclick="go('rec')" aria-label="Quero me organizar: abrir formulário de recrutamento" title="Abrir formulário de recrutamento"></button>
+      <button type="button" class="campaign-hotspot campaign-admin" onclick="go('admin')" aria-label="Área administrativa: entrar no painel de recrutamento" title="Entrar na área administrativa"></button>
+    </div>
+    <div class="campaign-mobile-actions" aria-label="Acessos da campanha">
+      <button type="button" class="campaign-mobile-join" onclick="go('rec')">QUERO ME ORGANIZAR <span aria-hidden="true">→</span></button>
+      <button type="button" class="campaign-mobile-admin" onclick="go('admin')">ÁREA ADMINISTRATIVA <span aria-hidden="true">→</span></button>
+    </div>
   </div>
-  <div class="quote">“Há homens que lutam um dia e são bons. Há outros que lutam um ano e são melhores. Há os que lutam muitos anos e são muito bons. Porém, há os que lutam toda a vida. Esses são os imprescindíveis!”<b>— Bertolt Brecht</b></div>
 </section>
 
 <section id="rec" class="view">
