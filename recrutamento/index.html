@@ -1713,24 +1713,7 @@ function exportRecruitPDF(id){
  const safe=s=>String(s??'—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
  const popup=window.open('','_blank','width=820,height=900');
  if(!popup){alert('Autorize pop-ups para exportar a ficha em PDF.');return}
- popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha de recrutamento - '+safe(r.nome)+'</title><style>@page{size:A4;margin:16mm}body{font:12px Arial,sans-serif;color:#1f2937}h1{font-size:19px;margin-bottom:5px}p{color:#64748b}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}td:first-child{width:30%;font-weight:bold;background:#f8fafc}tr{break-inside:avoid}.notice{font-size:10px;margin-top:18px;color:#64748b}@media print{.noprint{display:none}}</style></head><body><h1>Ficha de recrutamento</h1><p>PCB-SP · Documento administrativo de acesso restrito</p><table>'+fields.map(([k,v])=>'<tr><td>'+safe(k)+'</td><td>'+safe(v===''?'—':v)+'</td></tr>').join('')+'</table><p class="notice">Contém dados pessoais. Guarde e compartilhe somente com pessoas autorizadas.</p><p class="noprint"><button onclick="window.print()">Imprimir / Salvar como PDF</button></p><script>
-(function(){
- let deferredInstallPrompt=null;
- const btn=document.getElementById('install-recruitment-app');
- if(!btn)return;
- const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
- if(standalone)return;
- window.addEventListener('beforeinstallprompt',function(event){event.preventDefault();deferredInstallPrompt=event;btn.style.display='inline-flex';});
- window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;btn.style.display='none';});
- const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
- if(isIOS){btn.style.display='inline-flex';}
- btn.addEventListener('click',async function(){
-  if(deferredInstallPrompt){const prompt=deferredInstallPrompt;deferredInstallPrompt=null;btn.style.display='none';await prompt.prompt();return;}
-  if(isIOS)alert('No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início.');
- });
-})();
-</script>
-</body></html>');popup.document.close();popup.focus();
+ popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha de recrutamento - '+safe(r.nome)+'</title><style>@page{size:A4;margin:16mm}body{font:12px Arial,sans-serif;color:#1f2937}h1{font-size:19px;margin-bottom:5px}p{color:#64748b}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}td:first-child{width:30%;font-weight:bold;background:#f8fafc}tr{break-inside:avoid}.notice{font-size:10px;margin-top:18px;color:#64748b}@media print{.noprint{display:none}}</style></head><body><h1>Ficha de recrutamento</h1><p>PCB-SP · Documento administrativo de acesso restrito</p><table>'+fields.map(([k,v])=>'<tr><td>'+safe(k)+'</td><td>'+safe(v===''?'—':v)+'</td></tr>').join('')+'</table><p class="notice">Contém dados pessoais. Guarde e compartilhe somente com pessoas autorizadas.</p><p class="noprint"><button onclick="window.print()">Imprimir / Salvar como PDF</button></p></body></html>');popup.document.close();popup.focus();
 }
 async function editRecruitPhone(id){
  if(!['SUPERADMIN','ADMIN'].includes(adminProfile?.role)){alert('Edição reservada à administração.');return}
@@ -1841,5 +1824,18 @@ if(adminSession?.access_token){adminStart()}
 if('serviceWorker' in navigator){
  window.addEventListener('load',()=>navigator.serviceWorker.register('/recrutamento/sw.js',{scope:'/recrutamento/'}).catch(err=>console.warn('PWA indisponível:',err)));
 }
+</script>
+<script>
+(function(){
+ let deferredInstallPrompt=null;
+ const btn=document.getElementById('install-recruitment-app');
+ if(!btn)return;
+ if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)return;
+ window.addEventListener('beforeinstallprompt',function(event){event.preventDefault();deferredInstallPrompt=event;btn.style.display='inline-flex';});
+ window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;btn.style.display='none';});
+ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+ if(isIOS)btn.style.display='inline-flex';
+ btn.addEventListener('click',async function(){if(deferredInstallPrompt){const prompt=deferredInstallPrompt;deferredInstallPrompt=null;btn.style.display='none';await prompt.prompt();return;}if(isIOS)alert('No Safari, toque em Compartilhar e depois em Adicionar à Tela de Início.');});
+})();
 </script>
 </body></html>
