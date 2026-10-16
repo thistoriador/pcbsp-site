@@ -17,3 +17,10 @@
 .pcb-site-footer__bottom span+span:before{content:'|';color:#ffe22a;margin:0 15px}
 @media(max-width:950px){.pcb-site-footer__main{grid-template-columns:1fr auto;gap:8px 16px}.pcb-site-footer__nav{grid-column:1/-1;grid-row:2;justify-content:center;padding-top:3px}.pcb-site-footer__actions{grid-column:2;grid-row:1}}
 @media(max-width:540px){.pcb-site-footer__main{padding:12px 15px;grid-template-columns:1fr auto;gap:10px}.pcb-site-footer__brand{gap:8px}.pcb-site-footer__brand img{width:90px;height:76px}.pcb-site-footer__name{font-size:11px}.pcb-site-footer__name small{font-size:9px}.pcb-site-footer__actions{gap:8px}.pcb-site-footer__actions button{padding-left:9px}.pcb-site-footer__actions button span{display:none}.pcb-site-footer__nav{gap:8px 13px}.pcb-site-footer__nav a{font-size:11px}.pcb-site-footer__bottom{font-size:10px;padding:9px 8px}.pcb-site-footer__bottom span+span:before{margin:0 6px}}
+
+/* Variante institucional: mesma identidade, navegação mais espaçosa */
+.pcb-site-footer--institutional .pcb-site-footer__main{padding-top:28px;padding-bottom:28px;grid-template-columns:minmax(290px,1.4fr) minmax(310px,1fr) auto}
+.pcb-site-footer--institutional .pcb-site-footer__brand img{width:132px;height:104px}
+.pcb-site-footer--institutional .pcb-site-footer__nav{gap:14px 22px}
+@media(max-width:950px){.pcb-site-footer--institutional .pcb-site-footer__main{grid-template-columns:1fr auto}.pcb-site-footer--institutional .pcb-site-footer__nav{grid-column:1/-1}}
+@media(max-width:540px){.pcb-site-footer--institutional .pcb-site-footer__main{padding:17px 15px}.pcb-site-footer--institutional .pcb-site-footer__brand img{width:90px;height:76px}}
