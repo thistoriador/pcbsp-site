@@ -1647,6 +1647,8 @@ function sortTerritoryBy(key){if(territorySortKey===key)territorySortDir*=-1;els
 function renderTerritory(){
  // Known city: render immediately, without waiting for geocoding of other cities.
  territoryLocations.set('BARUERI',{lat:-23.51,lon:-46.88});
+ // Coordenada municipal conhecida: não depender de geocodificação externa.
+ territoryLocations.set('SAO LUIZ DO PARAITINGA',{lat:-23.222,lon:-45.311});
  const all=territoryRows(),filter=territoryNormalize(document.getElementById('territorySearch')?.value);
  const rows=all.filter(r=>territoryNormalize(r.name).includes(filter));
  rows.sort((a,b)=>{const cmp=territorySortKey==='name'?a.name.localeCompare(b.name,'pt-BR'):a[territorySortKey]-b[territorySortKey];return cmp*territorySortDir||a.name.localeCompare(b.name,'pt-BR')});
