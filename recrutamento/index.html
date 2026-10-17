@@ -1514,7 +1514,7 @@ function renderOverviewCharts(){
 async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('adminRefreshBtn');const oldText=refreshBtn?.textContent;try{
  if(refreshBtn){refreshBtn.disabled=true;refreshBtn.textContent='↻ Atualizando...'}
  const d=await adminApi('dashboard');
- const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];renderBulkRecruits();
+ const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];territoryFailed.clear();renderBulkRecruits();
  if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[];renderBulkRecruits()}
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const semResp=ativos.filter(x=>!x.responsavel_id).length,atrasados=ativos.filter(x=>x.data_proxima_acao&&x.data_proxima_acao<hoje).length,hojeN=ativos.filter(x=>x.data_proxima_acao===hoje).length;
@@ -1667,7 +1667,7 @@ function renderTerritory(){
  if(pending.length){const marker=L.circleMarker([-23.59,-46.60],{radius:Math.max(7,Math.min(16,6+Math.sqrt(pending.length)*2)),color:'#334155',weight:2,fillColor:'#facc15',fillOpacity:.95});marker.bindPopup('<strong>São Paulo · a conferir</strong><br>'+pending.length+' cadastro(s) sem zona validada ou com município inconsistente<br><small>Marcador ilustrativo; localização não identificada.</small><br><button type="button" class="territory-popup" data-city="São Paulo">Ver cadastros da capital</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)}
  return;
  }const c=territoryLocations.get(cityKey);if(!c)return;const marker=L.circleMarker([c.lat,c.lon],{radius:Math.max(6,Math.min(19,6+Math.sqrt(r.total)*2)),color:'#006b78',weight:2,fillColor:r.unassigned>0?'#dc2626':'#16a34a',fillOpacity:.85});marker.bindPopup('<strong>'+esc(r.name)+'</strong><br>'+r.total+' cadastro(s)<br>'+r.assigned+' atribuído(s) · '+r.unassigned+' não atribuído(s)<br><button type="button" class="territory-popup" data-city="'+esc(r.name)+'">Ver cadastros</button>');marker.on('popupopen',()=>document.querySelectorAll('.territory-popup').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city))));marker.addTo(territoryMarkers)});setTimeout(()=>{territoryMap.invalidateSize({pan:false});if(territoryMarkers?.getLayers().length)territoryMap.fitBounds(territoryMarkers.getBounds().pad(.15),{animate:false})},250)}
- if(!territoryGeocoding&&!territoryResolved&&all.some(r=>!territoryLocations.has(territoryNormalize(r.name))&&!territoryFailed.has(territoryNormalize(r.name))&&!['CIDADE NAO INFORMADA'].includes(territoryNormalize(r.name))&&!territoryNormalize(r.name).startsWith('REVISAR:')))territoryResolveCities(all.map(r=>r.name));
+ if(!territoryGeocoding&&all.some(r=>!territoryLocations.has(territoryNormalize(r.name))&&!territoryFailed.has(territoryNormalize(r.name))&&!['CIDADE NAO INFORMADA'].includes(territoryNormalize(r.name))&&!territoryNormalize(r.name).startsWith('REVISAR:')))territoryResolveCities(all.map(r=>r.name));
 }
 async function territoryResolveCities(cities){
  if(territoryGeocoding)return;territoryGeocoding=true;
