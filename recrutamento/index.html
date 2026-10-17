@@ -1534,13 +1534,26 @@ async function loadStateTerritory(){
  const x=await adminApi('territory_summary');
  const el=document.getElementById('territoryPanel');
  el.style.display='';
- el.innerHTML='<h3>Panorama estadual · somente leitura</h3><p style="color:#647078">Dados agregados. Localidades com menos de 3 registros são omitidas para proteger a privacidade.</p><p id="stateTerritorySummary"></p><div class="tablewrap"><table class="atable"><thead><tr><th>Município</th><th>Cadastros</th></tr></thead><tbody id="stateTerritoryRows"></tbody></table></div>';
+ if(window.__stateRecruitMap){window.__stateRecruitMap.remove();window.__stateRecruitMap=null}
+ el.innerHTML='<h3>Panorama estadual · somente leitura</h3><p style="color:#647078">Mapa agregado por município. Localidades com menos de 3 registros são omitidas para proteger a privacidade.</p><p id="stateTerritorySummary"></p><div id="stateRecruitMap" style="height:390px;border-radius:12px;border:1px solid #dbe1e3;background:#edf1f1;margin:12px 0" role="region" aria-label="Mapa estadual agregado dos recrutamentos"></div><div class="tablewrap"><table class="atable"><thead><tr><th>Município</th><th>Cadastros</th></tr></thead><tbody id="stateTerritoryRows"></tbody></table></div>';
  const grouped=new Map();
  (x.rows||[]).forEach(r=>{const city=territoryCity(r.cidade);const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA'||key.startsWith('REVISAR:'))return;const prev=grouped.get(key)||{name:city,total:0};prev.total+=r.total;grouped.set(key,prev)});
  const rows=[...grouped.values()].filter(r=>r.total>=3).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
  document.getElementById('stateTerritorySummary').textContent=rows.length+' municípios apresentados · outros registros protegidos por privacidade';
  document.getElementById('stateTerritoryRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+r.total+'</td></tr>').join('');
+ const showMap=()=>{
+  if(!window.L){document.getElementById('stateTerritorySummary').textContent+=' · mapa indisponível';return}
+  const map=L.map('stateRecruitMap',{scrollWheelZoom:true}).setView([-22.4,-48.5],7);
+  window.__stateRecruitMap=map;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18}).addTo(map);
+  const markers=L.featureGroup().addTo(map);
+  rows.forEach(r=>{const p=territoryLocations.get(territoryNormalize(r.name));if(p){L.circleMarker([p.lat,p.lon],{radius:Math.min(18,6+Math.sqrt(r.total)*2),color:'#b51d24',fillOpacity:.75}).bindPopup(esc(r.name)+' · '+r.total+' cadastros').addTo(markers)}});
+  if(markers.getLayers().length)map.fitBounds(markers.getBounds().pad(.15));
+  setTimeout(()=>map.invalidateSize(),150);
+ };
+ if(window.L)showMap();else{let tries=0;const timer=setInterval(()=>{if(window.L){clearInterval(timer);showMap()}else if(++tries>=16){clearInterval(timer);showMap()}},500)}
 }
+
 let territoryMap=null,territoryMarkers=null,territoryLocations=new Map(),territoryGeocoding=false,territoryResolved=false,territoryFailed=new Set();
 function territoryNormalize(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase()}
 function territoryCity(v){
