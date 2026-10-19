@@ -248,6 +248,33 @@ img[alt*="PCB"],img[alt*="logo"],img[alt*="Logo"]{object-fit:contain}
 .home-rivera-content p{grid-column:1!important;grid-row:2!important;margin:0!important;text-shadow:0 2px 7px #000}
 .home-rivera-content a{grid-column:2!important;grid-row:1/span 2!important;justify-self:end!important;align-self:center!important;white-space:nowrap!important;margin:0!important}
 @media(max-width:520px){.home-rivera-content{grid-template-columns:1fr!important;gap:12px!important}.home-rivera-content h2{grid-column:1!important;grid-row:1!important}.home-rivera-content p{grid-column:1!important;grid-row:2!important}.home-rivera-content a{grid-column:1!important;grid-row:3!important;justify-self:start!important;white-space:normal!important}}
+</style><style id="home-banners-compact-crop-20261019">
+/* Dois cards da mesma altura; mural sem tarjas pretas e arte eleitoral recortada proporcionalmente. */
+.home-double-banner{align-items:stretch!important}
+.home-double-banner>.home-rivera-banner,.home-double-banner>.home-election-banner{
+ height:220px!important;min-height:0!important;max-height:220px!important;
+ overflow:hidden!important;border-radius:12px!important;
+}
+.home-rivera-banner:before{
+ background-image:url('/portal-teste/assets/bot%C3%A3o-estudar-diegorivera.png')!important;
+ background-size:115% auto!important;
+ background-position:center 50%!important;
+}
+.home-rivera-content{padding:18px 24px!important}
+.home-rivera-content h2{font-size:clamp(22px,2.2vw,31px)!important}
+.home-rivera-content p{font-size:clamp(11px,1.05vw,14px)!important}
+.home-rivera-content a{font-size:clamp(10px,.9vw,13px)!important;padding:13px 15px!important}
+.home-election-banner{position:relative!important;background:#860000!important}
+.home-election-banner img{
+ display:block!important;width:100%!important;height:100%!important;
+ min-height:100%!important;object-fit:cover!important;object-position:center center!important;
+}
+@media(max-width:780px){
+ .home-double-banner>.home-rivera-banner,.home-double-banner>.home-election-banner{
+ height:220px!important;min-height:0!important;max-height:220px!important
+ }
+ .home-rivera-banner:before{background-size:cover!important;background-position:center!important}
+}
 </style></head><body>
 
 <header class="header"><div class="wrap headrow" id="headrow"><a aria-label="PCB São Paulo, início" class="brand" href="#inicio"><img alt="Logomarca PCB São Paulo" src="/portal-teste/assets/pcb-sp-logo.png"/><span class="brand-institutional">PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></span></a><button aria-controls="mainnav" aria-expanded="false" class="menu-toggle" id="menu-toggle" type="button">☰ Menu</button><nav aria-label="Navegação principal" class="nav" id="mainnav"><a href="#inicio">Início</a><a href="#opcb">O PCB</a><a href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf" target="_blank" rel="noopener noreferrer" style="color:#e6ce2e;font-weight:900">PROGRAMA PARA SP ↗</a><a href="/formacao/">Formação Política</a><a href="#atuacao">Nossa atuação</a><a href="/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="#contato">Contato</a></nav><div class="nav-actions"><a class="topbtn organize" href="https://pcbsp.com.br/recrutamento/">ORGANIZE SUA REVOLTA ↗</a><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
