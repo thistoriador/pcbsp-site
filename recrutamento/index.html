@@ -1224,11 +1224,11 @@ async function loadStateTerritory(){
  const el=document.getElementById('territoryPanel');
  el.style.display='';
  if(window.__stateRecruitMap){window.__stateRecruitMap.remove();window.__stateRecruitMap=null}
- el.innerHTML='<h3>Panorama estadual · somente leitura</h3><p style="color:#647078">Mapa agregado por município. Localidades com menos de 3 registros são omitidas para proteger a privacidade.</p><p id="stateTerritorySummary"></p><div id="stateRecruitMap" style="height:390px;border-radius:12px;border:1px solid #dbe1e3;background:#edf1f1;margin:12px 0" role="region" aria-label="Mapa estadual agregado dos recrutamentos"></div><div class="tablewrap"><table class="atable"><thead><tr><th>Município</th><th>Cadastros</th></tr></thead><tbody id="stateTerritoryRows"></tbody></table></div>';
+ el.innerHTML='<h3>Panorama estadual · somente leitura</h3><p style="color:#647078">Mapa agregado por município a partir de 1 recrutamento. Acesso restrito a usuários autorizados; não compartilhe capturas ou dados identificáveis.</p><p id="stateTerritorySummary"></p><div id="stateRecruitMap" style="height:390px;border-radius:12px;border:1px solid #dbe1e3;background:#edf1f1;margin:12px 0" role="region" aria-label="Mapa estadual agregado dos recrutamentos"></div><div class="tablewrap"><table class="atable"><thead><tr><th>Município</th><th>Cadastros</th></tr></thead><tbody id="stateTerritoryRows"></tbody></table></div>';
  const grouped=new Map();
  (x.rows||[]).forEach(r=>{const city=territoryCity(r.cidade);const key=territoryNormalize(city);if(key==='CIDADE NAO INFORMADA'||key.startsWith('REVISAR:'))return;const prev=grouped.get(key)||{name:city,total:0};prev.total+=r.total;grouped.set(key,prev)});
- const rows=[...grouped.values()].filter(r=>r.total>=3).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
- document.getElementById('stateTerritorySummary').textContent=rows.length+' municípios apresentados · outros registros protegidos por privacidade';
+ const rows=[...grouped.values()].filter(r=>r.total>=1).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+ document.getElementById('stateTerritorySummary').textContent=rows.length+' municípios apresentados · mapa de acesso restrito';
  document.getElementById('stateTerritoryRows').innerHTML=rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+r.total+'</td></tr>').join('');
  const showMap=()=>{
   if(!window.L){document.getElementById('stateTerritorySummary').textContent+=' · mapa indisponível';return}
