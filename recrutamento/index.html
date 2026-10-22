@@ -1264,7 +1264,7 @@ async function loadStateTerritory(){
 }
 
 let territoryMap=null,territoryMarkers=null,territoryLocations=new Map(),territoryGeocoding=false,territoryResolved=false,territoryFailed=new Set();
-function territoryNormalize(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toUpperCase()}
+function territoryNormalize(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019\u02bc\u00b4\u0060\u0027]/g,'').replace(/\s+/g,' ').trim().toUpperCase()}
 function territoryCity(v){
  let x=String(v||'').trim().replace(/\s+/g,' ').replace(/[.\s]+$/g,'').trim();
  if(!x)return 'Cidade não informada';
