@@ -14,7 +14,7 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.57.4';
 const db=createClient('https://cthntxgopxhbaemgnttn.supabase.co','sb_publishable_1mRxuQ1M3IkESIIK4V9nfw_C5iF2g-e',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const root=document.getElementById('miniNoticiasEditor'),status=document.getElementById('miniNoticiasStatus'),download=document.getElementById('miniNoticiasBaixar'),reset=document.getElementById('miniNoticiasReset');
-const heading=root?.parentElement;if(!root)return;
+const heading=root?.parentElement;
 const notice=heading.querySelector('p.muted');if(notice)notice.textContent='Acesso administrativo da Central. Publique e retire destaques diretamente do Index, sem GitHub.';
 download.textContent='Publicar alterações no Index';reset.textContent='Recarregar notícias';
 const login=document.createElement('div');login.className='card';login.style.marginBottom='14px';login.innerHTML='<h3>Autenticação da Central</h3><p id="miniLoginMessage">Verificando sua sessão…</p><form id="miniLoginForm" class="fields"><label>E-mail<input type="email" name="email" autocomplete="email" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><div class="wide"><button type="submit">Entrar com conta da Central</button></div></form>';
