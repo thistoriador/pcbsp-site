@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "updated_at": null,
+  "items": [
+    {
+      "id": "destaque-1",
+      "category": "Mobilização",
+      "title": "Espaço reservado para notícia de mobilização",
+      "summary": "Publicação da Comunicação Estadual em preparação.",
+      "image": "",
+      "url": "",
+      "date": "",
+      "published": false
+    },
+    {
+      "id": "destaque-2",
+      "category": "Formação",
+      "title": "Espaço reservado para notícia de formação",
+      "summary": "Publicação da Comunicação Estadual em preparação.",
+      "image": "",
+      "url": "",
+      "date": "",
+      "published": false
+    },
+    {
+      "id": "destaque-3",
+      "category": "Organização",
+      "title": "Espaço reservado para notícia de organização",
+      "summary": "Publicação da Comunicação Estadual em preparação.",
+      "image": "",
+      "url": "",
+      "date": "",
+      "published": false
+    }
+  ]
+}
