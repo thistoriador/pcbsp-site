@@ -19,14 +19,56 @@ const notice=heading.querySelector('p.muted');if(notice)notice.textContent='Aces
 download.textContent='Publicar alterações no Index';reset.textContent='Recarregar notícias';
 const login=document.createElement('div');login.className='card';login.style.marginBottom='14px';login.innerHTML='<h3>Autenticação da Central</h3><p id="miniLoginMessage">Verificando sua sessão…</p><form id="miniLoginForm" class="fields"><label>E-mail<input type="email" name="email" autocomplete="email" required></label><label>Senha<input type="password" name="password" autocomplete="current-password" required></label><div class="wide"><button type="submit">Entrar com conta da Central</button></div></form>';
 heading.insertBefore(login,root);const form=login.querySelector('form'),message=login.querySelector('#miniLoginMessage');
-let allowed=false;let rows=[];
+let allowed=false,loaded=false,activeUserId=null,rows=[],dirty=new Set(),saving=false;
 const fields=[['category','Categoria','text'],['title','Título','text'],['summary','Resumo','textarea'],['image','URL da imagem','url'],['url','Link da notícia','url'],['display_date','Data exibida','text']];
-function render(){root.replaceChildren();for(let i=1;i<=3;i++){const item=rows.find(x=>x.slot===i)||{slot:i,category:'Notícias',title:'',summary:'',image:'',url:'',display_date:'',published:false};const group=document.createElement('fieldset');group.style.cssText='border:1px solid #555;border-radius:8px;padding:12px;min-width:0';const legend=document.createElement('legend');legend.textContent='Destaque '+i;group.append(legend);for(const [prop,label,type] of fields){const wrap=document.createElement('label');wrap.style.cssText='display:block;margin:8px 0';wrap.textContent=label;const input=type==='textarea'?document.createElement('textarea'):document.createElement('input');if(type!=='textarea')input.type=type;input.value=item[prop]||'';input.style.cssText='display:block;width:100%;box-sizing:border-box;margin-top:4px';input.addEventListener('input',()=>{item[prop]=input.value});wrap.append(input);group.append(wrap)}const check=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!item.published;cb.addEventListener('change',()=>{item.published=cb.checked});check.append(cb,document.createTextNode(' Publicado no Index'));group.append(check);if(!rows.some(x=>x.slot===i))rows.push(item);root.append(group)}}
-async function refresh(){const{data,error}=await db.from('news_highlights').select('*').order('slot');if(error){status.textContent='Erro ao carregar notícias: '+error.message;return}rows=data||[];render();status.textContent='Destaques sincronizados com o servidor.'}
-async function check(){const{data:{user}}=await db.auth.getUser();if(!user){allowed=false;form.classList.remove('hidden');root.classList.add('hidden');download.disabled=true;reset.disabled=true;message.textContent='Entre com o mesmo e-mail e senha da Central.';return}const{data,error}=await db.from('central_access').select('area,access_role').eq('user_id',user.id).eq('area','comunicacao').eq('access_role','admin').maybeSingle();allowed=!!data&&!error;form.classList.toggle('hidden',allowed);root.classList.toggle('hidden',!allowed);download.disabled=!allowed;reset.disabled=!allowed;message.textContent=allowed?'Administrador autorizado: '+user.email:'Conta sem permissão de administrador da Comunicação Estadual.';if(allowed)await refresh()}
+function render(){
+root.replaceChildren();
+for(let i=1;i<=3;i++){
+const item=rows.find(x=>x.slot===i)||{slot:i,category:'Notícias',title:'',summary:'',image:'',url:'',display_date:'',published:false};
+if(!rows.some(x=>x.slot===i))rows.push(item);
+const group=document.createElement('fieldset');group.style.cssText='border:1px solid #555;border-radius:8px;padding:12px;min-width:0';
+const legend=document.createElement('legend');legend.textContent='Destaque '+i;group.append(legend);
+for(const [prop,label,type] of fields){
+const wrap=document.createElement('label');wrap.style.cssText='display:block;margin:8px 0';wrap.textContent=label;
+const input=type==='textarea'?document.createElement('textarea'):document.createElement('input');
+if(type!=='textarea')input.type=type;input.value=item[prop]||'';input.style.cssText='display:block;width:100%;box-sizing:border-box;margin-top:4px';
+input.addEventListener('input',()=>{item[prop]=input.value;dirty.add(i);status.textContent='Alterações no destaque '+i+' ainda não publicadas.'});
+wrap.append(input);group.append(wrap)}
+const check=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!item.published;
+cb.addEventListener('change',()=>{item.published=cb.checked;dirty.add(i);status.textContent='Alterações no destaque '+i+' ainda não publicadas.'});
+check.append(cb,document.createTextNode(' Publicado no Index'));group.append(check);
+const save=document.createElement('button');save.type='button';save.textContent='Salvar destaque '+i;save.style.marginTop='12px';save.addEventListener('click',()=>publish([i],save));group.append(save);root.append(group)}
+}
+async function refresh(force=false){
+if(dirty.size&&!force){status.textContent='Existem alterações não publicadas. Salve os destaques antes de recarregar.';return}
+const{data,error}=await db.from('news_highlights').select('*').order('slot');
+if(error){status.textContent='Erro ao carregar notícias: '+error.message;return}
+rows=data||[];dirty.clear();loaded=true;render();status.textContent='Destaques sincronizados com o servidor.'
+}
+async function check(){
+const{data:{user}}=await db.auth.getUser();
+if(!user){allowed=false;activeUserId=null;loaded=false;form.classList.remove('hidden');root.classList.add('hidden');download.disabled=true;reset.disabled=true;message.textContent='Entre com o mesmo e-mail e senha da Central.';return}
+const{data,error}=await db.from('central_access').select('area,access_role').eq('user_id',user.id).eq('area','comunicacao').eq('access_role','admin').maybeSingle();
+const authorized=!!data&&!error;const userChanged=activeUserId!==user.id;
+allowed=authorized;activeUserId=user.id;form.classList.toggle('hidden',allowed);root.classList.toggle('hidden',!allowed);download.disabled=!allowed;reset.disabled=!allowed;
+message.textContent=allowed?'Administrador autorizado: '+user.email:'Conta sem permissão de administrador da Comunicação Estadual.';
+if(allowed&&(!loaded||userChanged)){if(userChanged){rows=[];dirty.clear();loaded=false}await refresh(true)}
+}
 form.addEventListener('submit',async e=>{e.preventDefault();message.textContent='Entrando…';const f=new FormData(form);const{error}=await db.auth.signInWithPassword({email:String(f.get('email')),password:String(f.get('password'))});if(error){message.textContent='Falha no login: '+error.message;return}await check()});
-reset.addEventListener('click',()=>{if(allowed)refresh()});
-download.addEventListener('click',async()=>{if(!allowed)return;for(const x of rows){if(x.published){if(!x.title?.trim()){status.textContent='Preencha o título de cada destaque publicado.';return}try{const u=new URL(x.url);if(!['https:','http:'].includes(u.protocol))throw Error()}catch{status.textContent='Informe um link válido para cada destaque publicado.';return}}}
-download.disabled=true;status.textContent='Publicando no Index…';const payload=rows.map(x=>({slot:x.slot,category:x.category||'',title:x.title||'',summary:x.summary||'',image:x.image||'',url:x.url||'',display_date:x.display_date||'',published:!!x.published,updated_at:new Date().toISOString()}));const{error}=await db.from('news_highlights').upsert(payload,{onConflict:'slot'});download.disabled=false;if(error){status.textContent='Publicação não concluída: '+error.message;return}status.textContent='Publicado! O Index já pode mostrar as alterações.';await refresh()});
-db.auth.onAuthStateChange(()=>{setTimeout(check,0)});await check();
+reset.addEventListener('click',()=>{if(!allowed||saving)return;if(dirty.size&&!confirm('Descartar alterações ainda não publicadas?'))return;refresh(true)});
+async function publish(slots,button){
+if(!allowed||saving)return;
+const selected=rows.filter(x=>slots.includes(x.slot));
+for(const x of selected){if(x.published){if(!x.title?.trim()){status.textContent='Preencha o título do destaque '+x.slot+'.';return}try{const u=new URL(x.url);if(!['https:','http:'].includes(u.protocol))throw Error()}catch{status.textContent='Informe um link válido no destaque '+x.slot+'.';return}}}
+saving=true;button.disabled=true;status.textContent='Salvando '+(slots.length===1?'destaque '+slots[0]:'destaques alterados')+'…';
+const payload=selected.map(x=>({slot:x.slot,category:x.category||'',title:x.title||'',summary:x.summary||'',image:x.image||'',url:x.url||'',display_date:x.display_date||'',published:!!x.published,updated_at:new Date().toISOString()}));
+const{error}=await db.from('news_highlights').upsert(payload,{onConflict:'slot'});
+saving=false;button.disabled=false;
+if(error){status.textContent='Não foi possível salvar: '+error.message;return}
+slots.forEach(x=>dirty.delete(x));status.textContent='Salvo com sucesso! Os demais destaques não foram alterados.';
+}
+download.textContent='Salvar destaques alterados';
+download.addEventListener('click',()=>{if(!dirty.size){status.textContent='Nenhuma alteração pendente.';return}publish([...dirty],download)});
+db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT'||event==='USER_UPDATED')setTimeout(check,0)});
+await check();
 </script></body></html>
