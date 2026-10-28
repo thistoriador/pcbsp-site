@@ -33,7 +33,30 @@ const wrap=document.createElement('label');wrap.style.cssText='display:block;mar
 const input=type==='textarea'?document.createElement('textarea'):document.createElement('input');
 if(type!=='textarea')input.type=type;input.value=item[prop]||'';input.style.cssText='display:block;width:100%;box-sizing:border-box;margin-top:4px';
 input.addEventListener('input',()=>{item[prop]=input.value;dirty.add(i);status.textContent='Alterações no destaque '+i+' ainda não publicadas.'});
-wrap.append(input);group.append(wrap)}
+wrap.append(input);group.append(wrap);
+if(prop==='image'){
+const uploadLabel=document.createElement('label');uploadLabel.style.cssText='display:block;margin:8px 0;font-weight:700';uploadLabel.textContent='Ou anexar imagem (JPG, PNG, WebP · até 2 MB)';
+const upload=document.createElement('input');upload.type='file';upload.accept='image/jpeg,image/png,image/webp';upload.style.cssText='display:block;width:100%;margin-top:5px';
+const uploadMessage=document.createElement('small');uploadMessage.style.cssText='display:block;margin-top:5px;color:#e6ce2e';
+upload.addEventListener('change',async()=>{
+const file=upload.files?.[0];if(!file)return;
+if(!allowed){uploadMessage.textContent='Faça login como administrador.';upload.value='';return}
+if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>2097152){uploadMessage.textContent='Use JPG, PNG ou WebP de até 2 MB.';upload.value='';return}
+upload.disabled=true;uploadMessage.textContent='Enviando imagem…';
+try{
+const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';
+const path='editorial/'+i+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+ext;
+const {error}=await db.storage.from('news-covers').upload(path,file,{contentType:file.type,upsert:false});
+if(error)throw error;
+const {data}=db.storage.from('news-covers').getPublicUrl(path);
+item.image=data.publicUrl;input.value=item.image;dirty.add(i);
+uploadMessage.textContent='Imagem anexada! Clique em Salvar destaque '+i+' para publicar.';
+status.textContent='Imagem enviada. Salve o destaque '+i+' para atualizar o Index.';
+}catch(e){uploadMessage.textContent='Falha no anexo: '+(e.message||e)}
+finally{upload.disabled=false;upload.value=''}
+});uploadLabel.append(upload,uploadMessage);group.append(uploadLabel);
+}
+}
 const check=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!item.published;
 cb.addEventListener('change',()=>{item.published=cb.checked;dirty.add(i);status.textContent='Alterações no destaque '+i+' ainda não publicadas.'});
 check.append(cb,document.createTextNode(i===8?' Exibir no banner editorial do Index':' Publicado no Index'));group.append(check);
