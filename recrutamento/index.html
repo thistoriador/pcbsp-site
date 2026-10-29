@@ -1294,6 +1294,7 @@ function territoryCity(v){
  x=x.replace(/\s*[-–,/]\s*(?:SP|SÃO PAULO|SAO PAULO|ESTADO DE SÃO PAULO|ESTADO DE SAO PAULO|RJ|RIO DE JANEIRO|MG|MINAS GERAIS)\s*$/i,'');
  x=x.replace(/\s+(?:SP|RJ|MG)\s*$/i,'').replace(/[.\s]+$/g,'').trim();
  const n=territoryNormalize(x);
+ if(n==='CARAGUAATUBA'||n==='CARAGUATATUBA')return 'Caraguatatuba';
  if(n==='MACUCO'||n==='SANTOS - MACUCO'||n==='SANTOS / MACUCO')return 'Santos';
  if(n==='ILHA CARAGUATA'||n==='JARDIM ILHA CARAGUATA'||n==='CUBATAO - ILHA CARAGUATA'||n==='CUBATAO / ILHA CARAGUATA')return 'Cubatão';
  if(/^SAO PAULO(?:\s*[-–,/]\s*.+)?$/.test(n)||/^SAO PAULO\s*\(.+\)$/.test(n))return 'São Paulo';
@@ -1357,16 +1358,21 @@ let territorySortKey='total',territorySortDir=-1;
 function sortTerritoryBy(key){if(territorySortKey===key)territorySortDir*=-1;else{territorySortKey=key;territorySortDir=key==='name'?1:-1}renderTerritory()}
 function renderTerritory(){
  // Known city: render immediately, without waiting for geocoding of other cities.
+ territoryLocations.set('CARAGUATATUBA',{lat:-23.6203,lon:-45.4131});
+ territoryLocations.set('ILHABELA',{lat:-23.7781,lon:-45.3584});
+ territoryLocations.set('SAO SEBASTIAO',{lat:-23.8067,lon:-45.4027});
  territoryLocations.set('BARUERI',{lat:-23.51,lon:-46.88});
  // Coordenada municipal conhecida: não depender de geocodificação externa.
  territoryLocations.set('SAO LUIZ DO PARAITINGA',{lat:-23.222,lon:-45.311});
  territoryLocations.set(territoryNormalize('Palmeira d´Oeste'),{lat:-20.415,lon:-50.763});
  const all=territoryRows(),filter=territoryNormalize(document.getElementById('territorySearch')?.value);
+ const geoMissing=all.filter(r=>!territoryLocations.has(territoryNormalize(r.name))&&territoryNormalize(r.name)!=='SAO PAULO');
  const rows=all.filter(r=>territoryNormalize(r.name).includes(filter));
  rows.sort((a,b)=>{const cmp=territorySortKey==='name'?a.name.localeCompare(b.name,'pt-BR'):a[territorySortKey]-b[territorySortKey];return cmp*territorySortDir||a.name.localeCompare(b.name,'pt-BR')});
  document.getElementById('territorySummary').textContent=(adminProfile?.role==='RECRUTADOR_LOCAL'?'Somente cadastros atribuídos ao seu usuário · ':'')+all.length+' cidades · '+recruitsCache.length+' cadastros';
  document.getElementById('territoryList').innerHTML='<table class="atable"><thead><tr>'+[['name','Cidade'],['total','Cadastros'],['assigned','Designados'],['unassigned','Não designados']].map(([k,label])=>'<th scope="col" aria-sort="'+(territorySortKey===k?(territorySortDir===1?'ascending':'descending'):'none')+'"><button type="button" onclick="sortTerritoryBy(\''+k+'\')" style="all:unset;cursor:pointer;font:inherit;color:inherit;font-weight:inherit" title="Ordenar por '+label+'">'+label+' '+(territorySortKey===k?(territorySortDir===1?'▲':'▼'):'↕')+'</button></th>').join('')+'<th>Ação</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+esc(r.name)+'</td><td>'+r.total+'</td><td>'+r.assigned+'</td><td>'+r.unassigned+'</td><td><button type="button" class="send secondary territory-view" data-city="'+esc(r.name)+'">Ver cadastros</button></td></tr>').join('')+'</tbody></table>';
  document.getElementById('territoryList').insertAdjacentHTML('afterbegin',capitalZoneOverview());
+ const geoStatus=document.getElementById('territoryMapStatus');if(geoStatus&&territoryResolved)geoStatus.textContent=(all.length-geoMissing.length)+' de '+all.length+' cidades localizadas · '+geoMissing.length+' pendente(s) de geolocalização';
  document.querySelectorAll('.territory-view').forEach(b=>b.addEventListener('click',()=>territoryOpenRecruits(b.dataset.city)));
  if(!window.L){const status=document.getElementById('territoryMapStatus');if(status)status.textContent='Carregando biblioteca do mapa…';if(!window.__territoryLeafletRetry){window.__territoryLeafletRetry=true;let tries=0;const timer=setInterval(()=>{if(window.L){clearInterval(timer);window.__territoryLeafletRetry=false;if(status)status.textContent='';renderTerritory()}else if(++tries>=16){clearInterval(timer);window.__territoryLeafletRetry=false;if(status)status.textContent='Mapa indisponível no momento. A lista de cidades continua acessível.'}},500)}}
  if(!territoryMap&&window.L){territoryMap=L.map('recruitGeoMap',{scrollWheelZoom:true}).setView([-22.4,-48.5],7);const base=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:18,keepBuffer:2,updateWhenIdle:true}).addTo(territoryMap);let tileErrors=0,usingFallback=false;base.on('tileerror',()=>{if(++tileErrors>=3&&!usingFallback){usingFallback=true;territoryMap.removeLayer(base);L.tileLayer('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',maxZoom:18,subdomains:'abcd',updateWhenIdle:true}).addTo(territoryMap)}});territoryMarkers=L.featureGroup().addTo(territoryMap)}
