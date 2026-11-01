@@ -399,6 +399,15 @@ max-height:none!important;object-fit:contain!important;object-position:center!im
 .header .nav{min-width:0}
 .header .nav a{white-space:nowrap}
 }
+</style><style id="pcb-admin-no-overlap-20261101">
+/* Descola ADMIN do último link de navegação em cabeçalhos largos. */
+@media(min-width:1101px){
+.header .headrow{position:relative;padding-right:90px!important}
+.header .pcb-central-admin{position:absolute!important;right:12px;top:6px;margin:0!important;z-index:2}
+}
+@media(min-width:701px) and (max-width:1100px){
+.header .pcb-central-admin{position:relative;top:-5px;margin-left:12px!important;flex-shrink:0}
+}
 </style></head><body>
 
 <header class="header"><div class="wrap headrow" id="headrow"><a aria-label="PCB São Paulo, início" class="brand" href="#inicio"><img alt="Logomarca PCB São Paulo" src="/portal-teste/assets/pcb-sp-logo.png"/><span class="brand-institutional">PARTIDO COMUNISTA BRASILEIRO<small>COMITÊ REGIONAL DE SÃO PAULO</small></span></a><button aria-controls="mainnav" aria-expanded="false" class="menu-toggle" id="menu-toggle" type="button">☰ Menu</button><nav aria-label="Navegação principal" class="nav" id="mainnav"><a href="#inicio">Início</a><a href="/portal-teste/historia/">O PCB-SP</a><a href="/portal-teste/Plano%20de%20Governo%20SP%20PCB%202026_12-08-26-1804%20%281%29.pdf" target="_blank" rel="noopener noreferrer" style="color:#e6ce2e;font-weight:900">PROGRAMA PARA SP ↗</a><a href="/formacao/">Formação Política</a><a href="#atuacao">Nossa atuação</a><a href="https://www.pcb.org.br/" target="_blank" rel="noopener noreferrer">PCB Nacional ↗</a><a href="/vamos-conversar/">Redes do PCB</a><a href="/portal-teste/galeria/">Galeria de Arte</a><a href="#contato">Contato</a></nav><a class="pcb-central-admin" href="/central-teste/" aria-label="Acessar Central Administrativa" title="Central Administrativa">🔒 <span>ADMIN</span></a><div class="nav-actions"><a class="topbtn organize" href="https://pcbsp.com.br/recrutamento/">ORGANIZE SUA REVOLTA ↗</a><a class="topbtn support" href="/circulismo/">APOIE ESSA LUTA ↗</a></div></div></header>
