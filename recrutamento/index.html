@@ -1074,18 +1074,20 @@ body:has(#admin.view.on) .wrap{max-width:1240px;padding-top:20px}
 <section id="rec" class="view">
 <div class="top"><h2>Quero me organizar no PCB</h2><button class="back" type="button" onclick="go('home')">← Início</button></div>
 <div class="panel">
-<div class="notice"><b>Seus dados são protegidos.</b> Preencha o cadastro para que possamos entrar em contato e encaminhar sua participação. Os campos com * são obrigatórios. O e-mail e a autorização para receber comunicações são opcionais.</div>
+<div class="notice"><b>Seus dados são protegidos.</b> Preencha o cadastro para que possamos entrar em contato e encaminhar sua participação. Os campos com * são obrigatórios. A data de nascimento, o e-mail e a rede social são obrigatórios. A autorização para receber outras comunicações é opcional.</div>
 <form id="fr"><div class="grid">
 <div><label>Nome completo *</label><input name="nome" autocomplete="name" required></div>
 <div><label>WhatsApp *</label><input name="whatsapp" inputmode="tel" autocomplete="tel" required></div>
-<div><label>E-mail (opcional)</label><input name="email" type="email" autocomplete="email"></div>
+<div><label>E-mail *</label><input name="email" type="email" autocomplete="email" required></div>
+<div><label>Data de nascimento *</label><input name="data_nascimento" type="date" autocomplete="bday" required min="1906-01-01" max="2012-11-03"></div>
+<div><label>Rede social *</label><input name="rede_social" type="text" autocomplete="off" required placeholder="@usuario ou link do perfil"></div>
 <div><label for="recGenero">Gênero *</label><select id="recGenero" name="genero" required><option value="" selected disabled>Selecione</option><option value="MULHER_CIS">Mulher</option><option value="HOMEM_CIS">Homem</option><option value="NAO_BINARIO">Não binário</option><option value="OUTRO">Outra identidade</option><option value="PREFIRO_NAO_DECLARAR">Prefiro não informar</option></select></div>
 <div><label for="recRaca">Cor/raça *</label><select id="recRaca" name="cor_raca" required><option value="" selected disabled>Selecione</option><option value="BRANCA">Branca</option><option value="PRETA">Preta</option><option value="PARDA">Parda</option><option value="AMARELA">Amarela</option><option value="INDIGENA">Indígena</option><option value="Prefiro não informar">Prefiro não informar</option></select></div>
 <div><label>Cidade/Estado *</label><input name="cidade" autocomplete="address-level2" required></div>
 <div><label>Bairro *</label><input name="bairro" autocomplete="address-level3" required></div>
-<div><label>Faixa etária *</label><select name="faixa_etaria" required><option value="" selected disabled>Selecione sua faixa etária</option><option value="14–17">14–17</option><option value="18–24">18–24</option><option value="25–34">25–34</option><option value="35–44">35–44</option><option value="45–59">45–59</option><option value="60+">60+</option></select></div>
+
 <div class="full"><label>Como conheceu o PCB? *</label><textarea name="como_conheceu" rows="3" required placeholder="Conte como conheceu o partido"></textarea></div>
-<div class="full"><label>Por que deseja se filiar ou se organizar? *</label><textarea name="mensagem" rows="3" required placeholder="Escreva brevemente sua motivação"></textarea></div>
+<div class="full"><label>Por que deseja se organizar? *</label><textarea name="mensagem" rows="3" required placeholder="Escreva brevemente sua motivação"></textarea></div>
 <div class="full check"><input id="rc" type="checkbox" required><label for="rc">Autorizo o tratamento destes dados para contato e acompanhamento do meu cadastro. *</label></div>
 <div class="full check"><input id="rm" type="checkbox"><label for="rm">Autorizo receber outras comunicações do PCB-SP (opcional).</label></div>
 <div class="full"><button class="send" type="submit">ENVIAR CADASTRO →</button></div>
