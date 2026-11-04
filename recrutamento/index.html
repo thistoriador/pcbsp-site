@@ -1285,7 +1285,7 @@ async function adminRefresh(btn){const refreshBtn=btn||document.getElementById('
  if(refreshBtn){refreshBtn.disabled=true;refreshBtn.textContent='↻ Atualizando...'}
  const d=await adminApi('dashboard');
  const r=await adminApi('list_recrutamentos');recruitsCache=r.rows||[];territoryFailed.clear();renderBulkRecruits();
- if(['SUPERADMIN','ADMIN'].includes(adminProfile.role)){const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[];renderBulkRecruits()}
+ try{const z=await adminOps('list_responsaveis');responsaveisCache=z.rows||[];}catch(e){console.warn('Não foi possível carregar os nomes dos responsáveis:',e);responsaveisCache=[];}renderBulkRecruits();
  const hoje=new Date().toISOString().slice(0,10),ativos=recruitsCache.filter(x=>x.status==='ATIVO'),arquivadosN=recruitsCache.filter(x=>x.status==='ARQUIVADO').length;
  const tenDaysAgo=Date.now()-10*86400000;
  const recruitAttention=(x,k)=>{if(x.status!=='ATIVO')return false;
