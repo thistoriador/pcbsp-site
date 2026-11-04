@@ -1424,7 +1424,7 @@ function territoryOpenRecruits(city){
 }
 let territorySortKey='total',territorySortDir=-1;
 function sortTerritoryBy(key){if(territorySortKey===key)territorySortDir*=-1;else{territorySortKey=key;territorySortDir=key==='name'?1:-1}renderTerritory()}
-function recruitMapOrg(x){return x.organizacao_interesse==='UJC'||(x.tipo_cadastro==='UJC'&&x.organizacao_interesse!=='PCB')?'UJC':'PCB'}
+function recruitMapOrg(x){return x.organizacao_interesse==='UJC'||x.tipo_cadastro==='UJC'?'UJC':'PCB'}
 function recruitMapColor(kind){return kind==='UJC'?'#2563eb':'#16a34a'}
 function renderTerritory(){
  // Known city: render immediately, without waiting for geocoding of other cities.
