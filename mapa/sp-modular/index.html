@@ -768,6 +768,8 @@ function renderMunicipios(rows){
  document.getElementById('openMunicipioList').onclick=()=>showMunicipioList(rows);
 }
 
+let candidateMunicipioOrder='votos';
+function changeCandidateMunicipioOrder(value){candidateMunicipioOrder=value;if(selectedCandidate)openCandidate(selectedCandidate.candidatura_id);}
 async function openCandidate(id){
  const c=candidates.find(x=>Number(x.candidatura_id)===Number(id)); if(!c)return;
  selectedCandidate=c; panelState={type:'candidateMunicipios'};
@@ -776,7 +778,7 @@ async function openCandidate(id){
  try{
    const rows=await rpc('candidato_municipios',{p_candidatura_id:id});
    candidateMapRows=rows; mapMode='candidato'; updateRealMap();
-   const sorted=[...rows].sort((a,b)=>Number(b.votos||0)-Number(a.votos||0));
+   const sorted=[...rows].sort((a,b)=>candidateMunicipioOrder==='az'?String(a.municipio||'').localeCompare(String(b.municipio||''),'pt-BR'):candidateMunicipioOrder==='za'?String(b.municipio||'').localeCompare(String(a.municipio||''),'pt-BR'):Number(b.votos||0)-Number(a.votos||0));
    const top=sorted.slice(0,10), max=Math.max(1,...top.map(x=>Number(x.votos||0)));
    const chart=top.map(m=>`<div class="chart-row"><span class="chart-label" title="${esc(m.municipio)}">${esc(m.municipio)}</span><span class="chart-track"><span class="chart-fill" style="display:block;width:${Math.max(2,Number(m.votos||0)/max*100)}%"></span></span><span class="chart-value">${fmt(m.votos)}</span></div>`).join('');
    document.getElementById('panel').innerHTML=`
@@ -786,7 +788,7 @@ async function openCandidate(id){
        <div class="kpi-mini"><b>${year}</b><span>eleição</span></div>
      </div>
      <div class="chart-card"><h4>Municípios com mais votos</h4>${chart||'<div class="empty">Sem votação municipal.</div>'}</div>
-     <div class="list">${sorted.map(m=>`<button class="row" onclick="openCandidateMunicipio(${m.municipio_id},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;
+     <div style="margin:12px 0 8px"><label for="candidateMunicipioOrder" style="display:block;font-size:12px;margin-bottom:5px">Ordenar municípios por</label><select id="candidateMunicipioOrder" onchange="changeCandidateMunicipioOrder(this.value)" style="width:100%;padding:9px;border-radius:8px;border:1px solid #d9c8b9;background:#fff"><option value="votos" ${candidateMunicipioOrder==='votos'?'selected':''}>Mais votos primeiro</option><option value="az" ${candidateMunicipioOrder==='az'?'selected':''}>Município A–Z</option><option value="za" ${candidateMunicipioOrder==='za'?'selected':''}>Município Z–A</option></select></div><div class="list">${sorted.map(m=>`<button class="row" onclick="openCandidateMunicipio(${m.municipio_id},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>ver zonas eleitorais</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;
    if(window.innerWidth<=980) setTimeout(()=>document.getElementById('panel').scrollIntoView({behavior:'smooth',block:'start'}),60);
  }catch(e){err(e)}
 }
