@@ -718,21 +718,6 @@ async function loadYear(){
  document.getElementById('panel').innerHTML='<div class="loading">Carregando território…</div>';
  try{
   mapMode='geral'; candidateMapRows=[]; mapaMunicipios=[];
-  if(year===2026){
-   if(!dados2026){const r=await fetch('/mapa/dados/2026/sp/municipios-interesse.json',{cache:'no-store'});if(!r.ok)throw new Error('dados 2026: HTTP '+r.status);dados2026=await r.json();}
-   const defs=[
-    [2026001,'21','EDMILSON COSTA','Presidente','PCB'],[2026002,'21','CARLOS MACHADO','Governador','PCB'],[2026003,'211','PETTER MAAHS','Senador','PCB'],
-    [2026004,'5010','NATÁLIA BOULOS','Deputada Federal','Apoiada pelo PCB'],[2026005,'5013','FABIO MELLO','Deputado Federal','Apoiado pelo PCB'],
-    [2026006,'13622','JOÃO PAULO RILLO','Deputado Estadual','Apoiado pelo PCB'],[2026007,'13500','PROFESSORA PRISCILA','Deputada Estadual','Apoiada pelo PCB'],[2026008,'50500','DÉBORA CAMILO','Deputada Estadual','Apoiada pelo PCB']];
-   candidates=defs.map(d=>({candidatura_id:d[0],numero:d[1],nome:d[2],cargo:d[3],partido:d[4],votos:dados2026.reduce((n,m)=>n+Number(m.candidatos?.[d[2]]||0),0)}));
-   municipios=dados2026.map(m=>({municipio_id:Number(m.codigo_tse),municipio:m.municipio,codigo_tse:m.codigo_tse}));
-   mapaMunicipios=dados2026.map(m=>({municipio_id:Number(m.codigo_tse),municipio:m.municipio,votos_total:Number(m.candidatos?.['EDMILSON COSTA']||0)+Number(m.candidatos?.['CARLOS MACHADO']||0)+Number(m.candidatos?.['PETTER MAAHS']||0)}));
-   resumo={candidaturas:candidates.length,municipios:645,zonas:0};resumoRows=[resumo];
-   document.getElementById('statCandidates').textContent=fmt(candidates.length);document.getElementById('statMunicipios').textContent='645';document.getElementById('statZonas').textContent='—';
-   document.getElementById('mapLabel').textContent='645 municípios • 2026';document.getElementById('mapSubtitle').textContent='Apuração 2026 • candidaturas do PCB e apoiadas • dados municipais do TSE';
-   renderCandidates(candidates);renderMunicipios(municipios);updateRealMap();setTimeout(fitState,120);
-   msg('2026: apuração oficial do TSE • dados municipais provisórios durante a totalização.');return;
-  }
   [candidates,municipios,resumoRows]=await Promise.all([
    rpc('candidaturas',{p_ano:year}),
    rpc('municipios',{p_ano:year}),
@@ -788,12 +773,6 @@ async function openCandidate(id){
  selectedCandidate=c; panelState={type:'candidateMunicipios'};
  title(c.nome,`${c.cargo} • ${fmt(c.votos)} votos`,true);
  document.getElementById('panel').innerHTML='<div class="loading">Carregando municípios…</div>';
- if(year===2026){
-   const rows=dados2026.map(m=>({municipio_id:Number(m.codigo_tse),municipio:m.municipio,votos:Number(m.candidatos?.[c.nome]||0)}));
-   candidateMapRows=rows;mapMode='candidato';updateRealMap();const sorted=[...rows].sort((a,b)=>b.votos-a.votos),top=sorted.slice(0,10),max=Math.max(1,...top.map(x=>x.votos));
-   const chart=top.map(m=>`<div class="chart-row"><span class="chart-label">${esc(m.municipio)}</span><span class="chart-track"><span class="chart-fill" style="display:block;width:${Math.max(2,m.votos/max*100)}%"></span></span><span class="chart-value">${fmt(m.votos)}</span></div>`).join('');
-   document.getElementById('panel').innerHTML=`<div class="kpi-strip"><div class="kpi-mini"><b>${fmt(c.votos)}</b><span>votos</span></div><div class="kpi-mini"><b>${rows.filter(x=>x.votos>0).length}</b><span>municípios</span></div><div class="kpi-mini"><b>2026</b><span>eleição</span></div></div><div class="chart-card"><h4>Municípios com mais votos</h4>${chart}</div><div class="list">${sorted.map(m=>`<button class="row" onclick="openCandidateMunicipio(${m.municipio_id},'${js(m.municipio)}')"><div><strong>${esc(m.municipio)}</strong><small>votação municipal</small></div><span class="votes">${fmt(m.votos)}</span></button>`).join('')}</div>`;return;
- }
  try{
    const rows=await rpc('candidato_municipios',{p_candidatura_id:id});
    candidateMapRows=rows; mapMode='candidato'; updateRealMap();
@@ -813,7 +792,6 @@ async function openCandidate(id){
 }
 async function openCandidateMunicipio(mid,nome){
  selectedMunicipio={municipio_id:mid,municipio:nome};panelState={type:'candidateZones'};
- if(year===2026){const m=dados2026.find(x=>Number(x.codigo_tse)===Number(mid));title(nome,`${selectedCandidate.nome} • votação municipal`,true);document.getElementById('panel').innerHTML=`<div class="kpi-strip"><div class="kpi-mini"><b>${fmt(m?.candidatos?.[selectedCandidate.nome]||0)}</b><span>votos</span></div><div class="kpi-mini"><b>2026</b><span>apuração</span></div></div><div class="empty">Detalhamento por zona e seção será incorporado à medida que a base detalhada do TSE for consolidada.</div>`;return;}
  title(nome,`${selectedCandidate.nome} • zonas eleitorais`,true);
  document.getElementById('panel').innerHTML='<div class="loading">Carregando zonas…</div>';
  try{const rows=await rpc('candidato_zonas',{p_candidatura_id:selectedCandidate.candidatura_id,p_municipio_id:mid});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(z=>`<button class="row" onclick="openZona(${z.zona_id},${z.zona})"><div><strong>Zona ${z.zona}</strong><small>${year===2000?'Base histórica por zona':'ver seções'}</small></div><span class="votes">${fmt(z.votos)}</span></button>`).join('')}</div>`;}catch(e){err(e)}
@@ -827,7 +805,6 @@ async function openZona(zid,znum){
 }
 async function openMunicipio(mid,nome){
  selectedMunicipio={municipio_id:mid,municipio:nome};panelState={type:'municipioCandidates'};
- if(year===2026){const m=dados2026.find(x=>Number(x.codigo_tse)===Number(mid));title(nome,'Candidaturas • 2026',true);document.getElementById('panel').innerHTML=`<div class="list">${candidates.map(c=>`<button class="row" onclick="openCandidate(${c.candidatura_id})"><div><strong>${esc(c.nome)}</strong><small>${esc(c.cargo)} • nº ${c.numero}</small></div><span class="votes">${fmt(m?.candidatos?.[c.nome]||0)}</span></button>`).join('')}</div>`;return;}
  title(nome,`Candidaturas • ${year}`,true);document.getElementById('panel').innerHTML='<div class="loading">Carregando candidaturas…</div>';
  try{const rows=await rpc('municipio_candidaturas',{p_ano:year,p_municipio_id:mid});document.getElementById('panel').innerHTML=`<div class="list">${rows.map(c=>`<button class="row" onclick="openCandidate(${c.candidatura_id})"><div><strong>${esc(c.nome)}</strong><small>${esc(c.cargo)} • nº ${c.numero??'—'}</small></div><span class="votes">${fmt(c.votos)}</span></button>`).join('')}</div>`;}catch(e){err(e)}
 }
