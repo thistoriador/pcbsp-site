@@ -1662,14 +1662,36 @@ recruitList.innerHTML='<table class="atable"><thead><tr><th scope="col">Nº <inp
 labelMobileCells(recruitList,['Nº','Nome / contato','Tipo','Idade','Nascimento','Cidade','Etapa','Responsável','Próxima ação','Data do cadastro','Próxima ação em']);
 }
 function renderCirculists(rows){if(rows)circulistsCache=rows;const q=(cq?.value||'').toLowerCase(),st=cs?.value||'ATIVOS';const list=circulistsCache.filter(x=>(st==='ATIVOS'?!x.archived_at:st==='ARQUIVADOS'?!!x.archived_at:true)&&(!q||[x.nome,x.cidade,x.whatsapp,x.email].join(' ').toLowerCase().includes(q)));circulistList.innerHTML='<table class="atable"><thead><tr><th>Nº</th><th>Nome</th><th>Cidade</th><th>WhatsApp</th><th>Valor</th><th>Situação</th></tr></thead><tbody>'+list.map((x,i)=>'<tr data-id="'+x.id+'" onclick="openCirculist(\''+x.id+'\')"><td>'+(i+1)+'</td><td><b>'+esc(x.nome)+'</b></td><td>'+esc(x.cidade)+'</td><td>'+esc(x.whatsapp)+'</td><td>'+esc(x.valor_preferido||'—')+'</td><td>'+esc(situacao(x.situacao))+'</td></tr>').join('')+'</tbody></table>'}
-function exportRecruitPDF(id){
- const r=recruitsCache.find(x=>String(x.id)===String(id));
- if(!r){alert('Cadastro não encontrado. Atualize a lista.');return}
- const fields=[['Código',r.codigo],['Nome',r.nome],['Tipo',cadastroTipo(r)],['Data do cadastro',formatRecruitDate(r.created_at)],['Data de nascimento',formatRecruitDate(r.data_nascimento)],['Idade',recruitAge(r)??'—'],['Cidade',r.cidade],['Bairro',r.bairro],['WhatsApp',r.whatsapp],['E-mail',r.email],['Rede social',r.rede_social],['Formação',r.formacao],['Trabalho',r.trabalho],['Entidades',r.entidades],['Experiência política',r.experiencia_politica],['Como conheceu',r.como_conheceu],['Etapa',etapa(r.etapa)],['Responsável',respName(r.responsavel_id)],['Próxima ação',r.proxima_acao],['Data da próxima ação',formatRecruitDate(r.data_proxima_acao)],['Observações internas',r.observacoes]];
- const safe=s=>String(s??'—').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+async function exportRecruitPDF(id){
  const popup=window.open('','_blank','width=820,height=900');
  if(!popup){alert('Autorize pop-ups para exportar a ficha em PDF.');return}
- popup.document.open();popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha de recrutamento - '+safe(r.nome)+'</title><style>@page{size:A4;margin:16mm}body{font:12px Arial,sans-serif;color:#1f2937}h1{font-size:19px;margin-bottom:5px}p{color:#64748b}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}td:first-child{width:30%;font-weight:bold;background:#f8fafc}tr{break-inside:avoid}.notice{font-size:10px;margin-top:18px;color:#64748b}@media print{.noprint{display:none}}</style></head><body><h1>Ficha de recrutamento</h1><p>PCB-SP · Documento administrativo de acesso restrito</p><table>'+fields.map(([k,v])=>'<tr><td>'+safe(k)+'</td><td>'+safe(v===''?'—':v)+'</td></tr>').join('')+'</table><p class="notice">Contém dados pessoais. Guarde e compartilhe somente com pessoas autorizadas.</p><p class="noprint"><button onclick="window.print()">Imprimir / Salvar como PDF</button></p></body></html>');popup.document.close();popup.focus();
+ const safe=v=>String(v===null||v===undefined||v===''?'—':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+ try{
+  popup.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Preparando ficha</title></head><body><p>Carregando cadastro completo...</p></body></html>');
+  const result=await adminOps('get_recrutamento',{id});
+  const r=result?.row;
+  if(!r)throw Error('Cadastro não encontrado ou acesso não autorizado.');
+  const yesno=v=>v===true?'Sim':v===false?'Não':'Não informado';
+  const sections=[
+   ['Identificação e cadastro',[
+    ['Código',r.codigo],['Nome completo',r.nome],['CPF',r.cpf],['Data de nascimento',formatRecruitDate(r.data_nascimento)],['Idade',recruitAge(r)??'—'],['Cor/raça',r.cor_raca],['Gênero',r.genero],['Pronomes',r.pronomes],['Tipo de cadastro',cadastroTipo(r)],['Organização de interesse',r.organizacao_interesse],['Origem/encaminhamento',r.origem_encaminhamento],['Data do cadastro',formatRecruitDate(r.created_at)],['Última atualização',formatRecruitDate(r.updated_at)]
+   ]],
+   ['Contato e localização',[
+    ['WhatsApp',r.whatsapp],['E-mail',r.email],['Rede social',r.rede_social],['Estado',r.estado],['Cidade',r.cidade],['Bairro',r.bairro]
+   ]],
+   ['Respostas do formulário de recrutamento',[
+    ['Formação',r.formacao],['Trabalho',r.trabalho],['Dinâmica de vida',r.dinamica_vida],['Entidades',r.entidades],['Experiência política',r.experiencia_politica],['Como conheceu o PCB?',r.como_conheceu],['Por que deseja se filiar ou se organizar?',r.motivacao_ingresso]
+   ]],
+   ['Acompanhamento do recrutamento',[
+    ['Etapa',etapa(r.etapa)],['Situação do cadastro',r.status],['Responsável',respName(r.responsavel_id)],['Último contato',formatRecruitDate(r.ultimo_contato_at)],['Próxima ação',r.proxima_acao],['Data da próxima ação',formatRecruitDate(r.data_proxima_acao)],['Observações internas',r.observacoes],['Data do arquivamento',r.archived_at?formatRecruitDate(r.archived_at):'—']
+   ]],
+   ['Consentimento e comunicações',[
+    ['Consentimento para tratamento de dados',yesno(r.consentimento_dados)],['Versão do consentimento',r.consentimento_versao],['Data do consentimento',r.consentimento_at?formatRecruitDate(r.consentimento_at):'—'],['Autoriza comunicações',yesno(r.autoriza_comunicacoes)]
+   ]]
+  ];
+  const html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Ficha de recrutamento - '+safe(r.nome)+'</title><style>@page{size:A4;margin:16mm}body{font:12px Arial,sans-serif;color:#1f2937}h1{font-size:19px;margin-bottom:5px}h2{font-size:14px;margin:22px 0 8px;padding:7px;background:#f1f5f9;break-after:avoid}p{color:#64748b}table{border-collapse:collapse;width:100%;table-layout:fixed}td{padding:9px 8px;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}td:first-child{width:30%;font-weight:bold;background:#f8fafc}tr{break-inside:avoid}.notice{font-size:10px;margin-top:18px;color:#64748b}@media print{.noprint{display:none}}</style></head><body><h1>Ficha completa de recrutamento</h1><p>PCB-SP · Documento administrativo de acesso restrito</p>'+sections.map(([title,fields])=>'<section><h2>'+safe(title)+'</h2><table>'+fields.map(([k,v])=>'<tr><td>'+safe(k)+'</td><td>'+safe(v)+'</td></tr>').join('')+'</table></section>').join('')+'<p class="notice">Contém dados pessoais e respostas de recrutamento. Guarde e compartilhe somente com pessoas autorizadas.</p><p class="noprint"><button onclick="window.print()">Imprimir / Salvar como PDF</button></p></body></html>';
+  popup.document.open();popup.document.write(html);popup.document.close();popup.focus();
+ }catch(e){popup.close();alert('Não foi possível exportar a ficha completa: '+(e?.message||e))}
 }
 async function editRecruitPhone(id){
  if(!['SUPERADMIN','ADMIN'].includes(adminProfile?.role)){alert('Edição reservada à administração.');return}
